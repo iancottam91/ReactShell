@@ -3,6 +3,6 @@ import ReactDOM from "react-dom";
 
 
 
-import Main from "./components/Main";
+import Main from "./components/Main"; 
 
-ReactDOM.render(<Main />, document.getElementById('react'));
+ReactDOM.render(<Main />, document.getElementById('react')); 
