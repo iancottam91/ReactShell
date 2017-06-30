@@ -57,13 +57,35 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _Main = __webpack_require__(/*! ./components/Main */ 159);
+	var _reactRelay = __webpack_require__(/*! react-relay */ 159);
+	
+	var _reactRelay2 = _interopRequireDefault(_reactRelay);
+	
+	var _Main = __webpack_require__(/*! ./components/Main */ 368);
 	
 	var _Main2 = _interopRequireDefault(_Main);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	_reactDom2.default.render(_react2.default.createElement(_Main2.default, null), document.getElementById('react'));
+	_reactDom2.default.render(_react2.default.createElement(_Main2.default, { limit: 5 }), document.getElementById('react'));
+	
+	console.log(function () {
+	  return {
+	    children: [{
+	      fieldName: "title",
+	      kind: "Field",
+	      metadata: {},
+	      type: "String"
+	    }],
+	    fieldName: "links",
+	    kind: "Query",
+	    metadata: {
+	      isPlural: true
+	    },
+	    name: "Test",
+	    type: "Link"
+	  };
+	}());
 
 /***/ }),
 /* 1 */
@@ -20239,6 +20261,13696 @@
 
 /***/ }),
 /* 159 */
+/*!********************************!*\
+  !*** ./~/react-relay/index.js ***!
+  \********************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Relay v1.1.0
+	 *
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 */
+	
+	module.exports = __webpack_require__(/*! ./lib/ReactRelayPublic.js */ 160);
+
+/***/ }),
+/* 160 */
+/*!***********************************************!*\
+  !*** ./~/react-relay/lib/ReactRelayPublic.js ***!
+  \***********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactRelayPublic
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _require = __webpack_require__(/*! relay-runtime */ 161),
+	    commitLocalUpdate = _require.commitLocalUpdate,
+	    commitMutation = _require.commitMutation,
+	    fetchQuery = _require.fetchQuery,
+	    graphql = _require.graphql,
+	    requestSubscription = _require.requestSubscription;
+	
+	/**
+	 * The public interface to React Relay.
+	 */
+	module.exports = {
+	  QueryRenderer: __webpack_require__(/*! ./ReactRelayQueryRenderer */ 301),
+	  createFragmentContainer: __webpack_require__(/*! ./ReactRelayFragmentContainer */ 350).createContainer,
+	  createPaginationContainer: __webpack_require__(/*! ./ReactRelayPaginationContainer */ 363).createContainer,
+	  createRefetchContainer: __webpack_require__(/*! ./ReactRelayRefetchContainer */ 367).createContainer,
+	  commitLocalUpdate: commitLocalUpdate,
+	  commitMutation: commitMutation,
+	  fetchQuery: fetchQuery,
+	  graphql: graphql,
+	  requestSubscription: requestSubscription
+	};
+
+/***/ }),
+/* 161 */
+/*!**********************************!*\
+  !*** ./~/relay-runtime/index.js ***!
+  \**********************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Relay v1.1.0
+	 *
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 */
+	
+	module.exports = __webpack_require__(/*! ./lib/RelayRuntime.js */ 162);
+
+/***/ }),
+/* 162 */
+/*!*********************************************!*\
+  !*** ./~/relay-runtime/lib/RelayRuntime.js ***!
+  \*********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process, global) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayRuntime
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	// As early as possible, check for the existence of the JavaScript globals which
+	// Relay Runtime relies upon, and produce a clear message if they do not exist.
+	if (process.env.NODE_ENV !== 'production') {
+	  if (typeof Map !== 'function' || typeof Set !== 'function' || typeof Promise !== 'function' || typeof Object.assign !== 'function') {
+	    throw new Error('relay-runtime requires Map, Set, Promise, and Object.assign to exist. ' + 'Use a polyfill to provide these for older browsers.');
+	  }
+	}
+	
+	/**
+	 * The public interface to Relay Runtime.
+	 */
+	module.exports = {
+	  // Core API
+	  Environment: __webpack_require__(/*! ./RelayModernEnvironment */ 163),
+	  Network: __webpack_require__(/*! ./RelayNetwork */ 246),
+	  QueryResponseCache: __webpack_require__(/*! ./RelayQueryResponseCache */ 272),
+	  RecordSource: __webpack_require__(/*! ./RelayInMemoryRecordSource */ 199),
+	  Store: __webpack_require__(/*! ./RelayMarkSweepStore */ 273),
+	
+	  areEqualSelectors: __webpack_require__(/*! ./RelayCore */ 238).areEqualSelectors,
+	  createFragmentSpecResolver: __webpack_require__(/*! ./RelayCore */ 238).createFragmentSpecResolver,
+	  createOperationSelector: __webpack_require__(/*! ./RelayCore */ 238).createOperationSelector,
+	  getDataIDsFromObject: __webpack_require__(/*! ./RelayCore */ 238).getDataIDsFromObject,
+	  getFragment: __webpack_require__(/*! ./RelayModernGraphQLTag */ 239).getFragment,
+	  getOperation: __webpack_require__(/*! ./RelayModernGraphQLTag */ 239).getOperation,
+	  getSelector: __webpack_require__(/*! ./RelayCore */ 238).getSelector,
+	  getSelectorList: __webpack_require__(/*! ./RelayCore */ 238).getSelectorList,
+	  getSelectorsFromObject: __webpack_require__(/*! ./RelayCore */ 238).getSelectorsFromObject,
+	  getVariablesFromObject: __webpack_require__(/*! ./RelayCore */ 238).getVariablesFromObject,
+	  graphql: __webpack_require__(/*! ./RelayModernGraphQLTag */ 239).graphql,
+	
+	  // Extensions
+	  ConnectionHandler: __webpack_require__(/*! ./RelayConnectionHandler */ 166),
+	  ViewerHandler: __webpack_require__(/*! ./RelayViewerHandler */ 194),
+	
+	  // Helpers (can be implemented via the above API)
+	  commitLocalUpdate: __webpack_require__(/*! ./commitLocalUpdate */ 291),
+	  commitMutation: __webpack_require__(/*! ./commitRelayModernMutation */ 292),
+	  fetchQuery: __webpack_require__(/*! ./fetchRelayModernQuery */ 295),
+	  isRelayModernEnvironment: __webpack_require__(/*! ./isRelayModernEnvironment */ 293),
+	  requestSubscription: __webpack_require__(/*! ./requestRelaySubscription */ 296)
+	};
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  var RelayRecordSourceInspector = __webpack_require__(/*! ./RelayRecordSourceInspector */ 297);
+	
+	  // Debugging-related symbols exposed only in development
+	  Object.assign(module.exports, {
+	    RecordSourceInspector: RelayRecordSourceInspector
+	  });
+	
+	  // Attach the debugger symbol to the global symbol so it can be accessed by
+	  // devtools extension.
+	  var RelayDebugger = __webpack_require__(/*! ./RelayDebugger */ 300);
+	  var g = typeof global !== 'undefined' ? global : window;
+	  g.__RELAY_DEBUGGER__ = new RelayDebugger();
+	}
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 4), (function() { return this; }())))
+
+/***/ }),
+/* 163 */
+/*!*******************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayModernEnvironment.js ***!
+  \*******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process, global) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayModernEnvironment
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var RelayModernEnvironment = function () {
+	  function RelayModernEnvironment(config) {
+	    var _this = this;
+	
+	    (0, _classCallCheck3['default'])(this, RelayModernEnvironment);
+	
+	    var handlerProvider = config.handlerProvider ? config.handlerProvider : __webpack_require__(/*! ./RelayDefaultHandlerProvider */ 165);
+	    this._network = config.network;
+	    this._publishQueue = new (__webpack_require__(/*! ./RelayPublishQueue */ 198))(config.store, handlerProvider);
+	    this._store = config.store;
+	    this.setNet = function (newNet) {
+	      return _this._network = newNet;
+	    };
+	    this.unstable_internal = __webpack_require__(/*! ./RelayCore */ 238);
+	
+	    if (process.env.NODE_ENV !== 'production') {
+	      var g = typeof global !== 'undefined' ? global : window;
+	      g.__RELAY_DEBUGGER__ && g.__RELAY_DEBUGGER__.registerEnvironment(this);
+	    }
+	  }
+	
+	  RelayModernEnvironment.prototype.getStore = function getStore() {
+	    return this._store;
+	  };
+	
+	  RelayModernEnvironment.prototype.applyUpdate = function applyUpdate(updater) {
+	    var _this2 = this;
+	
+	    var optimisticUpdate = { storeUpdater: updater };
+	    var dispose = function dispose() {
+	      _this2._publishQueue.revertUpdate(optimisticUpdate);
+	      _this2._publishQueue.run();
+	    };
+	    this._publishQueue.applyUpdate(optimisticUpdate);
+	    this._publishQueue.run();
+	    return { dispose: dispose };
+	  };
+	
+	  RelayModernEnvironment.prototype.check = function check(readSelector) {
+	    return this._store.check(readSelector);
+	  };
+	
+	  RelayModernEnvironment.prototype.commitPayload = function commitPayload(operationSelector, payload) {
+	    // Do not handle stripped nulls when commiting a payload
+	    var relayPayload = __webpack_require__(/*! ./normalizeRelayPayload */ 231)(operationSelector.root, payload);
+	    this._publishQueue.commitPayload(operationSelector, relayPayload);
+	    this._publishQueue.run();
+	  };
+	
+	  RelayModernEnvironment.prototype.commitUpdate = function commitUpdate(updater) {
+	    this._publishQueue.commitUpdate(updater);
+	    this._publishQueue.run();
+	  };
+	
+	  RelayModernEnvironment.prototype.lookup = function lookup(readSelector) {
+	    return this._store.lookup(readSelector);
+	  };
+	
+	  RelayModernEnvironment.prototype.subscribe = function subscribe(snapshot, callback) {
+	    return this._store.subscribe(snapshot, callback);
+	  };
+	
+	  RelayModernEnvironment.prototype.retain = function retain(selector) {
+	    return this._store.retain(selector);
+	  };
+	
+	  RelayModernEnvironment.prototype.sendQuery = function sendQuery(_ref) {
+	    var _this3 = this;
+	
+	    var cacheConfig = _ref.cacheConfig,
+	        onCompleted = _ref.onCompleted,
+	        onError = _ref.onError,
+	        onNext = _ref.onNext,
+	        operation = _ref.operation;
+	
+	    var isDisposed = false;
+	    var dispose = function dispose() {
+	      isDisposed = true;
+	    };
+	    var onRequestSuccess = function onRequestSuccess(payload) {
+	      if (isDisposed) {
+	        return;
+	      }
+	      _this3._publishQueue.commitPayload(operation, payload);
+	      _this3._publishQueue.run();
+	      onNext && onNext(payload);
+	      onCompleted && onCompleted();
+	    };
+	    var onRequestError = function onRequestError(error) {
+	      if (isDisposed) {
+	        return;
+	      }
+	      onError && onError(error);
+	    };
+	    var networkRequest = this._network.request(operation.node, operation.variables, cacheConfig);
+	    if (__webpack_require__(/*! ./isPromise */ 245)(networkRequest)) {
+	      networkRequest.then(onRequestSuccess)['catch'](onRequestError);
+	    } else if (networkRequest instanceof Error) {
+	      onRequestError(networkRequest);
+	    } else {
+	      onRequestSuccess(networkRequest);
+	    }
+	    return { dispose: dispose };
+	  };
+	
+	  RelayModernEnvironment.prototype.streamQuery = function streamQuery(_ref2) {
+	    var _this4 = this;
+	
+	    var cacheConfig = _ref2.cacheConfig,
+	        onCompleted = _ref2.onCompleted,
+	        onError = _ref2.onError,
+	        _onNext = _ref2.onNext,
+	        operation = _ref2.operation;
+	
+	    return this._network.requestStream(operation.node, operation.variables, cacheConfig, {
+	      onCompleted: onCompleted,
+	      onError: onError,
+	      onNext: function onNext(payload) {
+	        _this4._publishQueue.commitPayload(operation, payload);
+	        _this4._publishQueue.run();
+	        _onNext && _onNext(payload);
+	      }
+	    });
+	  };
+	
+	  RelayModernEnvironment.prototype.sendMutation = function sendMutation(_ref3) {
+	    var _this5 = this;
+	
+	    var onCompleted = _ref3.onCompleted,
+	        onError = _ref3.onError,
+	        operation = _ref3.operation,
+	        optimisticResponse = _ref3.optimisticResponse,
+	        optimisticUpdater = _ref3.optimisticUpdater,
+	        updater = _ref3.updater,
+	        uploadables = _ref3.uploadables;
+	
+	    var hasOptimisticUpdate = !!optimisticResponse || optimisticUpdater;
+	    var optimisticUpdate = {
+	      operation: operation,
+	      selectorStoreUpdater: optimisticUpdater,
+	      response: optimisticResponse || null
+	    };
+	    if (hasOptimisticUpdate) {
+	      this._publishQueue.applyUpdate(optimisticUpdate);
+	      this._publishQueue.run();
+	    }
+	    var isDisposed = false;
+	    var dispose = function dispose() {
+	      if (hasOptimisticUpdate) {
+	        _this5._publishQueue.revertUpdate(optimisticUpdate);
+	        _this5._publishQueue.run();
+	        hasOptimisticUpdate = false;
+	      }
+	      isDisposed = true;
+	    };
+	    var onRequestSuccess = function onRequestSuccess(payload) {
+	      if (isDisposed) {
+	        return;
+	      }
+	      if (hasOptimisticUpdate) {
+	        _this5._publishQueue.revertUpdate(optimisticUpdate);
+	      }
+	      _this5._publishQueue.commitPayload(operation, payload, updater);
+	      _this5._publishQueue.run();
+	      onCompleted && onCompleted(payload.errors);
+	    };
+	
+	    var onRequestError = function onRequestError(error) {
+	      if (isDisposed) {
+	        return;
+	      }
+	      if (hasOptimisticUpdate) {
+	        _this5._publishQueue.revertUpdate(optimisticUpdate);
+	      }
+	      _this5._publishQueue.run();
+	      onError && onError(error);
+	    };
+	
+	    var networkRequest = this._network.request(operation.node, operation.variables, { force: true }, uploadables);
+	
+	    if (__webpack_require__(/*! ./isPromise */ 245)(networkRequest)) {
+	      networkRequest.then(onRequestSuccess)['catch'](onRequestError);
+	    } else {
+	      __webpack_require__(/*! fbjs/lib/warning */ 189)(false, 'RelayModernEnvironment: mutation request cannot be synchronous.');
+	    }
+	    return { dispose: dispose };
+	  };
+	
+	  RelayModernEnvironment.prototype.sendSubscription = function sendSubscription(_ref4) {
+	    var _this6 = this;
+	
+	    var onCompleted = _ref4.onCompleted,
+	        _onNext2 = _ref4.onNext,
+	        onError = _ref4.onError,
+	        operation = _ref4.operation,
+	        updater = _ref4.updater;
+	
+	    return this._network.requestStream(operation.node, operation.variables, { force: true }, {
+	      onCompleted: onCompleted,
+	      onError: onError,
+	      onNext: function onNext(payload) {
+	        _this6._publishQueue.commitPayload(operation, payload, updater);
+	        _this6._publishQueue.run();
+	        _onNext2 && _onNext2(payload);
+	      }
+	    });
+	  };
+	
+	  return RelayModernEnvironment;
+	}();
+	
+	// Add a sigil for detection by `isRelayModernEnvironment()` to avoid a
+	// realm-specific instanceof check, and to aid in module tree-shaking to
+	// avoid requiring all of RelayRuntime just to detect its environment.
+	
+	
+	RelayModernEnvironment.prototype['@@RelayModernEnvironment'] = true;
+	
+	module.exports = RelayModernEnvironment;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 4), (function() { return this; }())))
+
+/***/ }),
+/* 164 */
+/*!***************************************************!*\
+  !*** ./~/babel-runtime/helpers/classCallCheck.js ***!
+  \***************************************************/
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	exports.__esModule = true;
+	
+	exports.default = function (instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	};
+
+/***/ }),
+/* 165 */
+/*!************************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayDefaultHandlerProvider.js ***!
+  \************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayDefaultHandlerProvider
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	function RelayDefaultHandlerProvider(handle) {
+	  switch (handle) {
+	    case 'connection':
+	      return __webpack_require__(/*! ./RelayConnectionHandler */ 166);
+	    case 'viewer':
+	      return __webpack_require__(/*! ./RelayViewerHandler */ 194);
+	  }
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(false, 'RelayDefaultHandlerProvider: No handler provided for `%s`.', handle);
+	}
+	
+	module.exports = RelayDefaultHandlerProvider;
+
+/***/ }),
+/* 166 */
+/*!*******************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayConnectionHandler.js ***!
+  \*******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayConnectionHandler
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _require = __webpack_require__(/*! ./RelayConnectionInterface */ 167),
+	    CURSOR = _require.CURSOR,
+	    EDGES = _require.EDGES,
+	    NODE = _require.NODE,
+	    END_CURSOR = _require.END_CURSOR,
+	    HAS_NEXT_PAGE = _require.HAS_NEXT_PAGE,
+	    HAS_PREV_PAGE = _require.HAS_PREV_PAGE,
+	    PAGE_INFO = _require.PAGE_INFO,
+	    PAGE_INFO_TYPE = _require.PAGE_INFO_TYPE,
+	    START_CURSOR = _require.START_CURSOR;
+	
+	var CONNECTION = 'connection';
+	
+	// Per-instance incrementing index used to generate unique edge IDs
+	var NEXT_EDGE_INDEX = '__connection_next_edge_index';
+	
+	/**
+	 * @public
+	 *
+	 * A default runtime handler for connection fields that appends newly fetched
+	 * edges onto the end of a connection, regardless of the arguments used to fetch
+	 * those edges.
+	 */
+	function update(store, payload) {
+	  var record = store.get(payload.dataID);
+	  if (!record) {
+	    return;
+	  }
+	
+	  var serverConnection = record.getLinkedRecord(payload.fieldKey);
+	  var serverPageInfo = serverConnection && serverConnection.getLinkedRecord(PAGE_INFO);
+	  if (!serverConnection) {
+	    record.setValue(null, payload.handleKey);
+	    return;
+	  }
+	  var clientConnection = record.getLinkedRecord(payload.handleKey);
+	  var clientPageInfo = clientConnection && clientConnection.getLinkedRecord(PAGE_INFO);
+	  if (!clientConnection) {
+	    // Initial fetch with data: copy fields from the server record
+	    var connection = store.create(__webpack_require__(/*! ./generateRelayClientID */ 188)(record.getDataID(), payload.handleKey), serverConnection.getType());
+	    connection.setValue(0, NEXT_EDGE_INDEX);
+	    connection.copyFieldsFrom(serverConnection);
+	    var serverEdges = serverConnection.getLinkedRecords(EDGES);
+	    if (serverEdges) {
+	      serverEdges = serverEdges.map(function (edge) {
+	        return buildConnectionEdge(store, connection, edge);
+	      });
+	      connection.setLinkedRecords(serverEdges, EDGES);
+	    }
+	    record.setLinkedRecord(connection, payload.handleKey);
+	
+	    clientPageInfo = store.create(__webpack_require__(/*! ./generateRelayClientID */ 188)(connection.getDataID(), PAGE_INFO), PAGE_INFO_TYPE);
+	    clientPageInfo.setValue(false, HAS_NEXT_PAGE);
+	    clientPageInfo.setValue(false, HAS_PREV_PAGE);
+	    clientPageInfo.setValue(null, END_CURSOR);
+	    clientPageInfo.setValue(null, START_CURSOR);
+	    if (serverPageInfo) {
+	      clientPageInfo.copyFieldsFrom(serverPageInfo);
+	    }
+	    connection.setLinkedRecord(clientPageInfo, PAGE_INFO);
+	  } else {
+	    var _connection = clientConnection;
+	    // Subsequent fetches:
+	    // - merge prev/next edges, de-duplicating by node id
+	    // - synthesize page info fields
+	    var _serverEdges = serverConnection.getLinkedRecords(EDGES);
+	    if (_serverEdges) {
+	      _serverEdges = _serverEdges.map(function (edge) {
+	        return buildConnectionEdge(store, _connection, edge);
+	      });
+	    }
+	    var prevEdges = _connection.getLinkedRecords(EDGES);
+	    var nextEdges = [];
+	    var args = payload.args;
+	    if (prevEdges && _serverEdges) {
+	      if (args.after != null) {
+	        // Forward pagination from the end of the connection: append edges
+	        if (clientPageInfo && args.after === clientPageInfo.getValue(END_CURSOR)) {
+	          var nodeIDs = new Set();
+	          mergeEdges(prevEdges, nextEdges, nodeIDs);
+	          mergeEdges(_serverEdges, nextEdges, nodeIDs);
+	        } else {
+	          __webpack_require__(/*! fbjs/lib/warning */ 189)(false, 'RelayConnectionHandler: Unexpected after cursor `%s`, edges must ' + 'be fetched from the end of the list (`%s`).', args.after, clientPageInfo && clientPageInfo.getValue(END_CURSOR));
+	          return;
+	        }
+	      } else if (args.before != null) {
+	        // Backward pagination from the start of the connection: prepend edges
+	        if (clientPageInfo && args.before === clientPageInfo.getValue(START_CURSOR)) {
+	          var _nodeIDs = new Set();
+	          mergeEdges(_serverEdges, nextEdges, _nodeIDs);
+	          mergeEdges(prevEdges, nextEdges, _nodeIDs);
+	        } else {
+	          __webpack_require__(/*! fbjs/lib/warning */ 189)(false, 'RelayConnectionHandler: Unexpected before cursor `%s`, edges must ' + 'be fetched from the beginning of the list (`%s`).', args.before, clientPageInfo && clientPageInfo.getValue(START_CURSOR));
+	          return;
+	        }
+	      } else {
+	        // The connection was refetched from the beginning/end: replace edges
+	        nextEdges = _serverEdges;
+	      }
+	    } else if (_serverEdges) {
+	      nextEdges = _serverEdges;
+	    } else {
+	      nextEdges = prevEdges;
+	    }
+	    // Update edges and page info only if edges were updated, the null check is
+	    // for Flow (prevEdges could be null).
+	    if (nextEdges != null && nextEdges !== prevEdges) {
+	      _connection.setLinkedRecords(nextEdges, EDGES);
+	      if (clientPageInfo && serverPageInfo) {
+	        if (args.before != null || args.after == null && args.last) {
+	          clientPageInfo.setValue(!!serverPageInfo.getValue(HAS_PREV_PAGE), HAS_PREV_PAGE);
+	          var startCursor = serverPageInfo.getValue(START_CURSOR);
+	          if (typeof startCursor === 'string') {
+	            clientPageInfo.setValue(startCursor, START_CURSOR);
+	          }
+	        } else if (args.after != null || args.before == null && args.first) {
+	          clientPageInfo.setValue(!!serverPageInfo.getValue(HAS_NEXT_PAGE), HAS_NEXT_PAGE);
+	          var endCursor = serverPageInfo.getValue(END_CURSOR);
+	          if (typeof endCursor === 'string') {
+	            clientPageInfo.setValue(endCursor, END_CURSOR);
+	          }
+	        }
+	      }
+	    }
+	  }
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Given a record and the name of the schema field for which a connection was
+	 * fetched, returns the linked connection record.
+	 *
+	 * Example:
+	 *
+	 * Given that data has already been fetched on some user `<id>` on the `friends`
+	 * field:
+	 *
+	 * ```
+	 * fragment FriendsFragment on User {
+	 *   friends(first: 10) @connection(key: "FriendsFragment_friends") {
+	 *    edges {
+	 *      node {
+	 *        id
+	 *        }
+	 *      }
+	 *   }
+	 * }
+	 * ```
+	 *
+	 * The `friends` connection record can be accessed with:
+	 *
+	 * ```
+	 * store => {
+	 *   const user = store.get('<id>');
+	 *   const friends = RelayConnectionHandler.getConnection(user, 'FriendsFragment_friends');
+	 *   // Access fields on the connection:
+	 *   const edges = friends.getLinkedRecords('edges');
+	 * }
+	 * ```
+	 *
+	 * TODO: t15733312
+	 * Currently we haven't run into this case yet, but we need to add a `getConnections`
+	 * that returns an array of the connections under the same `key` regardless of the variables.
+	 */
+	function getConnection(record, key, filters) {
+	  var handleKey = __webpack_require__(/*! ./getRelayHandleKey */ 191)(CONNECTION, key, null);
+	  return record.getLinkedRecord(handleKey, filters);
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Inserts an edge after the given cursor, or at the end of the list if no
+	 * cursor is provided.
+	 *
+	 * Example:
+	 *
+	 * Given that data has already been fetched on some user `<id>` on the `friends`
+	 * field:
+	 *
+	 * ```
+	 * fragment FriendsFragment on User {
+	 *   friends(first: 10) @connection(key: "FriendsFragment_friends") {
+	 *    edges {
+	 *      node {
+	 *        id
+	 *        }
+	 *      }
+	 *   }
+	 * }
+	 * ```
+	 *
+	 * An edge can be appended with:
+	 *
+	 * ```
+	 * store => {
+	 *   const user = store.get('<id>');
+	 *   const friends = RelayConnectionHandler.getConnection(user, 'FriendsFragment_friends');
+	 *   const edge = store.create('<edge-id>', 'FriendsEdge');
+	 *   RelayConnectionHandler.insertEdgeAfter(friends, edge);
+	 * }
+	 * ```
+	 */
+	function insertEdgeAfter(record, newEdge, cursor) {
+	  var edges = record.getLinkedRecords(EDGES);
+	  if (!edges) {
+	    record.setLinkedRecords([newEdge], EDGES);
+	    return;
+	  }
+	  var nextEdges = void 0;
+	  if (cursor == null) {
+	    nextEdges = edges.concat(newEdge);
+	  } else {
+	    nextEdges = [];
+	    var foundCursor = false;
+	    for (var ii = 0; ii < edges.length; ii++) {
+	      var edge = edges[ii];
+	      nextEdges.push(edge);
+	      if (edge == null) {
+	        continue;
+	      }
+	      var edgeCursor = edge.getValue(CURSOR);
+	      if (cursor === edgeCursor) {
+	        nextEdges.push(newEdge);
+	        foundCursor = true;
+	      }
+	    }
+	    if (!foundCursor) {
+	      nextEdges.push(newEdge);
+	    }
+	  }
+	  record.setLinkedRecords(nextEdges, EDGES);
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Creates an edge for a connection record, given a node and edge type.
+	 */
+	function createEdge(store, record, node, edgeType) {
+	  // An index-based client ID could easily conflict (unless it was
+	  // auto-incrementing, but there is nowhere to the store the id)
+	  // Instead, construct a client ID based on the connection ID and node ID,
+	  // which will only conflict if the same node is added to the same connection
+	  // twice. This is acceptable since the `insertEdge*` functions ignore
+	  // duplicates.
+	  var edgeID = __webpack_require__(/*! ./generateRelayClientID */ 188)(record.getDataID(), node.getDataID());
+	  var edge = store.get(edgeID);
+	  if (!edge) {
+	    edge = store.create(edgeID, edgeType);
+	  }
+	  edge.setLinkedRecord(node, NODE);
+	  return edge;
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Inserts an edge before the given cursor, or at the beginning of the list if
+	 * no cursor is provided.
+	 *
+	 * Example:
+	 *
+	 * Given that data has already been fetched on some user `<id>` on the `friends`
+	 * field:
+	 *
+	 * ```
+	 * fragment FriendsFragment on User {
+	 *   friends(first: 10) @connection(key: "FriendsFragment_friends") {
+	 *    edges {
+	 *      node {
+	 *        id
+	 *        }
+	 *      }
+	 *   }
+	 * }
+	 * ```
+	 *
+	 * An edge can be prepended with:
+	 *
+	 * ```
+	 * store => {
+	 *   const user = store.get('<id>');
+	 *   const friends = RelayConnectionHandler.getConnection(user, 'FriendsFragment_friends');
+	 *   const edge = store.create('<edge-id>', 'FriendsEdge');
+	 *   RelayConnectionHandler.insertEdgeBefore(friends, edge);
+	 * }
+	 * ```
+	 */
+	function insertEdgeBefore(record, newEdge, cursor) {
+	  var edges = record.getLinkedRecords(EDGES);
+	  if (!edges) {
+	    record.setLinkedRecords([newEdge], EDGES);
+	    return;
+	  }
+	  var nextEdges = void 0;
+	  if (cursor == null) {
+	    nextEdges = [newEdge].concat(edges);
+	  } else {
+	    nextEdges = [];
+	    var foundCursor = false;
+	    for (var ii = 0; ii < edges.length; ii++) {
+	      var edge = edges[ii];
+	      if (edge != null) {
+	        var edgeCursor = edge.getValue(CURSOR);
+	        if (cursor === edgeCursor) {
+	          nextEdges.push(newEdge);
+	          foundCursor = true;
+	        }
+	      }
+	      nextEdges.push(edge);
+	    }
+	    if (!foundCursor) {
+	      nextEdges.unshift(newEdge);
+	    }
+	  }
+	  record.setLinkedRecords(nextEdges, EDGES);
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Remove any edges whose `node.id` matches the given id.
+	 */
+	function deleteNode(record, nodeID) {
+	  var edges = record.getLinkedRecords(EDGES);
+	  if (!edges) {
+	    return;
+	  }
+	  var nextEdges = void 0;
+	  for (var ii = 0; ii < edges.length; ii++) {
+	    var edge = edges[ii];
+	    var node = edge && edge.getLinkedRecord(NODE);
+	    if (node != null && node.getDataID() === nodeID) {
+	      if (nextEdges === undefined) {
+	        nextEdges = edges.slice(0, ii);
+	      }
+	    } else if (nextEdges !== undefined) {
+	      nextEdges.push(edge);
+	    }
+	  }
+	  if (nextEdges !== undefined) {
+	    record.setLinkedRecords(nextEdges, EDGES);
+	  }
+	}
+	
+	/**
+	 * @internal
+	 *
+	 * Creates a copy of an edge with a unique ID based on per-connection-instance
+	 * incrementing edge index. This is necessary to avoid collisions between edges,
+	 * which can occur because (edge) client IDs are assigned deterministically
+	 * based on the path from the nearest node with an id.
+	 *
+	 * Example: if the first N edges of the same connection are refetched, the edges
+	 * from the second fetch will be assigned the same IDs as the first fetch, even
+	 * though the nodes they point to may be different (or the same and in different
+	 * order).
+	 */
+	function buildConnectionEdge(store, connection, edge) {
+	  if (edge == null) {
+	    return edge;
+	  }
+	  var edgeIndex = connection.getValue(NEXT_EDGE_INDEX);
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(typeof edgeIndex === 'number', 'RelayConnectionHandler: Expected %s to be a number, got `%s`.', NEXT_EDGE_INDEX, edgeIndex);
+	  var edgeID = __webpack_require__(/*! ./generateRelayClientID */ 188)(connection.getDataID(), EDGES, edgeIndex);
+	  var connectionEdge = store.create(edgeID, edge.getType());
+	  connectionEdge.copyFieldsFrom(edge);
+	  connection.setValue(edgeIndex + 1, NEXT_EDGE_INDEX);
+	  return connectionEdge;
+	}
+	
+	/**
+	 * @internal
+	 *
+	 * Adds the source edges to the target edges, skipping edges with
+	 * duplicate cursors or node ids.
+	 */
+	function mergeEdges(sourceEdges, targetEdges, nodeIDs) {
+	  for (var ii = 0; ii < sourceEdges.length; ii++) {
+	    var edge = sourceEdges[ii];
+	    if (!edge) {
+	      continue;
+	    }
+	    var node = edge.getLinkedRecord(NODE);
+	    var nodeID = node && node.getValue('id');
+	    if (nodeID) {
+	      if (nodeIDs.has(nodeID)) {
+	        continue;
+	      }
+	      nodeIDs.add(nodeID);
+	    }
+	    targetEdges.push(edge);
+	  }
+	}
+	
+	module.exports = {
+	  createEdge: createEdge,
+	  deleteNode: deleteNode,
+	  getConnection: getConnection,
+	  insertEdgeAfter: insertEdgeAfter,
+	  insertEdgeBefore: insertEdgeBefore,
+	  update: update
+	};
+
+/***/ }),
+/* 167 */
+/*!*********************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayConnectionInterface.js ***!
+  \*********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayConnectionInterface
+	 * @format
+	 */
+	
+	'use strict';
+	
+	module.exports = __webpack_require__(/*! ./RelayOSSConnectionInterface */ 168);
+
+/***/ }),
+/* 168 */
+/*!************************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayOSSConnectionInterface.js ***!
+  \************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayOSSConnectionInterface
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _defineProperty3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/defineProperty */ 169));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var CLIENT_MUTATION_ID = 'clientMutationId';
+	var CONNECTION_CALLS = {
+	  after: true,
+	  before: true,
+	  find: true,
+	  first: true,
+	  last: true,
+	  surrounds: true
+	};
+	var CURSOR = 'cursor';
+	var EDGES = 'edges';
+	var END_CURSOR = 'endCursor';
+	var HAS_NEXT_PAGE = 'hasNextPage';
+	var HAS_PREV_PAGE = 'hasPreviousPage';
+	var NODE = 'node';
+	var PAGE_INFO = 'pageInfo';
+	var PAGE_INFO_TYPE = 'PageInfo';
+	var REQUIRED_RANGE_CALLS = {
+	  find: true,
+	  first: true,
+	  last: true
+	};
+	var START_CURSOR = 'startCursor';
+	
+	/**
+	 * @internal
+	 *
+	 * Defines logic relevant to the informal "Connection" GraphQL interface.
+	 */
+	var RelayOSSConnectionInterface = {
+	  CLIENT_MUTATION_ID: CLIENT_MUTATION_ID,
+	  CURSOR: CURSOR,
+	  EDGES: EDGES,
+	  END_CURSOR: END_CURSOR,
+	  HAS_NEXT_PAGE: HAS_NEXT_PAGE,
+	  HAS_PREV_PAGE: HAS_PREV_PAGE,
+	  NODE: NODE,
+	  PAGE_INFO: PAGE_INFO,
+	  PAGE_INFO_TYPE: PAGE_INFO_TYPE,
+	  START_CURSOR: START_CURSOR,
+	
+	  /**
+	   * Whether `edges` fields are expected to have `source` fields.
+	   */
+	  EDGES_HAVE_SOURCE_FIELD: false,
+	
+	  /**
+	   * Checks whether a call exists strictly to encode which parts of a connection
+	   * to fetch. Fields that only differ by connection call values should have the
+	   * same identity.
+	   */
+	  isConnectionCall: function isConnectionCall(call) {
+	    return CONNECTION_CALLS.hasOwnProperty(call.name);
+	  },
+	
+	
+	  /**
+	   * Checks whether a set of calls on a connection supply enough information to
+	   * fetch the range fields (i.e. `edges` and `page_info`).
+	   */
+	  hasRangeCalls: function hasRangeCalls(calls) {
+	    return calls.some(function (call) {
+	      return REQUIRED_RANGE_CALLS.hasOwnProperty(call.name);
+	    });
+	  },
+	
+	
+	  /**
+	   * Gets a default record representing a connection's `PAGE_INFO`.
+	   */
+	  getDefaultPageInfo: function getDefaultPageInfo() {
+	    var _ref;
+	
+	    return _ref = {}, (0, _defineProperty3['default'])(_ref, END_CURSOR, undefined), (0, _defineProperty3['default'])(_ref, HAS_NEXT_PAGE, false), (0, _defineProperty3['default'])(_ref, HAS_PREV_PAGE, false), (0, _defineProperty3['default'])(_ref, START_CURSOR, undefined), _ref;
+	  }
+	};
+	
+	module.exports = RelayOSSConnectionInterface;
+
+/***/ }),
+/* 169 */
+/*!***************************************************!*\
+  !*** ./~/babel-runtime/helpers/defineProperty.js ***!
+  \***************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	exports.__esModule = true;
+	
+	var _defineProperty = __webpack_require__(/*! ../core-js/object/define-property */ 170);
+	
+	var _defineProperty2 = _interopRequireDefault(_defineProperty);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function (obj, key, value) {
+	  if (key in obj) {
+	    (0, _defineProperty2.default)(obj, key, {
+	      value: value,
+	      enumerable: true,
+	      configurable: true,
+	      writable: true
+	    });
+	  } else {
+	    obj[key] = value;
+	  }
+	
+	  return obj;
+	};
+
+/***/ }),
+/* 170 */
+/*!***********************************************************!*\
+  !*** ./~/babel-runtime/core-js/object/define-property.js ***!
+  \***********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(/*! core-js/library/fn/object/define-property */ 171), __esModule: true };
+
+/***/ }),
+/* 171 */
+/*!********************************************************!*\
+  !*** ./~/core-js/library/fn/object/define-property.js ***!
+  \********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	__webpack_require__(/*! ../../modules/es6.object.define-property */ 172);
+	var $Object = __webpack_require__(/*! ../../modules/_core */ 175).Object;
+	module.exports = function defineProperty(it, key, desc){
+	  return $Object.defineProperty(it, key, desc);
+	};
+
+/***/ }),
+/* 172 */
+/*!*****************************************************************!*\
+  !*** ./~/core-js/library/modules/es6.object.define-property.js ***!
+  \*****************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var $export = __webpack_require__(/*! ./_export */ 173);
+	// 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
+	$export($export.S + $export.F * !__webpack_require__(/*! ./_descriptors */ 183), 'Object', {defineProperty: __webpack_require__(/*! ./_object-dp */ 179).f});
+
+/***/ }),
+/* 173 */
+/*!**********************************************!*\
+  !*** ./~/core-js/library/modules/_export.js ***!
+  \**********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var global    = __webpack_require__(/*! ./_global */ 174)
+	  , core      = __webpack_require__(/*! ./_core */ 175)
+	  , ctx       = __webpack_require__(/*! ./_ctx */ 176)
+	  , hide      = __webpack_require__(/*! ./_hide */ 178)
+	  , PROTOTYPE = 'prototype';
+	
+	var $export = function(type, name, source){
+	  var IS_FORCED = type & $export.F
+	    , IS_GLOBAL = type & $export.G
+	    , IS_STATIC = type & $export.S
+	    , IS_PROTO  = type & $export.P
+	    , IS_BIND   = type & $export.B
+	    , IS_WRAP   = type & $export.W
+	    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
+	    , expProto  = exports[PROTOTYPE]
+	    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
+	    , key, own, out;
+	  if(IS_GLOBAL)source = name;
+	  for(key in source){
+	    // contains in native
+	    own = !IS_FORCED && target && target[key] !== undefined;
+	    if(own && key in exports)continue;
+	    // export native or passed
+	    out = own ? target[key] : source[key];
+	    // prevent global pollution for namespaces
+	    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
+	    // bind timers to global for call from export context
+	    : IS_BIND && own ? ctx(out, global)
+	    // wrap global constructors for prevent change them in library
+	    : IS_WRAP && target[key] == out ? (function(C){
+	      var F = function(a, b, c){
+	        if(this instanceof C){
+	          switch(arguments.length){
+	            case 0: return new C;
+	            case 1: return new C(a);
+	            case 2: return new C(a, b);
+	          } return new C(a, b, c);
+	        } return C.apply(this, arguments);
+	      };
+	      F[PROTOTYPE] = C[PROTOTYPE];
+	      return F;
+	    // make static versions for prototype methods
+	    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+	    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
+	    if(IS_PROTO){
+	      (exports.virtual || (exports.virtual = {}))[key] = out;
+	      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
+	      if(type & $export.R && expProto && !expProto[key])hide(expProto, key, out);
+	    }
+	  }
+	};
+	// type bitmap
+	$export.F = 1;   // forced
+	$export.G = 2;   // global
+	$export.S = 4;   // static
+	$export.P = 8;   // proto
+	$export.B = 16;  // bind
+	$export.W = 32;  // wrap
+	$export.U = 64;  // safe
+	$export.R = 128; // real proto method for `library` 
+	module.exports = $export;
+
+/***/ }),
+/* 174 */
+/*!**********************************************!*\
+  !*** ./~/core-js/library/modules/_global.js ***!
+  \**********************************************/
+/***/ (function(module, exports) {
+
+	// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+	var global = module.exports = typeof window != 'undefined' && window.Math == Math
+	  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+	if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+
+/***/ }),
+/* 175 */
+/*!********************************************!*\
+  !*** ./~/core-js/library/modules/_core.js ***!
+  \********************************************/
+/***/ (function(module, exports) {
+
+	var core = module.exports = {version: '2.4.0'};
+	if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
+
+/***/ }),
+/* 176 */
+/*!*******************************************!*\
+  !*** ./~/core-js/library/modules/_ctx.js ***!
+  \*******************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// optional / simple context binding
+	var aFunction = __webpack_require__(/*! ./_a-function */ 177);
+	module.exports = function(fn, that, length){
+	  aFunction(fn);
+	  if(that === undefined)return fn;
+	  switch(length){
+	    case 1: return function(a){
+	      return fn.call(that, a);
+	    };
+	    case 2: return function(a, b){
+	      return fn.call(that, a, b);
+	    };
+	    case 3: return function(a, b, c){
+	      return fn.call(that, a, b, c);
+	    };
+	  }
+	  return function(/* ...args */){
+	    return fn.apply(that, arguments);
+	  };
+	};
+
+/***/ }),
+/* 177 */
+/*!**************************************************!*\
+  !*** ./~/core-js/library/modules/_a-function.js ***!
+  \**************************************************/
+/***/ (function(module, exports) {
+
+	module.exports = function(it){
+	  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
+	  return it;
+	};
+
+/***/ }),
+/* 178 */
+/*!********************************************!*\
+  !*** ./~/core-js/library/modules/_hide.js ***!
+  \********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var dP         = __webpack_require__(/*! ./_object-dp */ 179)
+	  , createDesc = __webpack_require__(/*! ./_property-desc */ 187);
+	module.exports = __webpack_require__(/*! ./_descriptors */ 183) ? function(object, key, value){
+	  return dP.f(object, key, createDesc(1, value));
+	} : function(object, key, value){
+	  object[key] = value;
+	  return object;
+	};
+
+/***/ }),
+/* 179 */
+/*!*************************************************!*\
+  !*** ./~/core-js/library/modules/_object-dp.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var anObject       = __webpack_require__(/*! ./_an-object */ 180)
+	  , IE8_DOM_DEFINE = __webpack_require__(/*! ./_ie8-dom-define */ 182)
+	  , toPrimitive    = __webpack_require__(/*! ./_to-primitive */ 186)
+	  , dP             = Object.defineProperty;
+	
+	exports.f = __webpack_require__(/*! ./_descriptors */ 183) ? Object.defineProperty : function defineProperty(O, P, Attributes){
+	  anObject(O);
+	  P = toPrimitive(P, true);
+	  anObject(Attributes);
+	  if(IE8_DOM_DEFINE)try {
+	    return dP(O, P, Attributes);
+	  } catch(e){ /* empty */ }
+	  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+	  if('value' in Attributes)O[P] = Attributes.value;
+	  return O;
+	};
+
+/***/ }),
+/* 180 */
+/*!*************************************************!*\
+  !*** ./~/core-js/library/modules/_an-object.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var isObject = __webpack_require__(/*! ./_is-object */ 181);
+	module.exports = function(it){
+	  if(!isObject(it))throw TypeError(it + ' is not an object!');
+	  return it;
+	};
+
+/***/ }),
+/* 181 */
+/*!*************************************************!*\
+  !*** ./~/core-js/library/modules/_is-object.js ***!
+  \*************************************************/
+/***/ (function(module, exports) {
+
+	module.exports = function(it){
+	  return typeof it === 'object' ? it !== null : typeof it === 'function';
+	};
+
+/***/ }),
+/* 182 */
+/*!******************************************************!*\
+  !*** ./~/core-js/library/modules/_ie8-dom-define.js ***!
+  \******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = !__webpack_require__(/*! ./_descriptors */ 183) && !__webpack_require__(/*! ./_fails */ 184)(function(){
+	  return Object.defineProperty(__webpack_require__(/*! ./_dom-create */ 185)('div'), 'a', {get: function(){ return 7; }}).a != 7;
+	});
+
+/***/ }),
+/* 183 */
+/*!***************************************************!*\
+  !*** ./~/core-js/library/modules/_descriptors.js ***!
+  \***************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// Thank's IE8 for his funny defineProperty
+	module.exports = !__webpack_require__(/*! ./_fails */ 184)(function(){
+	  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+	});
+
+/***/ }),
+/* 184 */
+/*!*********************************************!*\
+  !*** ./~/core-js/library/modules/_fails.js ***!
+  \*********************************************/
+/***/ (function(module, exports) {
+
+	module.exports = function(exec){
+	  try {
+	    return !!exec();
+	  } catch(e){
+	    return true;
+	  }
+	};
+
+/***/ }),
+/* 185 */
+/*!**************************************************!*\
+  !*** ./~/core-js/library/modules/_dom-create.js ***!
+  \**************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var isObject = __webpack_require__(/*! ./_is-object */ 181)
+	  , document = __webpack_require__(/*! ./_global */ 174).document
+	  // in old IE typeof document.createElement is 'object'
+	  , is = isObject(document) && isObject(document.createElement);
+	module.exports = function(it){
+	  return is ? document.createElement(it) : {};
+	};
+
+/***/ }),
+/* 186 */
+/*!****************************************************!*\
+  !*** ./~/core-js/library/modules/_to-primitive.js ***!
+  \****************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// 7.1.1 ToPrimitive(input [, PreferredType])
+	var isObject = __webpack_require__(/*! ./_is-object */ 181);
+	// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+	// and the second argument - flag - preferred type is a string
+	module.exports = function(it, S){
+	  if(!isObject(it))return it;
+	  var fn, val;
+	  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+	  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
+	  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+	  throw TypeError("Can't convert object to primitive value");
+	};
+
+/***/ }),
+/* 187 */
+/*!*****************************************************!*\
+  !*** ./~/core-js/library/modules/_property-desc.js ***!
+  \*****************************************************/
+/***/ (function(module, exports) {
+
+	module.exports = function(bitmap, value){
+	  return {
+	    enumerable  : !(bitmap & 1),
+	    configurable: !(bitmap & 2),
+	    writable    : !(bitmap & 4),
+	    value       : value
+	  };
+	};
+
+/***/ }),
+/* 188 */
+/*!******************************************************!*\
+  !*** ./~/relay-runtime/lib/generateRelayClientID.js ***!
+  \******************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule generateRelayClientID
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var PREFIX = 'client:';
+	
+	function generateRelayClientID(id, storageKey, index) {
+	  var key = id + ':' + storageKey;
+	  if (index != null) {
+	    key += ':' + index;
+	  }
+	  if (key.indexOf(PREFIX) !== 0) {
+	    key = PREFIX + key;
+	  }
+	  return key;
+	}
+	
+	module.exports = generateRelayClientID;
+
+/***/ }),
+/* 189 */
+/*!***********************************************!*\
+  !*** ./~/relay-runtime/~/fbjs/lib/warning.js ***!
+  \***********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 */
+	
+	'use strict';
+	
+	var emptyFunction = __webpack_require__(/*! ./emptyFunction */ 190);
+	
+	/**
+	 * Similar to invariant but only logs a warning if the condition is not met.
+	 * This can be used to log issues in development environments in critical
+	 * paths. Removing the logging code for production environments will keep the
+	 * same logic and follow the same code paths.
+	 */
+	
+	var warning = emptyFunction;
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  (function () {
+	    var printWarning = function printWarning(format) {
+	      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        args[_key - 1] = arguments[_key];
+	      }
+	
+	      var argIndex = 0;
+	      var message = 'Warning: ' + format.replace(/%s/g, function () {
+	        return args[argIndex++];
+	      });
+	      if (typeof console !== 'undefined') {
+	        console.error(message);
+	      }
+	      try {
+	        // --- Welcome to debugging React ---
+	        // This error was thrown as a convenience so that you can use this stack
+	        // to find the callsite that caused this warning to fire.
+	        throw new Error(message);
+	      } catch (x) {}
+	    };
+	
+	    warning = function warning(condition, format) {
+	      if (format === undefined) {
+	        throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+	      }
+	
+	      if (format.indexOf('Failed Composite propType: ') === 0) {
+	        return; // Ignore CompositeComponent proptype check.
+	      }
+	
+	      if (!condition) {
+	        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+	          args[_key2 - 2] = arguments[_key2];
+	        }
+	
+	        printWarning.apply(undefined, [format].concat(args));
+	      }
+	    };
+	  })();
+	}
+	
+	module.exports = warning;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../../process/browser.js */ 4)))
+
+/***/ }),
+/* 190 */
+/*!*****************************************************!*\
+  !*** ./~/relay-runtime/~/fbjs/lib/emptyFunction.js ***!
+  \*****************************************************/
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 */
+	
+	function makeEmptyFunction(arg) {
+	  return function () {
+	    return arg;
+	  };
+	}
+	
+	/**
+	 * This function accepts and discards inputs; it has no side effects. This is
+	 * primarily useful idiomatically for overridable function endpoints which
+	 * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
+	 */
+	var emptyFunction = function emptyFunction() {};
+	
+	emptyFunction.thatReturns = makeEmptyFunction;
+	emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
+	emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
+	emptyFunction.thatReturnsNull = makeEmptyFunction(null);
+	emptyFunction.thatReturnsThis = function () {
+	  return this;
+	};
+	emptyFunction.thatReturnsArgument = function (arg) {
+	  return arg;
+	};
+	
+	module.exports = emptyFunction;
+
+/***/ }),
+/* 191 */
+/*!**************************************************!*\
+  !*** ./~/relay-runtime/lib/getRelayHandleKey.js ***!
+  \**************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 * @providesModule getRelayHandleKey
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _require = __webpack_require__(/*! ./RelayDefaultHandleKey */ 192),
+	    DEFAULT_HANDLE_KEY = _require.DEFAULT_HANDLE_KEY;
+	
+	/**
+	 * @internal
+	 *
+	 * Helper to create a unique name for a handle field based on the handle name, handle key and
+	 * source field.
+	 */
+	
+	
+	function getRelayHandleKey(handleName, key, fieldName) {
+	  if (key && key !== DEFAULT_HANDLE_KEY) {
+	    return '__' + key + '_' + handleName;
+	  }
+	
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(fieldName != null, 'getRelayHandleKey: Expected either `fieldName` or `key` in `handle` to be provided');
+	  return '__' + fieldName + '_' + handleName;
+	}
+	
+	module.exports = getRelayHandleKey;
+
+/***/ }),
+/* 192 */
+/*!******************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayDefaultHandleKey.js ***!
+  \******************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayDefaultHandleKey
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	module.exports = {
+	  DEFAULT_HANDLE_KEY: ''
+	};
+
+/***/ }),
+/* 193 */
+/*!*************************************************!*\
+  !*** ./~/relay-runtime/~/fbjs/lib/invariant.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Use invariant() to assert state which your program assumes to be true.
+	 *
+	 * Provide sprintf-style format (only %s is supported) and arguments
+	 * to provide information about what broke and what you were
+	 * expecting.
+	 *
+	 * The invariant message will be stripped in production, but the invariant
+	 * will remain to ensure logic does not differ in production.
+	 */
+	
+	var validateFormat = function validateFormat(format) {};
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  validateFormat = function validateFormat(format) {
+	    if (format === undefined) {
+	      throw new Error('invariant requires an error message argument');
+	    }
+	  };
+	}
+	
+	function invariant(condition, format, a, b, c, d, e, f) {
+	  validateFormat(format);
+	
+	  if (!condition) {
+	    var error;
+	    if (format === undefined) {
+	      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+	    } else {
+	      var args = [a, b, c, d, e, f];
+	      var argIndex = 0;
+	      error = new Error(format.replace(/%s/g, function () {
+	        return args[argIndex++];
+	      }));
+	      error.name = 'Invariant Violation';
+	    }
+	
+	    error.framesToPop = 1; // we don't care about invariant's own frame
+	    throw error;
+	  }
+	}
+	
+	module.exports = invariant;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../../process/browser.js */ 4)))
+
+/***/ }),
+/* 194 */
+/*!***************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayViewerHandler.js ***!
+  \***************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayViewerHandler
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _require = __webpack_require__(/*! ./RelayStoreUtils */ 195),
+	    ROOT_ID = _require.ROOT_ID;
+	
+	var VIEWER_ID = __webpack_require__(/*! ./generateRelayClientID */ 188)(ROOT_ID, 'viewer');
+	var VIEWER_TYPE = 'Viewer';
+	
+	/**
+	 * A runtime handler for the `viewer` field. The actual viewer record will
+	 * *never* be accessed at runtime because all fragments that reference it will
+	 * delegate to the handle field. So in order to prevent GC from having to check
+	 * both the original server field *and* the handle field (which would be almost
+	 * duplicate work), the handler copies server fields and then deletes the server
+	 * record.
+	 *
+	 * NOTE: This means other handles may not be added on viewer, since they may
+	 * execute after this handle when the server record is already deleted.
+	 */
+	function update(store, payload) {
+	  var record = store.get(payload.dataID);
+	  if (!record) {
+	    return;
+	  }
+	  var serverViewer = record.getLinkedRecord(payload.fieldKey);
+	  if (!serverViewer) {
+	    record.setValue(null, payload.handleKey);
+	    return;
+	  }
+	  // Server data already has viewer data at `client:root:viewer`, so link the
+	  // handle field to the server viewer record.
+	  if (serverViewer.getDataID() === VIEWER_ID) {
+	    record.setValue(null, payload.fieldKey);
+	    record.setLinkedRecord(serverViewer, payload.handleKey);
+	    return;
+	  }
+	  // Other ways to access viewer such as mutations may have a different id for
+	  // viewer: synthesize a record at the canonical viewer id, copy its fields
+	  // from the server record, and delete the server record link to speed up GC.
+	  var clientViewer = store.get(VIEWER_ID) || store.create(VIEWER_ID, VIEWER_TYPE);
+	  clientViewer.copyFieldsFrom(serverViewer);
+	  record.setValue(null, payload.fieldKey);
+	  record.setLinkedRecord(clientViewer, payload.handleKey);
+	
+	  // Make sure the root object points to the viewer object as well
+	  var root = store.getRoot();
+	  root.setLinkedRecord(clientViewer, payload.handleKey);
+	}
+	
+	module.exports = {
+	  VIEWER_ID: VIEWER_ID,
+	  update: update
+	};
+
+/***/ }),
+/* 195 */
+/*!************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayStoreUtils.js ***!
+  \************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayStoreUtils
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var VARIABLE = __webpack_require__(/*! ./RelayConcreteNode */ 196).VARIABLE;
+	
+	/**
+	 * Returns the values of field/fragment arguments as an object keyed by argument
+	 * names.
+	 */
+	
+	
+	function getArgumentValues(args, variables) {
+	  var values = {};
+	  args.forEach(function (arg) {
+	    if (arg.kind === VARIABLE) {
+	      values[arg.name] = getVariableValue(arg.variableName, variables);
+	    } else {
+	      values[arg.name] = arg.value;
+	    }
+	  });
+	  return values;
+	}
+	
+	function getHandleFilterValues(args, filters, variables) {
+	  var filterArgs = args.filter(function (arg) {
+	    return filters.indexOf(arg.name) > -1;
+	  });
+	  return getArgumentValues(filterArgs, variables);
+	}
+	
+	/**
+	 * Given a field and variable values, returns a key that can be used to
+	 * uniquely identify the combination of the field name and argument values.
+	 *
+	 * Note: the word "storage" here refers to the fact this key is primarily used
+	 * when writing the results of a key in a normalized graph or "store". This
+	 * name was used in previous implementations of Relay internals and is also
+	 * used here for consistency.
+	 */
+	function getStorageKey(field, variables) {
+	  if (field.storageKey) {
+	    return field.storageKey;
+	  }
+	  var args = field.args,
+	      name = field.name;
+	
+	  if (!args || !args.length) {
+	    return name;
+	  }
+	  var values = [];
+	  args.forEach(function (arg) {
+	    var value = void 0;
+	    if (arg.kind === VARIABLE) {
+	      value = getVariableValue(arg.variableName, variables);
+	    } else {
+	      value = arg.value;
+	    }
+	    if (value != null) {
+	      values.push('"' + arg.name + '":' + __webpack_require__(/*! ./stableJSONStringify */ 197)(value));
+	    }
+	  });
+	  if (values.length) {
+	    return field.name + ('{' + values.join(',') + '}');
+	  } else {
+	    return field.name;
+	  }
+	}
+	
+	function getVariableValue(name, variables) {
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(variables.hasOwnProperty(name), 'getVariableValue(): Undefined variable `%s`.', name);
+	  return variables[name];
+	}
+	
+	/**
+	 * Constants shared by all implementations of RecordSource/MutableRecordSource/etc.
+	 */
+	var RelayStoreUtils = {
+	  FRAGMENTS_KEY: '__fragments',
+	  ID_KEY: '__id',
+	  REF_KEY: '__ref',
+	  REFS_KEY: '__refs',
+	  ROOT_ID: 'client:root',
+	  ROOT_TYPE: '__Root',
+	  TYPENAME_KEY: '__typename',
+	  UNPUBLISH_RECORD_SENTINEL: Object.freeze({ __UNPUBLISH_RECORD_SENTINEL: true }),
+	  UNPUBLISH_FIELD_SENTINEL: Object.freeze({ __UNPUBLISH_FIELD_SENTINEL: true }),
+	
+	  getArgumentValues: getArgumentValues,
+	  getStorageKey: getStorageKey,
+	  getHandleFilterValues: getHandleFilterValues
+	};
+	
+	module.exports = RelayStoreUtils;
+
+/***/ }),
+/* 196 */
+/*!**************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayConcreteNode.js ***!
+  \**************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayConcreteNode
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Represents a single ConcreteRoot along with metadata for processing it at
+	 * runtime. The persisted `id` (or `text`) can be used to fetch the query,
+	 * the `fragment` can be used to read the root data (masking data from child
+	 * fragments), and the `query` can be used to normalize server responses.
+	 *
+	 * NOTE: The use of "batch" in the name is intentional, as this wrapper around
+	 * the ConcreteRoot will provide a place to store multiple concrete nodes that
+	 * are part of the same batch, e.g. in the case of deferred nodes or
+	 * for streaming connections that are represented as distinct concrete roots but
+	 * are still conceptually tied to one source query.
+	 */
+	var RelayConcreteNode = {
+	  CONDITION: 'Condition',
+	  FRAGMENT: 'Fragment',
+	  FRAGMENT_SPREAD: 'FragmentSpread',
+	  INLINE_FRAGMENT: 'InlineFragment',
+	  LINKED_FIELD: 'LinkedField',
+	  LINKED_HANDLE: 'LinkedHandle',
+	  LITERAL: 'Literal',
+	  LOCAL_ARGUMENT: 'LocalArgument',
+	  ROOT: 'Root',
+	  ROOT_ARGUMENT: 'RootArgument',
+	  SCALAR_FIELD: 'ScalarField',
+	  SCALAR_HANDLE: 'ScalarHandle',
+	  VARIABLE: 'Variable'
+	};
+	
+	module.exports = RelayConcreteNode;
+
+/***/ }),
+/* 197 */
+/*!****************************************************!*\
+  !*** ./~/relay-runtime/lib/stableJSONStringify.js ***!
+  \****************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 * @providesModule stableJSONStringify
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Simple recursive stringifier that produces a stable JSON string suitable for
+	 * use as a cache key. Does not handle corner-cases such as circular references
+	 * or exotic types.
+	 */
+	
+	function stableJSONStringify(obj) {
+	  if (Array.isArray(obj)) {
+	    var result = [];
+	    for (var ii = 0; ii < obj.length; ii++) {
+	      var value = obj[ii] !== undefined ? obj[ii] : null;
+	      result.push(stableJSONStringify(value));
+	    }
+	    return '[' + result.join(',') + ']';
+	  } else if (typeof obj === 'object' && obj) {
+	    var _result = [];
+	    var keys = Object.keys(obj);
+	    keys.sort();
+	    for (var _ii = 0; _ii < keys.length; _ii++) {
+	      var key = keys[_ii];
+	      var _value = stableJSONStringify(obj[key]);
+	      _result.push('"' + key + '":' + _value);
+	    }
+	    return '{' + _result.join(',') + '}';
+	  } else {
+	    return JSON.stringify(obj);
+	  }
+	}
+	
+	module.exports = stableJSONStringify;
+
+/***/ }),
+/* 198 */
+/*!**************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayPublishQueue.js ***!
+  \**************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 * @providesModule RelayPublishQueue
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	/**
+	 * Coordinates the concurrent modification of a `Store` due to optimistic and
+	 * non-revertable client updates and server payloads:
+	 * - Applies optimistic updates.
+	 * - Reverts optimistic updates, rebasing any subsequent updates.
+	 * - Commits client updates (typically for client schema extensions).
+	 * - Commits server updates:
+	 *   - Normalizes query/mutation/subscription responses.
+	 *   - Executes handlers for "handle" fields.
+	 *   - Reverts and reapplies pending optimistic updates.
+	 */
+	var RelayPublishQueue = function () {
+	  // Optimistic updaters to add with the next `run()`.
+	
+	  // Payloads to apply with the next `run()`.
+	
+	
+	  // A "negative" of all applied updaters. It can be published to the store to
+	  // undo them in order to re-apply some of them for a rebase.
+	  function RelayPublishQueue(store, handlerProvider) {
+	    (0, _classCallCheck3['default'])(this, RelayPublishQueue);
+	
+	    this._backup = new (__webpack_require__(/*! ./RelayInMemoryRecordSource */ 199))();
+	    this._handlerProvider = handlerProvider || null;
+	    this._pendingBackupRebase = false;
+	    this._pendingPayloads = new Set();
+	    this._pendingUpdaters = new Set();
+	    this._pendingOptimisticUpdates = new Set();
+	    this._store = store;
+	    this._appliedOptimisticUpdates = new Set();
+	  }
+	
+	  /**
+	   * Schedule applying an optimistic updates on the next `run()`.
+	   */
+	
+	  // Optimistic updaters that are already added and might be rerun in order to
+	  // rebase them.
+	
+	  // Updaters to apply with the next `run()`. These mutate the store and should
+	  // typically only mutate client schema extensions.
+	
+	  // True if the next `run()` should apply the backup and rerun all optimistic
+	  // updates performing a rebase.
+	
+	
+	  RelayPublishQueue.prototype.applyUpdate = function applyUpdate(updater) {
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(!this._appliedOptimisticUpdates.has(updater) && !this._pendingOptimisticUpdates.has(updater), 'RelayPublishQueue: Cannot apply the same update function more than ' + 'once concurrently.');
+	    this._pendingOptimisticUpdates.add(updater);
+	  };
+	
+	  /**
+	   * Schedule reverting an optimistic updates on the next `run()`.
+	   */
+	
+	
+	  RelayPublishQueue.prototype.revertUpdate = function revertUpdate(updater) {
+	    if (this._pendingOptimisticUpdates.has(updater)) {
+	      // Reverted before it was applied
+	      this._pendingOptimisticUpdates['delete'](updater);
+	    } else if (this._appliedOptimisticUpdates.has(updater)) {
+	      this._pendingBackupRebase = true;
+	      this._appliedOptimisticUpdates['delete'](updater);
+	    }
+	  };
+	
+	  /**
+	   * Schedule a revert of all optimistic updates on the next `run()`.
+	   */
+	
+	
+	  RelayPublishQueue.prototype.revertAll = function revertAll() {
+	    this._pendingBackupRebase = true;
+	    this._pendingOptimisticUpdates.clear();
+	    this._appliedOptimisticUpdates.clear();
+	  };
+	
+	  /**
+	   * Schedule applying a payload to the store on the next `run()`.
+	   */
+	
+	
+	  RelayPublishQueue.prototype.commitPayload = function commitPayload(operation, _ref, updater) {
+	    var fieldPayloads = _ref.fieldPayloads,
+	        source = _ref.source;
+	
+	    this._pendingBackupRebase = true;
+	    this._pendingPayloads.add({ fieldPayloads: fieldPayloads, operation: operation, source: source, updater: updater });
+	  };
+	
+	  /**
+	   * Schedule an updater to mutate the store on the next `run()` typically to
+	   * update client schema fields.
+	   */
+	
+	
+	  RelayPublishQueue.prototype.commitUpdate = function commitUpdate(updater) {
+	    this._pendingBackupRebase = true;
+	    this._pendingUpdaters.add(updater);
+	  };
+	
+	  /**
+	   * Execute all queued up operations from the other public methods.
+	   */
+	
+	
+	  RelayPublishQueue.prototype.run = function run() {
+	    if (this._pendingBackupRebase && this._backup.size()) {
+	      this._store.publish(this._backup);
+	      this._backup = new (__webpack_require__(/*! ./RelayInMemoryRecordSource */ 199))();
+	    }
+	    this._commitPayloads();
+	    this._commitUpdaters();
+	    this._applyUpdates();
+	    this._pendingBackupRebase = false;
+	    this._store.notify();
+	  };
+	
+	  RelayPublishQueue.prototype._commitPayloads = function _commitPayloads() {
+	    var _this = this;
+	
+	    if (!this._pendingPayloads.size) {
+	      return;
+	    }
+	    this._pendingPayloads.forEach(function (_ref2) {
+	      var fieldPayloads = _ref2.fieldPayloads,
+	          operation = _ref2.operation,
+	          source = _ref2.source,
+	          updater = _ref2.updater;
+	
+	      var mutator = new (__webpack_require__(/*! ./RelayRecordSourceMutator */ 201))(_this._store.getSource(), source);
+	      var store = new (__webpack_require__(/*! ./RelayRecordSourceProxy */ 229))(mutator);
+	      var selectorStore = new (__webpack_require__(/*! ./RelayRecordSourceSelectorProxy */ 230))(store, operation.fragment);
+	      if (fieldPayloads && fieldPayloads.length) {
+	        fieldPayloads.forEach(function (fieldPayload) {
+	          var handler = _this._handlerProvider && _this._handlerProvider(fieldPayload.handle);
+	          __webpack_require__(/*! fbjs/lib/invariant */ 193)(handler, 'RelayModernEnvironment: Expected a handler to be provided for ' + 'handle `%s`.', fieldPayload.handle);
+	          handler.update(store, fieldPayload);
+	        });
+	      }
+	      if (updater) {
+	        var selectorData = lookupSelector(source, operation.fragment);
+	        updater(selectorStore, selectorData);
+	      }
+	      // Publish the server data first so that it is reflected in the mutation
+	      // backup created during the rebase
+	      _this._store.publish(source);
+	    });
+	    this._pendingPayloads.clear();
+	  };
+	
+	  RelayPublishQueue.prototype._commitUpdaters = function _commitUpdaters() {
+	    var _this2 = this;
+	
+	    if (!this._pendingUpdaters.size) {
+	      return;
+	    }
+	    var sink = new (__webpack_require__(/*! ./RelayInMemoryRecordSource */ 199))();
+	    this._pendingUpdaters.forEach(function (updater) {
+	      var mutator = new (__webpack_require__(/*! ./RelayRecordSourceMutator */ 201))(_this2._store.getSource(), sink);
+	      var store = new (__webpack_require__(/*! ./RelayRecordSourceProxy */ 229))(mutator);
+	      updater(store);
+	    });
+	    this._store.publish(sink);
+	    this._pendingUpdaters.clear();
+	  };
+	
+	  RelayPublishQueue.prototype._applyUpdates = function _applyUpdates() {
+	    var _this3 = this;
+	
+	    if (this._pendingOptimisticUpdates.size || this._pendingBackupRebase && this._appliedOptimisticUpdates.size) {
+	      var sink = new (__webpack_require__(/*! ./RelayInMemoryRecordSource */ 199))();
+	      var mutator = new (__webpack_require__(/*! ./RelayRecordSourceMutator */ 201))(this._store.getSource(), sink, this._backup);
+	      var store = new (__webpack_require__(/*! ./RelayRecordSourceProxy */ 229))(mutator, this._handlerProvider);
+	
+	      // rerun all updaters in case we are running a rebase
+	      if (this._pendingBackupRebase && this._appliedOptimisticUpdates.size) {
+	        this._appliedOptimisticUpdates.forEach(function (optimisticUpdate) {
+	          if (optimisticUpdate.operation) {
+	            var _selectorStoreUpdater = optimisticUpdate.selectorStoreUpdater,
+	                _operation = optimisticUpdate.operation,
+	                _response = optimisticUpdate.response;
+	
+	            var selectorStore = store.commitPayload(_operation, _response);
+	            // TODO: Fix commitPayload so we don't have to run normalize twice
+	            var selectorData = void 0,
+	                _source = void 0;
+	            if (_response) {
+	              var _normalizeRelayPayloa = __webpack_require__(/*! ./normalizeRelayPayload */ 231)(_operation.root, _response);
+	
+	              _source = _normalizeRelayPayloa.source;
+	
+	              selectorData = lookupSelector(_source, _operation.fragment);
+	            }
+	            _selectorStoreUpdater && _selectorStoreUpdater(selectorStore, selectorData);
+	          } else {
+	            var _storeUpdater = optimisticUpdate.storeUpdater;
+	
+	            _storeUpdater(store);
+	          }
+	        });
+	      }
+	
+	      // apply any new updaters
+	      if (this._pendingOptimisticUpdates.size) {
+	        this._pendingOptimisticUpdates.forEach(function (optimisticUpdate) {
+	          if (optimisticUpdate.operation) {
+	            var _selectorStoreUpdater2 = optimisticUpdate.selectorStoreUpdater,
+	                _operation2 = optimisticUpdate.operation,
+	                _response2 = optimisticUpdate.response;
+	
+	            var selectorStore = store.commitPayload(_operation2, _response2);
+	            // TODO: Fix commitPayload so we don't have to run normalize twice
+	            var selectorData = void 0,
+	                _source2 = void 0;
+	            if (_response2) {
+	              var _normalizeRelayPayloa2 = __webpack_require__(/*! ./normalizeRelayPayload */ 231)(_operation2.root, _response2);
+	
+	              _source2 = _normalizeRelayPayloa2.source;
+	
+	              selectorData = lookupSelector(_source2, _operation2.fragment);
+	            }
+	            _selectorStoreUpdater2 && _selectorStoreUpdater2(selectorStore, selectorData);
+	          } else {
+	            var _storeUpdater2 = optimisticUpdate.storeUpdater;
+	
+	            _storeUpdater2(store);
+	          }
+	          _this3._appliedOptimisticUpdates.add(optimisticUpdate);
+	        });
+	        this._pendingOptimisticUpdates.clear();
+	      }
+	
+	      this._store.publish(sink);
+	    }
+	  };
+	
+	  return RelayPublishQueue;
+	}();
+	
+	function lookupSelector(source, selector) {
+	  var selectorData = __webpack_require__(/*! ./RelayReader */ 237).read(source, selector).data;
+	  if (process.env.NODE_ENV !== 'production') {
+	    var deepFreeze = __webpack_require__(/*! ./deepFreeze */ 228);
+	    if (selectorData) {
+	      deepFreeze(selectorData);
+	    }
+	  }
+	  return selectorData;
+	}
+	
+	module.exports = RelayPublishQueue;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 4)))
+
+/***/ }),
+/* 199 */
+/*!**********************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayInMemoryRecordSource.js ***!
+  \**********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayInMemoryRecordSource
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var EXISTENT = __webpack_require__(/*! ./RelayRecordState */ 200).EXISTENT,
+	    NONEXISTENT = __webpack_require__(/*! ./RelayRecordState */ 200).NONEXISTENT,
+	    UNKNOWN = __webpack_require__(/*! ./RelayRecordState */ 200).UNKNOWN;
+	
+	/**
+	 * An implementation of the `MutableRecordSource` interface (defined in
+	 * `RelayStoreTypes`) that holds all records in memory.
+	 */
+	
+	
+	var RelayInMemoryRecordSource = function () {
+	  function RelayInMemoryRecordSource(records) {
+	    (0, _classCallCheck3['default'])(this, RelayInMemoryRecordSource);
+	
+	    this._records = records || {};
+	  }
+	
+	  RelayInMemoryRecordSource.prototype.clear = function clear() {
+	    this._records = {};
+	  };
+	
+	  RelayInMemoryRecordSource.prototype['delete'] = function _delete(dataID) {
+	    this._records[dataID] = null;
+	  };
+	
+	  RelayInMemoryRecordSource.prototype.get = function get(dataID) {
+	    return this._records[dataID];
+	  };
+	
+	  RelayInMemoryRecordSource.prototype.getRecordIDs = function getRecordIDs() {
+	    return Object.keys(this._records);
+	  };
+	
+	  RelayInMemoryRecordSource.prototype.getStatus = function getStatus(dataID) {
+	    if (!this._records.hasOwnProperty(dataID)) {
+	      return UNKNOWN;
+	    }
+	    return this._records[dataID] == null ? NONEXISTENT : EXISTENT;
+	  };
+	
+	  RelayInMemoryRecordSource.prototype.has = function has(dataID) {
+	    return this._records.hasOwnProperty(dataID);
+	  };
+	
+	  RelayInMemoryRecordSource.prototype.load = function load(dataID, callback) {
+	    callback(null, this.get(dataID));
+	  };
+	
+	  RelayInMemoryRecordSource.prototype.remove = function remove(dataID) {
+	    delete this._records[dataID];
+	  };
+	
+	  RelayInMemoryRecordSource.prototype.set = function set(dataID, record) {
+	    this._records[dataID] = record;
+	  };
+	
+	  RelayInMemoryRecordSource.prototype.size = function size() {
+	    return Object.keys(this._records).length;
+	  };
+	
+	  RelayInMemoryRecordSource.prototype.toJSON = function toJSON() {
+	    return this._records;
+	  };
+	
+	  return RelayInMemoryRecordSource;
+	}();
+	
+	module.exports = RelayInMemoryRecordSource;
+
+/***/ }),
+/* 200 */
+/*!*************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayRecordState.js ***!
+  \*************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayRecordState
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var RelayRecordState = {
+	  /**
+	   * Record exists (either fetched from the server or produced by a local,
+	   * optimistic update).
+	   */
+	  EXISTENT: 'EXISTENT',
+	
+	  /**
+	   * Record is known not to exist (either as the result of a mutation, or
+	   * because the server returned `null` when queried for the record).
+	   */
+	  NONEXISTENT: 'NONEXISTENT',
+	
+	  /**
+	   * Record State is unknown because it has not yet been fetched from the
+	   * server.
+	   */
+	  UNKNOWN: 'UNKNOWN'
+	};
+	
+	module.exports = RelayRecordState;
+
+/***/ }),
+/* 201 */
+/*!*********************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayRecordSourceMutator.js ***!
+  \*********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayRecordSourceMutator
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _extends3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/extends */ 202));
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _require = __webpack_require__(/*! ./RelayRecordState */ 200),
+	    EXISTENT = _require.EXISTENT;
+	
+	var _require2 = __webpack_require__(/*! ./RelayStoreUtils */ 195),
+	    UNPUBLISH_FIELD_SENTINEL = _require2.UNPUBLISH_FIELD_SENTINEL,
+	    UNPUBLISH_RECORD_SENTINEL = _require2.UNPUBLISH_RECORD_SENTINEL;
+	
+	/**
+	 * @internal
+	 *
+	 * Wrapper API that is an amalgam of the `RelayModernRecord` API and
+	 * `MutableRecordSource` interface, implementing copy-on-write semantics for
+	 * records in a record source. If a `backup` is supplied, the mutator will
+	 * ensure that the backup contains sufficient information to revert all
+	 * modifications by publishing the backup.
+	 *
+	 * Modifications are applied to fresh copies of records with optional backups
+	 * created:
+	 * - Records in `base` are never modified.
+	 * - Modifications cause a fresh version of a record to be created in `sink`.
+	 *   These sink records contain only modified fields.
+	 * - If a `backup` is supplied, any modifications to a record will cause the
+	 *   sink version of the record to be added to the backup.
+	 * - Creation of a record causes a sentinel object to be added to the backup
+	 *   so that the new record can be removed from the store by publishing the
+	 *   backup.
+	 */
+	var RelayRecordSourceMutator = function () {
+	  function RelayRecordSourceMutator(base, sink, backup) {
+	    (0, _classCallCheck3['default'])(this, RelayRecordSourceMutator);
+	
+	    this._backup = backup;
+	    this._base = base;
+	    this._sink = sink;
+	    this.__sources = [sink, base];
+	  }
+	
+	  RelayRecordSourceMutator.prototype._createBackupRecord = function _createBackupRecord(dataID) {
+	    var backup = this._backup;
+	    if (backup && !backup.has(dataID)) {
+	      var baseRecord = this._base.get(dataID);
+	      if (baseRecord != null) {
+	        backup.set(dataID, baseRecord);
+	      } else if (baseRecord === null) {
+	        backup['delete'](dataID);
+	      }
+	    }
+	  };
+	
+	  RelayRecordSourceMutator.prototype._setSentinelFieldsInBackupRecord = function _setSentinelFieldsInBackupRecord(dataID, record) {
+	    var backup = this._backup;
+	    if (backup) {
+	      var backupRecord = backup.get(dataID);
+	      if (backupRecord && backupRecord !== UNPUBLISH_RECORD_SENTINEL) {
+	        var copy = null;
+	        __webpack_require__(/*! fbjs/lib/forEachObject */ 225)(record, function (value, key) {
+	          if (!(key in backupRecord)) {
+	            copy = copy || (0, _extends3['default'])({}, backupRecord);
+	            copy[key] = UNPUBLISH_FIELD_SENTINEL;
+	          }
+	        });
+	        backup.set(dataID, copy || backupRecord);
+	      }
+	    }
+	  };
+	
+	  RelayRecordSourceMutator.prototype._setSentinelFieldInBackupRecord = function _setSentinelFieldInBackupRecord(dataID, storageKey) {
+	    var backup = this._backup;
+	    if (backup) {
+	      var backupRecord = backup.get(dataID);
+	      if (backupRecord && backupRecord !== UNPUBLISH_RECORD_SENTINEL && !(storageKey in backupRecord)) {
+	        var copy = (0, _extends3['default'])({}, backupRecord);
+	        __webpack_require__(/*! ./RelayModernRecord */ 226).setValue(copy, storageKey, UNPUBLISH_FIELD_SENTINEL);
+	        backup.set(dataID, copy);
+	      }
+	    }
+	  };
+	
+	  RelayRecordSourceMutator.prototype._getSinkRecord = function _getSinkRecord(dataID) {
+	    var sinkRecord = this._sink.get(dataID);
+	    if (!sinkRecord) {
+	      var baseRecord = this._base.get(dataID);
+	      __webpack_require__(/*! fbjs/lib/invariant */ 193)(baseRecord, 'RelayRecordSourceMutator: Cannot modify non-existent record `%s`.', dataID);
+	      sinkRecord = __webpack_require__(/*! ./RelayModernRecord */ 226).create(dataID, __webpack_require__(/*! ./RelayModernRecord */ 226).getType(baseRecord));
+	      this._sink.set(dataID, sinkRecord);
+	    }
+	    return sinkRecord;
+	  };
+	
+	  RelayRecordSourceMutator.prototype.copyFields = function copyFields(sourceID, sinkID) {
+	    var sinkSource = this._sink.get(sourceID);
+	    var baseSource = this._base.get(sourceID);
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(sinkSource || baseSource, 'RelayRecordSourceMutator#copyFields(): Cannot copy fields from ' + 'non-existent record `%s`.', sourceID);
+	    this._createBackupRecord(sinkID);
+	    var sink = this._getSinkRecord(sinkID);
+	    if (baseSource) {
+	      __webpack_require__(/*! ./RelayModernRecord */ 226).copyFields(baseSource, sink);
+	    }
+	    if (sinkSource) {
+	      __webpack_require__(/*! ./RelayModernRecord */ 226).copyFields(sinkSource, sink);
+	    }
+	    this._setSentinelFieldsInBackupRecord(sinkID, sink);
+	  };
+	
+	  RelayRecordSourceMutator.prototype.copyFieldsFromRecord = function copyFieldsFromRecord(record, sinkID) {
+	    this.copyFields(__webpack_require__(/*! ./RelayModernRecord */ 226).getDataID(record), sinkID);
+	    var sink = this._getSinkRecord(sinkID);
+	    __webpack_require__(/*! ./RelayModernRecord */ 226).copyFields(record, sink);
+	    this._setSentinelFieldsInBackupRecord(sinkID, sink);
+	  };
+	
+	  RelayRecordSourceMutator.prototype.create = function create(dataID, typeName) {
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(this._base.getStatus(dataID) !== EXISTENT && this._sink.getStatus(dataID) !== EXISTENT, 'RelayRecordSourceMutator#create(): Cannot create a record with id ' + '`%s`, this record already exists.', dataID);
+	    if (this._backup) {
+	      this._backup.set(dataID, UNPUBLISH_RECORD_SENTINEL);
+	    }
+	    var record = __webpack_require__(/*! ./RelayModernRecord */ 226).create(dataID, typeName);
+	    this._sink.set(dataID, record);
+	  };
+	
+	  RelayRecordSourceMutator.prototype['delete'] = function _delete(dataID) {
+	    this._createBackupRecord(dataID);
+	    this._sink['delete'](dataID);
+	  };
+	
+	  RelayRecordSourceMutator.prototype.getStatus = function getStatus(dataID) {
+	    return this._sink.has(dataID) ? this._sink.getStatus(dataID) : this._base.getStatus(dataID);
+	  };
+	
+	  RelayRecordSourceMutator.prototype.getType = function getType(dataID) {
+	    for (var ii = 0; ii < this.__sources.length; ii++) {
+	      var record = this.__sources[ii].get(dataID);
+	      if (record) {
+	        return __webpack_require__(/*! ./RelayModernRecord */ 226).getType(record);
+	      } else if (record === null) {
+	        return null;
+	      }
+	    }
+	  };
+	
+	  RelayRecordSourceMutator.prototype.getValue = function getValue(dataID, storageKey) {
+	    for (var ii = 0; ii < this.__sources.length; ii++) {
+	      var record = this.__sources[ii].get(dataID);
+	      if (record) {
+	        var value = __webpack_require__(/*! ./RelayModernRecord */ 226).getValue(record, storageKey);
+	        if (value !== undefined) {
+	          return value;
+	        }
+	      } else if (record === null) {
+	        return null;
+	      }
+	    }
+	  };
+	
+	  RelayRecordSourceMutator.prototype.setValue = function setValue(dataID, storageKey, value) {
+	    this._createBackupRecord(dataID);
+	    var sinkRecord = this._getSinkRecord(dataID);
+	    __webpack_require__(/*! ./RelayModernRecord */ 226).setValue(sinkRecord, storageKey, value);
+	    this._setSentinelFieldInBackupRecord(dataID, storageKey);
+	  };
+	
+	  RelayRecordSourceMutator.prototype.getLinkedRecordID = function getLinkedRecordID(dataID, storageKey) {
+	    for (var ii = 0; ii < this.__sources.length; ii++) {
+	      var record = this.__sources[ii].get(dataID);
+	      if (record) {
+	        var linkedID = __webpack_require__(/*! ./RelayModernRecord */ 226).getLinkedRecordID(record, storageKey);
+	        if (linkedID !== undefined) {
+	          return linkedID;
+	        }
+	      } else if (record === null) {
+	        return null;
+	      }
+	    }
+	  };
+	
+	  RelayRecordSourceMutator.prototype.setLinkedRecordID = function setLinkedRecordID(dataID, storageKey, linkedID) {
+	    this._createBackupRecord(dataID);
+	    var sinkRecord = this._getSinkRecord(dataID);
+	    __webpack_require__(/*! ./RelayModernRecord */ 226).setLinkedRecordID(sinkRecord, storageKey, linkedID);
+	    this._setSentinelFieldInBackupRecord(dataID, storageKey);
+	  };
+	
+	  RelayRecordSourceMutator.prototype.getLinkedRecordIDs = function getLinkedRecordIDs(dataID, storageKey) {
+	    for (var ii = 0; ii < this.__sources.length; ii++) {
+	      var record = this.__sources[ii].get(dataID);
+	      if (record) {
+	        var linkedIDs = __webpack_require__(/*! ./RelayModernRecord */ 226).getLinkedRecordIDs(record, storageKey);
+	        if (linkedIDs !== undefined) {
+	          return linkedIDs;
+	        }
+	      } else if (record === null) {
+	        return null;
+	      }
+	    }
+	  };
+	
+	  RelayRecordSourceMutator.prototype.setLinkedRecordIDs = function setLinkedRecordIDs(dataID, storageKey, linkedIDs) {
+	    this._createBackupRecord(dataID);
+	    var sinkRecord = this._getSinkRecord(dataID);
+	    __webpack_require__(/*! ./RelayModernRecord */ 226).setLinkedRecordIDs(sinkRecord, storageKey, linkedIDs);
+	    this._setSentinelFieldInBackupRecord(dataID, storageKey);
+	  };
+	
+	  return RelayRecordSourceMutator;
+	}();
+	
+	module.exports = RelayRecordSourceMutator;
+
+/***/ }),
+/* 202 */
+/*!********************************************!*\
+  !*** ./~/babel-runtime/helpers/extends.js ***!
+  \********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	exports.__esModule = true;
+	
+	var _assign = __webpack_require__(/*! ../core-js/object/assign */ 203);
+	
+	var _assign2 = _interopRequireDefault(_assign);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = _assign2.default || function (target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = arguments[i];
+	
+	    for (var key in source) {
+	      if (Object.prototype.hasOwnProperty.call(source, key)) {
+	        target[key] = source[key];
+	      }
+	    }
+	  }
+	
+	  return target;
+	};
+
+/***/ }),
+/* 203 */
+/*!**************************************************!*\
+  !*** ./~/babel-runtime/core-js/object/assign.js ***!
+  \**************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(/*! core-js/library/fn/object/assign */ 204), __esModule: true };
+
+/***/ }),
+/* 204 */
+/*!***********************************************!*\
+  !*** ./~/core-js/library/fn/object/assign.js ***!
+  \***********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	__webpack_require__(/*! ../../modules/es6.object.assign */ 205);
+	module.exports = __webpack_require__(/*! ../../modules/_core */ 175).Object.assign;
+
+/***/ }),
+/* 205 */
+/*!********************************************************!*\
+  !*** ./~/core-js/library/modules/es6.object.assign.js ***!
+  \********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// 19.1.3.1 Object.assign(target, source)
+	var $export = __webpack_require__(/*! ./_export */ 173);
+	
+	$export($export.S + $export.F, 'Object', {assign: __webpack_require__(/*! ./_object-assign */ 206)});
+
+/***/ }),
+/* 206 */
+/*!*****************************************************!*\
+  !*** ./~/core-js/library/modules/_object-assign.js ***!
+  \*****************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	// 19.1.2.1 Object.assign(target, source, ...)
+	var getKeys  = __webpack_require__(/*! ./_object-keys */ 207)
+	  , gOPS     = __webpack_require__(/*! ./_object-gops */ 222)
+	  , pIE      = __webpack_require__(/*! ./_object-pie */ 223)
+	  , toObject = __webpack_require__(/*! ./_to-object */ 224)
+	  , IObject  = __webpack_require__(/*! ./_iobject */ 211)
+	  , $assign  = Object.assign;
+	
+	// should work with symbols and should have deterministic property order (V8 bug)
+	module.exports = !$assign || __webpack_require__(/*! ./_fails */ 184)(function(){
+	  var A = {}
+	    , B = {}
+	    , S = Symbol()
+	    , K = 'abcdefghijklmnopqrst';
+	  A[S] = 7;
+	  K.split('').forEach(function(k){ B[k] = k; });
+	  return $assign({}, A)[S] != 7 || Object.keys($assign({}, B)).join('') != K;
+	}) ? function assign(target, source){ // eslint-disable-line no-unused-vars
+	  var T     = toObject(target)
+	    , aLen  = arguments.length
+	    , index = 1
+	    , getSymbols = gOPS.f
+	    , isEnum     = pIE.f;
+	  while(aLen > index){
+	    var S      = IObject(arguments[index++])
+	      , keys   = getSymbols ? getKeys(S).concat(getSymbols(S)) : getKeys(S)
+	      , length = keys.length
+	      , j      = 0
+	      , key;
+	    while(length > j)if(isEnum.call(S, key = keys[j++]))T[key] = S[key];
+	  } return T;
+	} : $assign;
+
+/***/ }),
+/* 207 */
+/*!***************************************************!*\
+  !*** ./~/core-js/library/modules/_object-keys.js ***!
+  \***************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// 19.1.2.14 / 15.2.3.14 Object.keys(O)
+	var $keys       = __webpack_require__(/*! ./_object-keys-internal */ 208)
+	  , enumBugKeys = __webpack_require__(/*! ./_enum-bug-keys */ 221);
+	
+	module.exports = Object.keys || function keys(O){
+	  return $keys(O, enumBugKeys);
+	};
+
+/***/ }),
+/* 208 */
+/*!************************************************************!*\
+  !*** ./~/core-js/library/modules/_object-keys-internal.js ***!
+  \************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var has          = __webpack_require__(/*! ./_has */ 209)
+	  , toIObject    = __webpack_require__(/*! ./_to-iobject */ 210)
+	  , arrayIndexOf = __webpack_require__(/*! ./_array-includes */ 214)(false)
+	  , IE_PROTO     = __webpack_require__(/*! ./_shared-key */ 218)('IE_PROTO');
+	
+	module.exports = function(object, names){
+	  var O      = toIObject(object)
+	    , i      = 0
+	    , result = []
+	    , key;
+	  for(key in O)if(key != IE_PROTO)has(O, key) && result.push(key);
+	  // Don't enum bug & hidden keys
+	  while(names.length > i)if(has(O, key = names[i++])){
+	    ~arrayIndexOf(result, key) || result.push(key);
+	  }
+	  return result;
+	};
+
+/***/ }),
+/* 209 */
+/*!*******************************************!*\
+  !*** ./~/core-js/library/modules/_has.js ***!
+  \*******************************************/
+/***/ (function(module, exports) {
+
+	var hasOwnProperty = {}.hasOwnProperty;
+	module.exports = function(it, key){
+	  return hasOwnProperty.call(it, key);
+	};
+
+/***/ }),
+/* 210 */
+/*!**************************************************!*\
+  !*** ./~/core-js/library/modules/_to-iobject.js ***!
+  \**************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// to indexed object, toObject with fallback for non-array-like ES3 strings
+	var IObject = __webpack_require__(/*! ./_iobject */ 211)
+	  , defined = __webpack_require__(/*! ./_defined */ 213);
+	module.exports = function(it){
+	  return IObject(defined(it));
+	};
+
+/***/ }),
+/* 211 */
+/*!***********************************************!*\
+  !*** ./~/core-js/library/modules/_iobject.js ***!
+  \***********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// fallback for non-array-like ES3 and non-enumerable old V8 strings
+	var cof = __webpack_require__(/*! ./_cof */ 212);
+	module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
+	  return cof(it) == 'String' ? it.split('') : Object(it);
+	};
+
+/***/ }),
+/* 212 */
+/*!*******************************************!*\
+  !*** ./~/core-js/library/modules/_cof.js ***!
+  \*******************************************/
+/***/ (function(module, exports) {
+
+	var toString = {}.toString;
+	
+	module.exports = function(it){
+	  return toString.call(it).slice(8, -1);
+	};
+
+/***/ }),
+/* 213 */
+/*!***********************************************!*\
+  !*** ./~/core-js/library/modules/_defined.js ***!
+  \***********************************************/
+/***/ (function(module, exports) {
+
+	// 7.2.1 RequireObjectCoercible(argument)
+	module.exports = function(it){
+	  if(it == undefined)throw TypeError("Can't call method on  " + it);
+	  return it;
+	};
+
+/***/ }),
+/* 214 */
+/*!******************************************************!*\
+  !*** ./~/core-js/library/modules/_array-includes.js ***!
+  \******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// false -> Array#indexOf
+	// true  -> Array#includes
+	var toIObject = __webpack_require__(/*! ./_to-iobject */ 210)
+	  , toLength  = __webpack_require__(/*! ./_to-length */ 215)
+	  , toIndex   = __webpack_require__(/*! ./_to-index */ 217);
+	module.exports = function(IS_INCLUDES){
+	  return function($this, el, fromIndex){
+	    var O      = toIObject($this)
+	      , length = toLength(O.length)
+	      , index  = toIndex(fromIndex, length)
+	      , value;
+	    // Array#includes uses SameValueZero equality algorithm
+	    if(IS_INCLUDES && el != el)while(length > index){
+	      value = O[index++];
+	      if(value != value)return true;
+	    // Array#toIndex ignores holes, Array#includes - not
+	    } else for(;length > index; index++)if(IS_INCLUDES || index in O){
+	      if(O[index] === el)return IS_INCLUDES || index || 0;
+	    } return !IS_INCLUDES && -1;
+	  };
+	};
+
+/***/ }),
+/* 215 */
+/*!*************************************************!*\
+  !*** ./~/core-js/library/modules/_to-length.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// 7.1.15 ToLength
+	var toInteger = __webpack_require__(/*! ./_to-integer */ 216)
+	  , min       = Math.min;
+	module.exports = function(it){
+	  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+	};
+
+/***/ }),
+/* 216 */
+/*!**************************************************!*\
+  !*** ./~/core-js/library/modules/_to-integer.js ***!
+  \**************************************************/
+/***/ (function(module, exports) {
+
+	// 7.1.4 ToInteger
+	var ceil  = Math.ceil
+	  , floor = Math.floor;
+	module.exports = function(it){
+	  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
+	};
+
+/***/ }),
+/* 217 */
+/*!************************************************!*\
+  !*** ./~/core-js/library/modules/_to-index.js ***!
+  \************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var toInteger = __webpack_require__(/*! ./_to-integer */ 216)
+	  , max       = Math.max
+	  , min       = Math.min;
+	module.exports = function(index, length){
+	  index = toInteger(index);
+	  return index < 0 ? max(index + length, 0) : min(index, length);
+	};
+
+/***/ }),
+/* 218 */
+/*!**************************************************!*\
+  !*** ./~/core-js/library/modules/_shared-key.js ***!
+  \**************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var shared = __webpack_require__(/*! ./_shared */ 219)('keys')
+	  , uid    = __webpack_require__(/*! ./_uid */ 220);
+	module.exports = function(key){
+	  return shared[key] || (shared[key] = uid(key));
+	};
+
+/***/ }),
+/* 219 */
+/*!**********************************************!*\
+  !*** ./~/core-js/library/modules/_shared.js ***!
+  \**********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var global = __webpack_require__(/*! ./_global */ 174)
+	  , SHARED = '__core-js_shared__'
+	  , store  = global[SHARED] || (global[SHARED] = {});
+	module.exports = function(key){
+	  return store[key] || (store[key] = {});
+	};
+
+/***/ }),
+/* 220 */
+/*!*******************************************!*\
+  !*** ./~/core-js/library/modules/_uid.js ***!
+  \*******************************************/
+/***/ (function(module, exports) {
+
+	var id = 0
+	  , px = Math.random();
+	module.exports = function(key){
+	  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+	};
+
+/***/ }),
+/* 221 */
+/*!*****************************************************!*\
+  !*** ./~/core-js/library/modules/_enum-bug-keys.js ***!
+  \*****************************************************/
+/***/ (function(module, exports) {
+
+	// IE 8- don't enum bug keys
+	module.exports = (
+	  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
+	).split(',');
+
+/***/ }),
+/* 222 */
+/*!***************************************************!*\
+  !*** ./~/core-js/library/modules/_object-gops.js ***!
+  \***************************************************/
+/***/ (function(module, exports) {
+
+	exports.f = Object.getOwnPropertySymbols;
+
+/***/ }),
+/* 223 */
+/*!**************************************************!*\
+  !*** ./~/core-js/library/modules/_object-pie.js ***!
+  \**************************************************/
+/***/ (function(module, exports) {
+
+	exports.f = {}.propertyIsEnumerable;
+
+/***/ }),
+/* 224 */
+/*!*************************************************!*\
+  !*** ./~/core-js/library/modules/_to-object.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// 7.1.13 ToObject(argument)
+	var defined = __webpack_require__(/*! ./_defined */ 213);
+	module.exports = function(it){
+	  return Object(defined(it));
+	};
+
+/***/ }),
+/* 225 */
+/*!*****************************************************!*\
+  !*** ./~/relay-runtime/~/fbjs/lib/forEachObject.js ***!
+  \*****************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @typechecks
+	 */
+	
+	'use strict';
+	
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
+	
+	/**
+	 * Executes the provided `callback` once for each enumerable own property in the
+	 * object. The `callback` is invoked with three arguments:
+	 *
+	 *  - the property value
+	 *  - the property name
+	 *  - the object being traversed
+	 *
+	 * Properties that are added after the call to `forEachObject` will not be
+	 * visited by `callback`. If the values of existing properties are changed, the
+	 * value passed to `callback` will be the value at the time `forEachObject`
+	 * visits them. Properties that are deleted before being visited are not
+	 * visited.
+	 *
+	 * @param {?object} object
+	 * @param {function} callback
+	 * @param {*} context
+	 */
+	function forEachObject(object, callback, context) {
+	  for (var name in object) {
+	    if (hasOwnProperty.call(object, name)) {
+	      callback.call(context, object[name], name, object);
+	    }
+	  }
+	}
+	
+	module.exports = forEachObject;
+
+/***/ }),
+/* 226 */
+/*!**************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayModernRecord.js ***!
+  \**************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayModernRecord
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _extends3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/extends */ 202));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _require = __webpack_require__(/*! ./RelayStoreUtils */ 195),
+	    ID_KEY = _require.ID_KEY,
+	    REF_KEY = _require.REF_KEY,
+	    REFS_KEY = _require.REFS_KEY,
+	    TYPENAME_KEY = _require.TYPENAME_KEY,
+	    UNPUBLISH_FIELD_SENTINEL = _require.UNPUBLISH_FIELD_SENTINEL;
+	
+	/**
+	 * @public
+	 *
+	 * Low-level record manipulation methods.
+	 *
+	 * A note about perf: we use long-hand property access rather than computed
+	 * properties in this file for speed ie.
+	 *
+	 *    const object = {};
+	 *    object[KEY] = value;
+	 *    record[storageKey] = object;
+	 *
+	 * instead of:
+	 *
+	 *    record[storageKey] = {
+	 *      [KEY]: value,
+	 *    };
+	 *
+	 * The latter gets transformed by Babel into something like:
+	 *
+	 *    function _defineProperty(obj, key, value) {
+	 *      if (key in obj) {
+	 *        Object.defineProperty(obj, key, {
+	 *          value: value,
+	 *          enumerable: true,
+	 *          configurable: true,
+	 *          writable: true,
+	 *        });
+	 *      } else {
+	 *        obj[key] = value;
+	 *      }
+	 *      return obj;
+	 *    }
+	 *
+	 *    record[storageKey] = _defineProperty({}, KEY, value);
+	 *
+	 * A quick benchmark shows that computed property access is an order of
+	 * magnitude slower (times in seconds for 100,000 iterations):
+	 *
+	 *               best     avg     sd
+	 *    computed 0.02175 0.02292 0.00113
+	 *      manual 0.00110 0.00123 0.00008
+	 */
+	
+	/**
+	 * @public
+	 *
+	 * Clone a record.
+	 */
+	function clone(record) {
+	  return (0, _extends3['default'])({}, record);
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Copies all fields from `source` to `sink`, excluding `__id` and `__typename`.
+	 *
+	 * NOTE: This function does not treat `id` specially. To preserve the id,
+	 * manually reset it after calling this function. Also note that values are
+	 * copied by reference and not value; callers should ensure that values are
+	 * copied on write.
+	 */
+	function copyFields(source, sink) {
+	  __webpack_require__(/*! fbjs/lib/forEachObject */ 225)(source, function (value, key) {
+	    if (key !== ID_KEY && key !== TYPENAME_KEY) {
+	      sink[key] = value;
+	    }
+	  });
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Create a new record.
+	 */
+	function create(dataID, typeName) {
+	  // See perf note above for why we aren't using computed property access.
+	  var record = {};
+	  record[ID_KEY] = dataID;
+	  record[TYPENAME_KEY] = typeName;
+	  return record;
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Get the record's `id` if available or the client-generated identifier.
+	 */
+	function getDataID(record) {
+	  return record[ID_KEY];
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Get the concrete type of the record.
+	 */
+	function getType(record) {
+	  return record[TYPENAME_KEY];
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Get a scalar (non-link) field value.
+	 */
+	function getValue(record, storageKey) {
+	  var value = record[storageKey];
+	  if (value && typeof value === 'object') {
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(!value.hasOwnProperty(REF_KEY) && !value.hasOwnProperty(REFS_KEY), 'RelayModernRecord.getValue(): Expected a scalar (non-link) value for `%s.%s` ' + 'but found %s.', record[ID_KEY], storageKey, value.hasOwnProperty(REF_KEY) ? 'a linked record' : 'plural linked records');
+	  }
+	  return value;
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Get the value of a field as a reference to another record. Throws if the
+	 * field has a different type.
+	 */
+	function getLinkedRecordID(record, storageKey) {
+	  var link = record[storageKey];
+	  if (link == null) {
+	    return link;
+	  }
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(typeof link === 'object' && link && typeof link[REF_KEY] === 'string', 'RelayModernRecord.getLinkedRecordID(): Expected `%s.%s` to be a linked ID, ' + 'was `%s`.', record[ID_KEY], storageKey, link);
+	  return link[REF_KEY];
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Get the value of a field as a list of references to other records. Throws if
+	 * the field has a different type.
+	 */
+	function getLinkedRecordIDs(record, storageKey) {
+	  var links = record[storageKey];
+	  if (links == null) {
+	    return links;
+	  }
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(typeof links === 'object' && Array.isArray(links[REFS_KEY]), 'RelayModernRecord.getLinkedRecordIDs(): Expected `%s.%s` to contain an array ' + 'of linked IDs, got `%s`.', record[ID_KEY], storageKey, JSON.stringify(links));
+	  // assume items of the array are ids
+	  return links[REFS_KEY];
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Compares the fields of a previous and new record, returning either the
+	 * previous record if all fields are equal or a new record (with merged fields)
+	 * if any fields have changed.
+	 */
+	function update(prevRecord, nextRecord) {
+	  var updated = void 0;
+	  var keys = Object.keys(nextRecord);
+	  for (var ii = 0; ii < keys.length; ii++) {
+	    var key = keys[ii];
+	    if (updated || !__webpack_require__(/*! fbjs/lib/areEqual */ 227)(prevRecord[key], nextRecord[key])) {
+	      updated = updated || (0, _extends3['default'])({}, prevRecord);
+	      if (nextRecord[key] !== UNPUBLISH_FIELD_SENTINEL) {
+	        updated[key] = nextRecord[key];
+	      } else {
+	        delete updated[key];
+	      }
+	    }
+	  }
+	  return updated || prevRecord;
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Returns a new record with the contents of the given records. Fields in the
+	 * second record will overwrite identical fields in the first record.
+	 */
+	function merge(record1, record2) {
+	  return Object.assign({}, record1, record2);
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Prevent modifications to the record. Attempts to call `set*` functions on a
+	 * frozen record will fatal at runtime.
+	 */
+	function freeze(record) {
+	  __webpack_require__(/*! ./deepFreeze */ 228)(record);
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Set the value of a storageKey to a scalar.
+	 */
+	function setValue(record, storageKey, value) {
+	  record[storageKey] = value;
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Set the value of a field to a reference to another record.
+	 */
+	function setLinkedRecordID(record, storageKey, linkedID) {
+	  // See perf note above for why we aren't using computed property access.
+	  var link = {};
+	  link[REF_KEY] = linkedID;
+	  record[storageKey] = link;
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Set the value of a field to a list of references other records.
+	 */
+	function setLinkedRecordIDs(record, storageKey, linkedIDs) {
+	  // See perf note above for why we aren't using computed property access.
+	  var links = {};
+	  links[REFS_KEY] = linkedIDs;
+	  record[storageKey] = links;
+	}
+	
+	module.exports = {
+	  clone: clone,
+	  copyFields: copyFields,
+	  create: create,
+	  freeze: freeze,
+	  getDataID: getDataID,
+	  getLinkedRecordID: getLinkedRecordID,
+	  getLinkedRecordIDs: getLinkedRecordIDs,
+	  getType: getType,
+	  getValue: getValue,
+	  merge: merge,
+	  setValue: setValue,
+	  setLinkedRecordID: setLinkedRecordID,
+	  setLinkedRecordIDs: setLinkedRecordIDs,
+	  update: update
+	};
+
+/***/ }),
+/* 227 */
+/*!************************************************!*\
+  !*** ./~/relay-runtime/~/fbjs/lib/areEqual.js ***!
+  \************************************************/
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 */
+	
+	var aStackPool = [];
+	var bStackPool = [];
+	
+	/**
+	 * Checks if two values are equal. Values may be primitives, arrays, or objects.
+	 * Returns true if both arguments have the same keys and values.
+	 *
+	 * @see http://underscorejs.org
+	 * @copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
+	 * @license MIT
+	 */
+	function areEqual(a, b) {
+	  var aStack = aStackPool.length ? aStackPool.pop() : [];
+	  var bStack = bStackPool.length ? bStackPool.pop() : [];
+	  var result = eq(a, b, aStack, bStack);
+	  aStack.length = 0;
+	  bStack.length = 0;
+	  aStackPool.push(aStack);
+	  bStackPool.push(bStack);
+	  return result;
+	}
+	
+	function eq(a, b, aStack, bStack) {
+	  if (a === b) {
+	    // Identical objects are equal. `0 === -0`, but they aren't identical.
+	    return a !== 0 || 1 / a == 1 / b;
+	  }
+	  if (a == null || b == null) {
+	    // a or b can be `null` or `undefined`
+	    return false;
+	  }
+	  if (typeof a != 'object' || typeof b != 'object') {
+	    return false;
+	  }
+	  var objToStr = Object.prototype.toString;
+	  var className = objToStr.call(a);
+	  if (className != objToStr.call(b)) {
+	    return false;
+	  }
+	  switch (className) {
+	    case '[object String]':
+	      return a == String(b);
+	    case '[object Number]':
+	      return isNaN(a) || isNaN(b) ? false : a == Number(b);
+	    case '[object Date]':
+	    case '[object Boolean]':
+	      return +a == +b;
+	    case '[object RegExp]':
+	      return a.source == b.source && a.global == b.global && a.multiline == b.multiline && a.ignoreCase == b.ignoreCase;
+	  }
+	  // Assume equality for cyclic structures.
+	  var length = aStack.length;
+	  while (length--) {
+	    if (aStack[length] == a) {
+	      return bStack[length] == b;
+	    }
+	  }
+	  aStack.push(a);
+	  bStack.push(b);
+	  var size = 0;
+	  // Recursively compare objects and arrays.
+	  if (className === '[object Array]') {
+	    size = a.length;
+	    if (size !== b.length) {
+	      return false;
+	    }
+	    // Deep compare the contents, ignoring non-numeric properties.
+	    while (size--) {
+	      if (!eq(a[size], b[size], aStack, bStack)) {
+	        return false;
+	      }
+	    }
+	  } else {
+	    if (a.constructor !== b.constructor) {
+	      return false;
+	    }
+	    if (a.hasOwnProperty('valueOf') && b.hasOwnProperty('valueOf')) {
+	      return a.valueOf() == b.valueOf();
+	    }
+	    var keys = Object.keys(a);
+	    if (keys.length != Object.keys(b).length) {
+	      return false;
+	    }
+	    for (var i = 0; i < keys.length; i++) {
+	      if (!eq(a[keys[i]], b[keys[i]], aStack, bStack)) {
+	        return false;
+	      }
+	    }
+	  }
+	  aStack.pop();
+	  bStack.pop();
+	  return true;
+	}
+	
+	module.exports = areEqual;
+
+/***/ }),
+/* 228 */
+/*!*******************************************!*\
+  !*** ./~/relay-runtime/lib/deepFreeze.js ***!
+  \*******************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 * @providesModule deepFreeze
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Recursively "deep" freezes the supplied object.
+	 *
+	 * For convenience, and for consistency with the behavior of `Object.freeze`,
+	 * returns the now-frozen original object.
+	 */
+	
+	function deepFreeze(object) {
+	  Object.freeze(object);
+	  Object.getOwnPropertyNames(object).forEach(function (name) {
+	    var property = object[name];
+	    if (property && typeof property === 'object' && !Object.isFrozen(property)) {
+	      deepFreeze(property);
+	    }
+	  });
+	  return object;
+	}
+	
+	module.exports = deepFreeze;
+
+/***/ }),
+/* 229 */
+/*!*******************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayRecordSourceProxy.js ***!
+  \*******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayRecordSourceProxy
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _require = __webpack_require__(/*! ./RelayRecordState */ 200),
+	    EXISTENT = _require.EXISTENT,
+	    NONEXISTENT = _require.NONEXISTENT;
+	
+	var _require2 = __webpack_require__(/*! ./RelayStoreUtils */ 195),
+	    ROOT_ID = _require2.ROOT_ID,
+	    ROOT_TYPE = _require2.ROOT_TYPE;
+	
+	/**
+	 * @internal
+	 *
+	 * A helper for manipulating a `RecordSource` via an imperative/OO-style API.
+	 */
+	var RelayRecordSourceProxy = function () {
+	  function RelayRecordSourceProxy(mutator, handlerProvider) {
+	    (0, _classCallCheck3['default'])(this, RelayRecordSourceProxy);
+	
+	    this.__mutator = mutator;
+	    this._handlerProvider = handlerProvider || null;
+	    this._proxies = {};
+	  }
+	
+	  RelayRecordSourceProxy.prototype.commitPayload = function commitPayload(operation, response) {
+	    var _this = this;
+	
+	    if (!response) {
+	      return new (__webpack_require__(/*! ./RelayRecordSourceSelectorProxy */ 230))(this, operation.fragment);
+	    }
+	
+	    var _normalizeRelayPayloa = __webpack_require__(/*! ./normalizeRelayPayload */ 231)(operation.root, response),
+	        source = _normalizeRelayPayloa.source,
+	        fieldPayloads = _normalizeRelayPayloa.fieldPayloads;
+	
+	    var dataIDs = source.getRecordIDs();
+	    dataIDs.forEach(function (dataID) {
+	      var status = source.getStatus(dataID);
+	      if (status === EXISTENT) {
+	        var sourceRecord = source.get(dataID);
+	        if (sourceRecord) {
+	          if (_this.__mutator.getStatus(dataID) !== EXISTENT) {
+	            _this.create(dataID, __webpack_require__(/*! ./RelayModernRecord */ 226).getType(sourceRecord));
+	          }
+	          _this.__mutator.copyFieldsFromRecord(sourceRecord, dataID);
+	          delete _this._proxies[dataID];
+	        }
+	      } else if (status === NONEXISTENT) {
+	        _this['delete'](dataID);
+	      }
+	    });
+	
+	    if (fieldPayloads && fieldPayloads.length) {
+	      fieldPayloads.forEach(function (fieldPayload) {
+	        var handler = _this._handlerProvider && _this._handlerProvider(fieldPayload.handle);
+	        __webpack_require__(/*! fbjs/lib/invariant */ 193)(handler, 'RelayModernEnvironment: Expected a handler to be provided for handle `%s`.', fieldPayload.handle);
+	        handler.update(_this, fieldPayload);
+	      });
+	    }
+	    return new (__webpack_require__(/*! ./RelayRecordSourceSelectorProxy */ 230))(this, operation.fragment);
+	  };
+	
+	  RelayRecordSourceProxy.prototype.create = function create(dataID, typeName) {
+	    this.__mutator.create(dataID, typeName);
+	    delete this._proxies[dataID];
+	    var record = this.get(dataID);
+	    // For flow
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(record, 'RelayRecordSourceProxy#create(): Expected the created record to exist.');
+	    return record;
+	  };
+	
+	  RelayRecordSourceProxy.prototype['delete'] = function _delete(dataID) {
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(dataID !== ROOT_ID, 'RelayRecordSourceProxy#delete(): Cannot delete the root record.');
+	    delete this._proxies[dataID];
+	    this.__mutator['delete'](dataID);
+	  };
+	
+	  RelayRecordSourceProxy.prototype.get = function get(dataID) {
+	    if (!this._proxies.hasOwnProperty(dataID)) {
+	      var status = this.__mutator.getStatus(dataID);
+	      if (status === EXISTENT) {
+	        this._proxies[dataID] = new (__webpack_require__(/*! ./RelayRecordProxy */ 236))(this, this.__mutator, dataID);
+	      } else {
+	        this._proxies[dataID] = status === NONEXISTENT ? null : undefined;
+	      }
+	    }
+	    return this._proxies[dataID];
+	  };
+	
+	  RelayRecordSourceProxy.prototype.getRoot = function getRoot() {
+	    var root = this.get(ROOT_ID);
+	    if (!root) {
+	      root = this.create(ROOT_ID, ROOT_TYPE);
+	    }
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(root && root.getType() === ROOT_TYPE, 'RelayRecordSourceProxy#getRoot(): Expected the source to contain a ' + 'root record.');
+	    return root;
+	  };
+	
+	  return RelayRecordSourceProxy;
+	}();
+	
+	module.exports = RelayRecordSourceProxy;
+
+/***/ }),
+/* 230 */
+/*!***************************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayRecordSourceSelectorProxy.js ***!
+  \***************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayRecordSourceSelectorProxy
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _require = __webpack_require__(/*! ./RelayStoreUtils */ 195),
+	    getStorageKey = _require.getStorageKey;
+	
+	/**
+	 * @internal
+	 *
+	 * A subclass of RecordSourceProxy that provides convenience methods for
+	 * accessing the root fields of a given query/mutation. These fields accept
+	 * complex arguments and it can be tedious to re-construct the correct sets of
+	 * arguments to pass to e.g. `getRoot().getLinkedRecord()`.
+	 */
+	var RelayRecordSourceSelectorProxy = function () {
+	  function RelayRecordSourceSelectorProxy(recordSource, readSelector) {
+	    (0, _classCallCheck3['default'])(this, RelayRecordSourceSelectorProxy);
+	
+	    this.__recordSource = recordSource;
+	    this._readSelector = readSelector;
+	  }
+	
+	  RelayRecordSourceSelectorProxy.prototype.create = function create(dataID, typeName) {
+	    return this.__recordSource.create(dataID, typeName);
+	  };
+	
+	  RelayRecordSourceSelectorProxy.prototype['delete'] = function _delete(dataID) {
+	    this.__recordSource['delete'](dataID);
+	  };
+	
+	  RelayRecordSourceSelectorProxy.prototype.get = function get(dataID) {
+	    return this.__recordSource.get(dataID);
+	  };
+	
+	  RelayRecordSourceSelectorProxy.prototype.getRoot = function getRoot() {
+	    return this.__recordSource.getRoot();
+	  };
+	
+	  RelayRecordSourceSelectorProxy.prototype._getRootField = function _getRootField(selector, fieldName, plural) {
+	    var field = selector.node.selections.find(function (selection) {
+	      return selection.kind === 'LinkedField' && selection.name === fieldName;
+	    });
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(field && field.kind === 'LinkedField', 'RelayRecordSourceSelectorProxy#getRootField(): Cannot find root ' + 'field `%s`, no such field is defined on GraphQL document `%s`.', fieldName, selector.node.name);
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(field.plural === plural, 'RelayRecordSourceSelectorProxy#getRootField(): Expected root field ' + '`%s` to be %s.', fieldName, plural ? 'plural' : 'singular');
+	    return field;
+	  };
+	
+	  RelayRecordSourceSelectorProxy.prototype.getRootField = function getRootField(fieldName) {
+	    var field = this._getRootField(this._readSelector, fieldName, false);
+	    var storageKey = getStorageKey(field, this._readSelector.variables);
+	    return this.getRoot().getLinkedRecord(storageKey);
+	  };
+	
+	  RelayRecordSourceSelectorProxy.prototype.getPluralRootField = function getPluralRootField(fieldName) {
+	    var field = this._getRootField(this._readSelector, fieldName, true);
+	    var storageKey = getStorageKey(field, this._readSelector.variables);
+	    return this.getRoot().getLinkedRecords(storageKey);
+	  };
+	
+	  return RelayRecordSourceSelectorProxy;
+	}();
+	
+	module.exports = RelayRecordSourceSelectorProxy;
+
+/***/ }),
+/* 231 */
+/*!******************************************************!*\
+  !*** ./~/relay-runtime/lib/normalizeRelayPayload.js ***!
+  \******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule normalizeRelayPayload
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _require = __webpack_require__(/*! ./RelayStoreUtils */ 195),
+	    ROOT_ID = _require.ROOT_ID,
+	    ROOT_TYPE = _require.ROOT_TYPE;
+	
+	function normalizeRelayPayload(selector, payload, errors) {
+	  var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : { handleStrippedNulls: false };
+	
+	  var source = new (__webpack_require__(/*! ./RelayInMemoryRecordSource */ 199))();
+	  source.set(ROOT_ID, __webpack_require__(/*! ./RelayModernRecord */ 226).create(ROOT_ID, ROOT_TYPE));
+	  var fieldPayloads = __webpack_require__(/*! ./RelayResponseNormalizer */ 232).normalize(source, selector, payload, options);
+	  return {
+	    errors: errors,
+	    fieldPayloads: fieldPayloads,
+	    source: source
+	  };
+	}
+	
+	module.exports = normalizeRelayPayload;
+
+/***/ }),
+/* 232 */
+/*!********************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayResponseNormalizer.js ***!
+  \********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayResponseNormalizer
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _require = __webpack_require__(/*! ./RelayStoreUtils */ 195),
+	    getHandleFilterValues = _require.getHandleFilterValues,
+	    getArgumentValues = _require.getArgumentValues,
+	    getStorageKey = _require.getStorageKey,
+	    TYPENAME_KEY = _require.TYPENAME_KEY;
+	
+	var CONDITION = __webpack_require__(/*! ./RelayConcreteNode */ 196).CONDITION,
+	    INLINE_FRAGMENT = __webpack_require__(/*! ./RelayConcreteNode */ 196).INLINE_FRAGMENT,
+	    LINKED_FIELD = __webpack_require__(/*! ./RelayConcreteNode */ 196).LINKED_FIELD,
+	    LINKED_HANDLE = __webpack_require__(/*! ./RelayConcreteNode */ 196).LINKED_HANDLE,
+	    SCALAR_FIELD = __webpack_require__(/*! ./RelayConcreteNode */ 196).SCALAR_FIELD,
+	    SCALAR_HANDLE = __webpack_require__(/*! ./RelayConcreteNode */ 196).SCALAR_HANDLE;
+	
+	/**
+	 * Normalizes the results of a query and standard GraphQL response, writing the
+	 * normalized records/fields into the given MutableRecordSource.
+	 *
+	 * If handleStrippedNulls is true, will replace fields on the Selector that
+	 * are not present in the response with null. Otherwise will leave fields unset.
+	 */
+	function normalize(recordSource, selector, response) {
+	  var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : { handleStrippedNulls: false };
+	  var dataID = selector.dataID,
+	      node = selector.node,
+	      variables = selector.variables;
+	
+	  var normalizer = new RelayResponseNormalizer(recordSource, variables, options);
+	  return normalizer.normalizeResponse(node, dataID, response);
+	}
+	
+	/**
+	 * @private
+	 *
+	 * Helper for handling payloads.
+	 */
+	
+	var RelayResponseNormalizer = function () {
+	  function RelayResponseNormalizer(recordSource, variables, options) {
+	    (0, _classCallCheck3['default'])(this, RelayResponseNormalizer);
+	
+	    this._handleFieldPayloads = [];
+	    this._recordSource = recordSource;
+	    this._variables = variables;
+	    this._handleStrippedNulls = options.handleStrippedNulls;
+	  }
+	
+	  RelayResponseNormalizer.prototype.normalizeResponse = function normalizeResponse(node, dataID, data) {
+	    var record = this._recordSource.get(dataID);
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(record, 'RelayResponseNormalizer(): Expected root record `%s` to exist.', dataID);
+	    this._traverseSelections(node.selections, record, data);
+	    return this._handleFieldPayloads;
+	  };
+	
+	  RelayResponseNormalizer.prototype._getVariableValue = function _getVariableValue(name) {
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(this._variables.hasOwnProperty(name), 'RelayResponseNormalizer(): Undefined variable `%s`.', name);
+	    return this._variables[name];
+	  };
+	
+	  RelayResponseNormalizer.prototype._getRecordType = function _getRecordType(data) {
+	    var typeName = data[TYPENAME_KEY];
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(typeName != null, 'RelayResponseNormalizer(): Expected a typename for record `%s`.', JSON.stringify(data, null, 2));
+	    return typeName;
+	  };
+	
+	  RelayResponseNormalizer.prototype._traverseSelections = function _traverseSelections(selections, record, data) {
+	    var _this = this;
+	
+	    selections.forEach(function (selection) {
+	      if (selection.kind === SCALAR_FIELD || selection.kind === LINKED_FIELD) {
+	        _this._normalizeField(selection, record, data);
+	      } else if (selection.kind === CONDITION) {
+	        var conditionValue = _this._getVariableValue(selection.condition);
+	        if (conditionValue === selection.passingValue) {
+	          _this._traverseSelections(selection.selections, record, data);
+	        }
+	      } else if (selection.kind === INLINE_FRAGMENT) {
+	        var typeName = __webpack_require__(/*! ./RelayModernRecord */ 226).getType(record);
+	        if (typeName === selection.type) {
+	          _this._traverseSelections(selection.selections, record, data);
+	        }
+	      } else if (selection.kind === LINKED_HANDLE || selection.kind === SCALAR_HANDLE) {
+	        var args = selection.args ? getArgumentValues(selection.args, _this._variables) : {};
+	
+	        var fieldKey = __webpack_require__(/*! ./formatStorageKey */ 233)(selection.name, args);
+	        var handleKey = __webpack_require__(/*! ./getRelayHandleKey */ 191)(selection.handle, selection.key, selection.name);
+	        if (selection.filters) {
+	          var filterValues = getHandleFilterValues(selection.args || [], selection.filters, _this._variables);
+	          handleKey = __webpack_require__(/*! ./formatStorageKey */ 233)(handleKey, filterValues);
+	        }
+	        _this._handleFieldPayloads.push({
+	          args: args,
+	          dataID: __webpack_require__(/*! ./RelayModernRecord */ 226).getDataID(record),
+	          fieldKey: fieldKey,
+	          handle: selection.handle,
+	          handleKey: handleKey
+	        });
+	      } else {
+	        __webpack_require__(/*! fbjs/lib/invariant */ 193)(false, 'RelayResponseNormalizer(): Unexpected ast kind `%s`.', selection.kind);
+	      }
+	    });
+	  };
+	
+	  RelayResponseNormalizer.prototype._normalizeField = function _normalizeField(selection, record, data) {
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(typeof data === 'object' && data, 'writeField(): Expected data for field `%s` to be an object.', selection.name);
+	    var responseKey = selection.alias || selection.name;
+	    var storageKey = getStorageKey(selection, this._variables);
+	    var fieldValue = data[responseKey];
+	    if (fieldValue == null) {
+	      if (fieldValue === undefined && !this._handleStrippedNulls) {
+	        // If we're not stripping nulls, undefined fields are unset
+	        return;
+	      }
+	      if (process.env.NODE_ENV !== 'production') {
+	        __webpack_require__(/*! fbjs/lib/warning */ 189)(Object.prototype.hasOwnProperty.call(data, responseKey), 'RelayResponseNormalizer(): Payload did not contain a value ' + 'for field `%s: %s`. Check that you are parsing with the same ' + 'query that was used to fetch the payload.', responseKey, storageKey);
+	      }
+	      __webpack_require__(/*! ./RelayModernRecord */ 226).setValue(record, storageKey, null);
+	      return;
+	    }
+	
+	    if (selection.kind === SCALAR_FIELD) {
+	      __webpack_require__(/*! ./RelayModernRecord */ 226).setValue(record, storageKey, fieldValue);
+	    } else if (selection.plural) {
+	      this._normalizePluralLink(selection, record, storageKey, fieldValue);
+	    } else {
+	      this._normalizeLink(selection, record, storageKey, fieldValue);
+	    }
+	  };
+	
+	  RelayResponseNormalizer.prototype._normalizeLink = function _normalizeLink(field, record, storageKey, fieldValue) {
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(typeof fieldValue === 'object' && fieldValue, 'RelayResponseNormalizer: Expected data for field `%s` to be an object.', storageKey);
+	    var nextID = fieldValue.id ||
+	    // Reuse previously generated client IDs
+	    __webpack_require__(/*! ./RelayModernRecord */ 226).getLinkedRecordID(record, storageKey) || __webpack_require__(/*! ./generateRelayClientID */ 188)(__webpack_require__(/*! ./RelayModernRecord */ 226).getDataID(record), storageKey);
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(typeof nextID === 'string', 'RelayResponseNormalizer: Expected id on field `%s` to be a string.', storageKey);
+	    __webpack_require__(/*! ./RelayModernRecord */ 226).setLinkedRecordID(record, storageKey, nextID);
+	    var nextRecord = this._recordSource.get(nextID);
+	    if (!nextRecord) {
+	      var typeName = field.concreteType || this._getRecordType(fieldValue);
+	      nextRecord = __webpack_require__(/*! ./RelayModernRecord */ 226).create(nextID, typeName);
+	      this._recordSource.set(nextID, nextRecord);
+	    } else if (process.env.NODE_ENV !== 'production') {
+	      this._validateRecordType(nextRecord, field, fieldValue);
+	    }
+	    this._traverseSelections(field.selections, nextRecord, fieldValue);
+	  };
+	
+	  RelayResponseNormalizer.prototype._normalizePluralLink = function _normalizePluralLink(field, record, storageKey, fieldValue) {
+	    var _this2 = this;
+	
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(Array.isArray(fieldValue), 'RelayResponseNormalizer: Expected data for field `%s` to be an array ' + 'of objects.', storageKey);
+	    var prevIDs = __webpack_require__(/*! ./RelayModernRecord */ 226).getLinkedRecordIDs(record, storageKey);
+	    var nextIDs = [];
+	    fieldValue.forEach(function (item, nextIndex) {
+	      // validate response data
+	      if (item == null) {
+	        nextIDs.push(item);
+	        return;
+	      }
+	      __webpack_require__(/*! fbjs/lib/invariant */ 193)(typeof item === 'object', 'RelayResponseNormalizer: Expected elements for field `%s` to be ' + 'objects.', storageKey);
+	
+	      var nextID = item.id || prevIDs && prevIDs[nextIndex] || // Reuse previously generated client IDs
+	      __webpack_require__(/*! ./generateRelayClientID */ 188)(__webpack_require__(/*! ./RelayModernRecord */ 226).getDataID(record), storageKey, nextIndex);
+	      __webpack_require__(/*! fbjs/lib/invariant */ 193)(typeof nextID === 'string', 'RelayResponseNormalizer: Expected id of elements of field `%s` to ' + 'be strings.', storageKey);
+	
+	      nextIDs.push(nextID);
+	      var nextRecord = _this2._recordSource.get(nextID);
+	      if (!nextRecord) {
+	        var typeName = field.concreteType || _this2._getRecordType(item);
+	        nextRecord = __webpack_require__(/*! ./RelayModernRecord */ 226).create(nextID, typeName);
+	        _this2._recordSource.set(nextID, nextRecord);
+	      } else if (process.env.NODE_ENV !== 'production') {
+	        _this2._validateRecordType(nextRecord, field, item);
+	      }
+	      _this2._traverseSelections(field.selections, nextRecord, item);
+	    });
+	    __webpack_require__(/*! ./RelayModernRecord */ 226).setLinkedRecordIDs(record, storageKey, nextIDs);
+	  };
+	
+	  /**
+	   * Warns if the type of the record does not match the type of the field/payload.
+	   */
+	
+	
+	  RelayResponseNormalizer.prototype._validateRecordType = function _validateRecordType(record, field, payload) {
+	    var typeName = field.concreteType || this._getRecordType(payload);
+	    __webpack_require__(/*! fbjs/lib/warning */ 189)(__webpack_require__(/*! ./RelayModernRecord */ 226).getType(record) === typeName, 'RelayResponseNormalizer: Invalid record `%s`. Expected %s to be ' + 'be consistent, but the record was assigned conflicting types `%s` ' + 'and `%s`. The GraphQL server likely violated the globally unique ' + 'id requirement by returning the same id for different objects.', __webpack_require__(/*! ./RelayModernRecord */ 226).getDataID(record), TYPENAME_KEY, __webpack_require__(/*! ./RelayModernRecord */ 226).getType(record), typeName);
+	  };
+	
+	  return RelayResponseNormalizer;
+	}();
+	
+	// eslint-disable-next-line no-func-assign
+	
+	
+	normalize = __webpack_require__(/*! ./RelayProfiler */ 234).instrument('RelayResponseNormalizer.normalize', normalize);
+	
+	module.exports = { normalize: normalize };
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 4)))
+
+/***/ }),
+/* 233 */
+/*!*************************************************!*\
+  !*** ./~/relay-runtime/lib/formatStorageKey.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule formatStorageKey
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Given a `fieldName` (eg. "foo") and an object representing arguments and
+	 * values (eg. `{first: 10, orberBy: "name"}`) returns a unique storage key
+	 * (ie. `foo{"first":10,"orderBy":"name"}`).
+	 */
+	function formatStorageKey(fieldName, argsWithValues) {
+	  if (!argsWithValues) {
+	    return fieldName;
+	  }
+	  var filtered = null;
+	  __webpack_require__(/*! fbjs/lib/forEachObject */ 225)(argsWithValues, function (value, argName) {
+	    if (value != null) {
+	      if (!filtered) {
+	        filtered = {};
+	      }
+	      filtered[argName] = value;
+	    }
+	  });
+	  return fieldName + (filtered ? __webpack_require__(/*! ./stableJSONStringify */ 197)(filtered) : '');
+	}
+	
+	module.exports = formatStorageKey;
+
+/***/ }),
+/* 234 */
+/*!**********************************************!*\
+  !*** ./~/relay-runtime/lib/RelayProfiler.js ***!
+  \**********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayProfiler
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var aggregateHandlersByName = {
+	  '*': []
+	};
+	var profileHandlersByName = {
+	  '*': []
+	};
+	
+	var NOT_INVOKED = {};
+	var defaultProfiler = { stop: __webpack_require__(/*! fbjs/lib/emptyFunction */ 190) };
+	var shouldInstrument = function shouldInstrument(name) {
+	  if (process.env.NODE_ENV !== 'production') {
+	    return true;
+	  }
+	  return name.charAt(0) !== '@';
+	};
+	
+	/**
+	 * @public
+	 *
+	 * Instruments methods to allow profiling various parts of Relay. Profiling code
+	 * in Relay consists of three steps:
+	 *
+	 *  - Instrument the function to be profiled.
+	 *  - Attach handlers to the instrumented function.
+	 *  - Run the code which triggers the handlers.
+	 *
+	 * Handlers attached to instrumented methods are called with an instrumentation
+	 * name and a callback that must be synchronously executed:
+	 *
+	 *   instrumentedMethod.attachHandler(function(name, callback) {
+	 *     const start = performance.now();
+	 *     callback();
+	 *     console.log('Duration', performance.now() - start);
+	 *   });
+	 *
+	 * Handlers for profiles are callbacks that return a stop method:
+	 *
+	 *   RelayProfiler.attachProfileHandler('profileName', (name, state) => {
+	 *     const start = performance.now();
+	 *     return function stop(name, state) {
+	 *       console.log(`Duration (${name})`, performance.now() - start);
+	 *     }
+	 *   });
+	 *
+	 * In order to reduce the impact on performance in production, instrumented
+	 * methods and profilers with names that begin with `@` will only be measured
+	 * if `__DEV__` is true. This should be used for very hot functions.
+	 */
+	var RelayProfiler = {
+	  /**
+	   * Instruments methods on a class or object. This re-assigns the method in
+	   * order to preserve function names in stack traces (which are detected by
+	   * modern debuggers via heuristics). Example usage:
+	   *
+	   *   const RelayStore = { primeCache: function() {...} };
+	   *   RelayProfiler.instrumentMethods(RelayStore, {
+	   *     primeCache: 'RelayStore.primeCache'
+	   *   });
+	   *
+	   *   RelayStore.primeCache.attachHandler(...);
+	   *
+	   * As a result, the methods will be replaced by wrappers that provide the
+	   * `attachHandler` and `detachHandler` methods.
+	   */
+	  instrumentMethods: function instrumentMethods(object, names) {
+	    __webpack_require__(/*! fbjs/lib/forEachObject */ 225)(names, function (name, key) {
+	      object[key] = RelayProfiler.instrument(name, object[key]);
+	    });
+	  },
+	
+	
+	  /**
+	   * Wraps the supplied function with one that provides the `attachHandler` and
+	   * `detachHandler` methods. Example usage:
+	   *
+	   *   const printRelayQuery =
+	   *     RelayProfiler.instrument('printRelayQuery', printRelayQuery);
+	   *
+	   *   printRelayQuery.attachHandler(...);
+	   *
+	   * NOTE: The instrumentation assumes that no handlers are attached or detached
+	   * in the course of executing another handler.
+	   */
+	  instrument: function instrument(name, originalFunction) {
+	    if (!shouldInstrument(name)) {
+	      originalFunction.attachHandler = __webpack_require__(/*! fbjs/lib/emptyFunction */ 190);
+	      originalFunction.detachHandler = __webpack_require__(/*! fbjs/lib/emptyFunction */ 190);
+	      return originalFunction;
+	    }
+	    if (!aggregateHandlersByName.hasOwnProperty(name)) {
+	      aggregateHandlersByName[name] = [];
+	    }
+	    var catchallHandlers = aggregateHandlersByName['*'];
+	    var aggregateHandlers = aggregateHandlersByName[name];
+	    var handlers = [];
+	    var contexts = [];
+	    var invokeHandlers = function invokeHandlers() {
+	      var context = contexts[contexts.length - 1];
+	      if (context[0]) {
+	        context[0]--;
+	        catchallHandlers[context[0]](name, invokeHandlers);
+	      } else if (context[1]) {
+	        context[1]--;
+	        aggregateHandlers[context[1]](name, invokeHandlers);
+	      } else if (context[2]) {
+	        context[2]--;
+	        handlers[context[2]](name, invokeHandlers);
+	      } else {
+	        context[5] = originalFunction.apply(context[3], context[4]);
+	      }
+	    };
+	    var instrumentedCallback = function instrumentedCallback() {
+	      var returnValue = void 0;
+	      if (aggregateHandlers.length === 0 && handlers.length === 0 && catchallHandlers.length === 0) {
+	        returnValue = originalFunction.apply(this, arguments);
+	      } else {
+	        contexts.push([catchallHandlers.length, aggregateHandlers.length, handlers.length, this, arguments, NOT_INVOKED]);
+	        invokeHandlers();
+	        var context = contexts.pop();
+	        returnValue = context[5];
+	        if (returnValue === NOT_INVOKED) {
+	          throw new Error('RelayProfiler: Handler did not invoke original function.');
+	        }
+	      }
+	      return returnValue;
+	    };
+	    instrumentedCallback.attachHandler = function (handler) {
+	      handlers.push(handler);
+	    };
+	    instrumentedCallback.detachHandler = function (handler) {
+	      __webpack_require__(/*! fbjs/lib/removeFromArray */ 235)(handlers, handler);
+	    };
+	    instrumentedCallback.displayName = '(instrumented ' + name + ')';
+	    return instrumentedCallback;
+	  },
+	
+	
+	  /**
+	   * Attaches a handler to all methods instrumented with the supplied name.
+	   *
+	   *   function createRenderer() {
+	   *     return RelayProfiler.instrument('render', function() {...});
+	   *   }
+	   *   const renderA = createRenderer();
+	   *   const renderB = createRenderer();
+	   *
+	   *   // Only profiles `renderA`.
+	   *   renderA.attachHandler(...);
+	   *
+	   *   // Profiles both `renderA` and `renderB`.
+	   *   RelayProfiler.attachAggregateHandler('render', ...);
+	   *
+	   */
+	  attachAggregateHandler: function attachAggregateHandler(name, handler) {
+	    if (shouldInstrument(name)) {
+	      if (!aggregateHandlersByName.hasOwnProperty(name)) {
+	        aggregateHandlersByName[name] = [];
+	      }
+	      aggregateHandlersByName[name].push(handler);
+	    }
+	  },
+	
+	
+	  /**
+	   * Detaches a handler attached via `attachAggregateHandler`.
+	   */
+	  detachAggregateHandler: function detachAggregateHandler(name, handler) {
+	    if (shouldInstrument(name)) {
+	      if (aggregateHandlersByName.hasOwnProperty(name)) {
+	        __webpack_require__(/*! fbjs/lib/removeFromArray */ 235)(aggregateHandlersByName[name], handler);
+	      }
+	    }
+	  },
+	
+	
+	  /**
+	   * Instruments profiling for arbitrarily asynchronous code by a name.
+	   *
+	   *   const timerProfiler = RelayProfiler.profile('timeout');
+	   *   setTimeout(function() {
+	   *     timerProfiler.stop();
+	   *   }, 1000);
+	   *
+	   *   RelayProfiler.attachProfileHandler('timeout', ...);
+	   *
+	   * Arbitrary state can also be passed into `profile` as a second argument. The
+	   * attached profile handlers will receive this as the second argument.
+	   */
+	  profile: function profile(name, state) {
+	    var hasCatchAllHandlers = profileHandlersByName['*'].length > 0;
+	    var hasNamedHandlers = profileHandlersByName.hasOwnProperty(name);
+	    if (hasNamedHandlers || hasCatchAllHandlers) {
+	      var profileHandlers = hasNamedHandlers && hasCatchAllHandlers ? profileHandlersByName[name].concat(profileHandlersByName['*']) : hasNamedHandlers ? profileHandlersByName[name] : profileHandlersByName['*'];
+	      var stopHandlers = void 0;
+	      for (var ii = profileHandlers.length - 1; ii >= 0; ii--) {
+	        var profileHandler = profileHandlers[ii];
+	        var stopHandler = profileHandler(name, state);
+	        stopHandlers = stopHandlers || [];
+	        stopHandlers.unshift(stopHandler);
+	      }
+	      return {
+	        stop: function stop() {
+	          if (stopHandlers) {
+	            stopHandlers.forEach(function (stopHandler) {
+	              return stopHandler();
+	            });
+	          }
+	        }
+	      };
+	    }
+	    return defaultProfiler;
+	  },
+	
+	
+	  /**
+	   * Attaches a handler to profiles with the supplied name. You can also
+	   * attach to the special name '*' which is a catch all.
+	   */
+	  attachProfileHandler: function attachProfileHandler(name, handler) {
+	    if (shouldInstrument(name)) {
+	      if (!profileHandlersByName.hasOwnProperty(name)) {
+	        profileHandlersByName[name] = [];
+	      }
+	      profileHandlersByName[name].push(handler);
+	    }
+	  },
+	
+	
+	  /**
+	   * Detaches a handler attached via `attachProfileHandler`.
+	   */
+	  detachProfileHandler: function detachProfileHandler(name, handler) {
+	    if (shouldInstrument(name)) {
+	      if (profileHandlersByName.hasOwnProperty(name)) {
+	        __webpack_require__(/*! fbjs/lib/removeFromArray */ 235)(profileHandlersByName[name], handler);
+	      }
+	    }
+	  }
+	};
+	
+	module.exports = RelayProfiler;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 4)))
+
+/***/ }),
+/* 235 */
+/*!*******************************************************!*\
+  !*** ./~/relay-runtime/~/fbjs/lib/removeFromArray.js ***!
+  \*******************************************************/
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @typechecks
+	 * 
+	 */
+	
+	/**
+	 * Removes an element from an array.
+	 */
+	function removeFromArray(array, element) {
+	  var index = array.indexOf(element);
+	  if (index !== -1) {
+	    array.splice(index, 1);
+	  }
+	}
+	
+	module.exports = removeFromArray;
+
+/***/ }),
+/* 236 */
+/*!*************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayRecordProxy.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayRecordProxy
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	/**
+	 * @internal
+	 *
+	 * A helper class for manipulating a given record from a record source via an
+	 * imperative/OO-style API.
+	 */
+	var RelayRecordProxy = function () {
+	  function RelayRecordProxy(source, mutator, dataID) {
+	    (0, _classCallCheck3['default'])(this, RelayRecordProxy);
+	
+	    this._dataID = dataID;
+	    this._mutator = mutator;
+	    this._source = source;
+	  }
+	
+	  RelayRecordProxy.prototype.copyFieldsFrom = function copyFieldsFrom(source) {
+	    this._mutator.copyFields(source.getDataID(), this._dataID);
+	  };
+	
+	  RelayRecordProxy.prototype.getDataID = function getDataID() {
+	    return this._dataID;
+	  };
+	
+	  RelayRecordProxy.prototype.getType = function getType() {
+	    var type = this._mutator.getType(this._dataID);
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(type != null, 'RelayRecordProxy: Cannot get the type of deleted record `%s`.', this._dataID);
+	    return type;
+	  };
+	
+	  RelayRecordProxy.prototype.getValue = function getValue(name, args) {
+	    var storageKey = args ? __webpack_require__(/*! ./formatStorageKey */ 233)(name, args) : name;
+	    return this._mutator.getValue(this._dataID, storageKey);
+	  };
+	
+	  RelayRecordProxy.prototype.setValue = function setValue(value, name, args) {
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(value == null || typeof value !== 'object', 'RelayRecordProxy#setValue(): Expected a scalar value, got `%s`.', JSON.stringify(value));
+	    var storageKey = args ? __webpack_require__(/*! ./formatStorageKey */ 233)(name, args) : name;
+	    this._mutator.setValue(this._dataID, storageKey, value);
+	    return this;
+	  };
+	
+	  RelayRecordProxy.prototype.getLinkedRecord = function getLinkedRecord(name, args) {
+	    var storageKey = args ? __webpack_require__(/*! ./formatStorageKey */ 233)(name, args) : name;
+	    var linkedID = this._mutator.getLinkedRecordID(this._dataID, storageKey);
+	    return linkedID != null ? this._source.get(linkedID) : linkedID;
+	  };
+	
+	  RelayRecordProxy.prototype.setLinkedRecord = function setLinkedRecord(record, name, args) {
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(record instanceof RelayRecordProxy, 'RelayRecordProxy#setLinkedRecord(): Expected a record, got `%s`.', record);
+	    var storageKey = args ? __webpack_require__(/*! ./formatStorageKey */ 233)(name, args) : name;
+	    var linkedID = record.getDataID();
+	    this._mutator.setLinkedRecordID(this._dataID, storageKey, linkedID);
+	    return this;
+	  };
+	
+	  RelayRecordProxy.prototype.getOrCreateLinkedRecord = function getOrCreateLinkedRecord(name, typeName, args) {
+	    var linkedRecord = this.getLinkedRecord(name, args);
+	    if (!linkedRecord) {
+	      var storageKey = args ? __webpack_require__(/*! ./formatStorageKey */ 233)(name, args) : name;
+	      var clientID = __webpack_require__(/*! ./generateRelayClientID */ 188)(this.getDataID(), storageKey);
+	      linkedRecord = this._source.create(clientID, typeName);
+	      this.setLinkedRecord(linkedRecord, name, args);
+	    }
+	    return linkedRecord;
+	  };
+	
+	  RelayRecordProxy.prototype.getLinkedRecords = function getLinkedRecords(name, args) {
+	    var _this = this;
+	
+	    var storageKey = args ? __webpack_require__(/*! ./formatStorageKey */ 233)(name, args) : name;
+	    var linkedIDs = this._mutator.getLinkedRecordIDs(this._dataID, storageKey);
+	    if (linkedIDs == null) {
+	      return linkedIDs;
+	    }
+	    return linkedIDs.map(function (linkedID) {
+	      return linkedID != null ? _this._source.get(linkedID) : linkedID;
+	    });
+	  };
+	
+	  RelayRecordProxy.prototype.setLinkedRecords = function setLinkedRecords(records, name, args) {
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(Array.isArray(records), 'RelayRecordProxy#setLinkedRecords(): Expected records to be an array, got `%s`.', records);
+	    var storageKey = args ? __webpack_require__(/*! ./formatStorageKey */ 233)(name, args) : name;
+	    var linkedIDs = records.map(function (record) {
+	      return record && record.getDataID();
+	    });
+	    this._mutator.setLinkedRecordIDs(this._dataID, storageKey, linkedIDs);
+	    return this;
+	  };
+	
+	  return RelayRecordProxy;
+	}();
+	
+	module.exports = RelayRecordProxy;
+
+/***/ }),
+/* 237 */
+/*!********************************************!*\
+  !*** ./~/relay-runtime/lib/RelayReader.js ***!
+  \********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayReader
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var CONDITION = __webpack_require__(/*! ./RelayConcreteNode */ 196).CONDITION,
+	    FRAGMENT_SPREAD = __webpack_require__(/*! ./RelayConcreteNode */ 196).FRAGMENT_SPREAD,
+	    INLINE_FRAGMENT = __webpack_require__(/*! ./RelayConcreteNode */ 196).INLINE_FRAGMENT,
+	    LINKED_FIELD = __webpack_require__(/*! ./RelayConcreteNode */ 196).LINKED_FIELD,
+	    SCALAR_FIELD = __webpack_require__(/*! ./RelayConcreteNode */ 196).SCALAR_FIELD;
+	
+	var FRAGMENTS_KEY = __webpack_require__(/*! ./RelayStoreUtils */ 195).FRAGMENTS_KEY,
+	    ID_KEY = __webpack_require__(/*! ./RelayStoreUtils */ 195).ID_KEY,
+	    getArgumentValues = __webpack_require__(/*! ./RelayStoreUtils */ 195).getArgumentValues,
+	    getStorageKey = __webpack_require__(/*! ./RelayStoreUtils */ 195).getStorageKey;
+	
+	function read(recordSource, selector) {
+	  var dataID = selector.dataID,
+	      node = selector.node,
+	      variables = selector.variables;
+	
+	  var reader = new RelayReader(recordSource, variables);
+	  return reader.read(node, dataID);
+	}
+	
+	/**
+	 * @private
+	 */
+	
+	var RelayReader = function () {
+	  function RelayReader(recordSource, variables) {
+	    (0, _classCallCheck3['default'])(this, RelayReader);
+	
+	    this._recordSource = recordSource;
+	    this._seenRecords = {};
+	    this._variables = variables;
+	  }
+	
+	  RelayReader.prototype.read = function read(node, dataID) {
+	    var data = this._traverse(node, dataID, null);
+	    return {
+	      data: data,
+	      dataID: dataID,
+	      node: node,
+	      seenRecords: this._seenRecords,
+	      variables: this._variables
+	    };
+	  };
+	
+	  RelayReader.prototype._traverse = function _traverse(node, dataID, prevData) {
+	    var record = this._recordSource.get(dataID);
+	    this._seenRecords[dataID] = record;
+	    if (record == null) {
+	      return record;
+	    }
+	    var data = prevData || {};
+	    this._traverseSelections(node.selections, record, data);
+	    return data;
+	  };
+	
+	  RelayReader.prototype._getVariableValue = function _getVariableValue(name) {
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(this._variables.hasOwnProperty(name), 'RelayReader(): Undefined variable `%s`.', name);
+	    return this._variables[name];
+	  };
+	
+	  RelayReader.prototype._traverseSelections = function _traverseSelections(selections, record, data) {
+	    var _this = this;
+	
+	    selections.forEach(function (selection) {
+	      if (selection.kind === SCALAR_FIELD) {
+	        _this._readScalar(selection, record, data);
+	      } else if (selection.kind === LINKED_FIELD) {
+	        if (selection.plural) {
+	          _this._readPluralLink(selection, record, data);
+	        } else {
+	          _this._readLink(selection, record, data);
+	        }
+	      } else if (selection.kind === CONDITION) {
+	        var conditionValue = _this._getVariableValue(selection.condition);
+	        if (conditionValue === selection.passingValue) {
+	          _this._traverseSelections(selection.selections, record, data);
+	        }
+	      } else if (selection.kind === INLINE_FRAGMENT) {
+	        var typeName = __webpack_require__(/*! ./RelayModernRecord */ 226).getType(record);
+	        if (typeName != null && typeName === selection.type) {
+	          _this._traverseSelections(selection.selections, record, data);
+	        }
+	      } else if (selection.kind === FRAGMENT_SPREAD) {
+	        _this._createFragmentPointer(selection, record, data);
+	      } else {
+	        __webpack_require__(/*! fbjs/lib/invariant */ 193)(false, 'RelayReader(): Unexpected ast kind `%s`.', selection.kind);
+	      }
+	    });
+	  };
+	
+	  RelayReader.prototype._readScalar = function _readScalar(field, record, data) {
+	    var applicationName = field.alias || field.name;
+	    var storageKey = getStorageKey(field, this._variables);
+	    var value = __webpack_require__(/*! ./RelayModernRecord */ 226).getValue(record, storageKey);
+	    data[applicationName] = value;
+	  };
+	
+	  RelayReader.prototype._readLink = function _readLink(field, record, data) {
+	    var applicationName = field.alias || field.name;
+	    var storageKey = getStorageKey(field, this._variables);
+	    var linkedID = __webpack_require__(/*! ./RelayModernRecord */ 226).getLinkedRecordID(record, storageKey);
+	
+	    if (linkedID == null) {
+	      data[applicationName] = linkedID;
+	      return;
+	    }
+	
+	    var prevData = data[applicationName];
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(prevData == null || typeof prevData === 'object', 'RelayReader(): Expected data for field `%s` on record `%s` ' + 'to be an object, got `%s`.', applicationName, __webpack_require__(/*! ./RelayModernRecord */ 226).getDataID(record), prevData);
+	    data[applicationName] = this._traverse(field, linkedID, prevData);
+	  };
+	
+	  RelayReader.prototype._readPluralLink = function _readPluralLink(field, record, data) {
+	    var _this2 = this;
+	
+	    var applicationName = field.alias || field.name;
+	    var storageKey = getStorageKey(field, this._variables);
+	    var linkedIDs = __webpack_require__(/*! ./RelayModernRecord */ 226).getLinkedRecordIDs(record, storageKey);
+	
+	    if (linkedIDs == null) {
+	      data[applicationName] = linkedIDs;
+	      return;
+	    }
+	
+	    var prevData = data[applicationName];
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(prevData == null || Array.isArray(prevData), 'RelayReader(): Expected data for field `%s` on record `%s` ' + 'to be an array, got `%s`.', applicationName, __webpack_require__(/*! ./RelayModernRecord */ 226).getDataID(record), prevData);
+	    var linkedArray = prevData || [];
+	    linkedIDs.forEach(function (linkedID, nextIndex) {
+	      if (linkedID == null) {
+	        linkedArray[nextIndex] = linkedID;
+	        return;
+	      }
+	      var prevItem = linkedArray[nextIndex];
+	      __webpack_require__(/*! fbjs/lib/invariant */ 193)(prevItem == null || typeof prevItem === 'object', 'RelayReader(): Expected data for field `%s` on record `%s` ' + 'to be an object, got `%s`.', applicationName, __webpack_require__(/*! ./RelayModernRecord */ 226).getDataID(record), prevItem);
+	      var linkedItem = _this2._traverse(field, linkedID, prevItem);
+	      linkedArray[nextIndex] = linkedItem;
+	    });
+	    data[applicationName] = linkedArray;
+	  };
+	
+	  RelayReader.prototype._createFragmentPointer = function _createFragmentPointer(fragmentSpread, record, data) {
+	    var fragmentPointers = data[FRAGMENTS_KEY];
+	    if (!fragmentPointers) {
+	      fragmentPointers = data[FRAGMENTS_KEY] = {};
+	    }
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(typeof fragmentPointers === 'object' && fragmentPointers, 'RelayReader: Expected fragment spread data to be an object, got `%s`.', fragmentPointers);
+	    data[ID_KEY] = data[ID_KEY] || __webpack_require__(/*! ./RelayModernRecord */ 226).getDataID(record);
+	    var variables = fragmentSpread.args ? getArgumentValues(fragmentSpread.args, this._variables) : {};
+	    fragmentPointers[fragmentSpread.name] = variables;
+	  };
+	
+	  return RelayReader;
+	}();
+	
+	module.exports = { read: read };
+
+/***/ }),
+/* 238 */
+/*!******************************************!*\
+  !*** ./~/relay-runtime/lib/RelayCore.js ***!
+  \******************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayCore
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _require = __webpack_require__(/*! ./RelayModernGraphQLTag */ 239),
+	    getFragment = _require.getFragment,
+	    getOperation = _require.getOperation;
+	
+	var _require2 = __webpack_require__(/*! ./RelayModernOperationSelector */ 240),
+	    createOperationSelector = _require2.createOperationSelector;
+	
+	var _require3 = __webpack_require__(/*! ./RelayModernSelector */ 242),
+	    areEqualSelectors = _require3.areEqualSelectors,
+	    getDataIDsFromObject = _require3.getDataIDsFromObject,
+	    getSelector = _require3.getSelector,
+	    getSelectorList = _require3.getSelectorList,
+	    getSelectorsFromObject = _require3.getSelectorsFromObject,
+	    getVariablesFromObject = _require3.getVariablesFromObject;
+	
+	function createFragmentSpecResolver(context, containerName, fragments, props, callback) {
+	  if (process.env.NODE_ENV !== 'production') {
+	    var fragmentNames = Object.keys(fragments);
+	    fragmentNames.forEach(function (fragmentName) {
+	      var propValue = props[fragmentName];
+	      __webpack_require__(/*! fbjs/lib/warning */ 189)(propValue !== undefined, 'createFragmentSpecResolver: Expected prop `%s` to be supplied to `%s`, but ' + 'got `undefined`. Pass an explicit `null` if this is intentional.', fragmentName, containerName);
+	    });
+	  }
+	
+	  return new (__webpack_require__(/*! ./RelayModernFragmentSpecResolver */ 243))(context, fragments, props, callback);
+	}
+	
+	module.exports = {
+	  areEqualSelectors: areEqualSelectors,
+	  createFragmentSpecResolver: createFragmentSpecResolver,
+	  createOperationSelector: createOperationSelector,
+	  getDataIDsFromObject: getDataIDsFromObject,
+	  getFragment: getFragment,
+	  getOperation: getOperation,
+	  getSelector: getSelector,
+	  getSelectorList: getSelectorList,
+	  getSelectorsFromObject: getSelectorsFromObject,
+	  getVariablesFromObject: getVariablesFromObject
+	};
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 4)))
+
+/***/ }),
+/* 239 */
+/*!******************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayModernGraphQLTag.js ***!
+  \******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayModernGraphQLTag
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Runtime function to correspond to the `graphql` tagged template function.
+	 * All calls to this function should be transformed by the plugin.
+	 */
+	
+	
+	// The type of a graphql`...` tagged template expression.
+	function graphql(strings) {
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(false, 'graphql: Unexpected invocation at runtime. Either the Babel transform ' + 'was not set up, or it failed to identify this call site. Make sure it ' + 'is being used verbatim as `graphql`.');
+	}
+	
+	/**
+	 * Variant of the `graphql` tag that enables experimental features.
+	 */
+	graphql.experimental = function (strings) {
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(false, 'graphql.experimental: Unexpected invocation at runtime. Either the ' + 'Babel transform was not set up, or it failed to identify this call ' + 'site. Make sure it is being used verbatim as `graphql`.');
+	};
+	
+	function getNode(taggedNode) {
+	  var fn = typeof taggedNode === 'function' ? taggedNode : taggedNode.modern;
+	  // Support for classic raw nodes (used in test mock)
+	  if (typeof fn !== 'function') {
+	    return taggedNode;
+	  }
+	  return fn();
+	}
+	
+	function getFragment(taggedNode) {
+	  var fragment = getNode(taggedNode);
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(typeof fragment === 'object' && fragment !== null && fragment.kind === 'Fragment', 'RelayModernGraphQLTag: Expected a fragment, got `%s`.', JSON.stringify(fragment));
+	  return fragment;
+	}
+	
+	function getOperation(taggedNode) {
+	  var operation = getNode(taggedNode);
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(typeof operation === 'object' && operation !== null && operation.kind === 'Batch', 'RelayModernGraphQLTag: Expected an operation, got `%s`.', JSON.stringify(operation));
+	  return operation;
+	}
+	
+	module.exports = {
+	  getFragment: getFragment,
+	  getOperation: getOperation,
+	  graphql: graphql
+	};
+
+/***/ }),
+/* 240 */
+/*!*************************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayModernOperationSelector.js ***!
+  \*************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayModernOperationSelector
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _require = __webpack_require__(/*! ./RelayConcreteVariables */ 241),
+	    getOperationVariables = _require.getOperationVariables;
+	
+	var _require2 = __webpack_require__(/*! ./RelayStoreUtils */ 195),
+	    ROOT_ID = _require2.ROOT_ID;
+	
+	/**
+	 * Creates an instance of the `OperationSelector` type defined in
+	 * `RelayStoreTypes` given an operation and some variables. The input variables
+	 * are filtered to exclude variables that do not match defined arguments on the
+	 * operation, and default values are populated for null values.
+	 */
+	function createOperationSelector(operation, variables) {
+	  var operationVariables = getOperationVariables(operation, variables);
+	  var dataID = ROOT_ID;
+	  return {
+	    fragment: {
+	      dataID: dataID,
+	      node: operation.fragment,
+	      variables: operationVariables
+	    },
+	    node: operation,
+	    root: {
+	      dataID: dataID,
+	      node: operation.query,
+	      variables: operationVariables
+	    },
+	    variables: operationVariables
+	  };
+	}
+	
+	module.exports = {
+	  createOperationSelector: createOperationSelector
+	};
+
+/***/ }),
+/* 241 */
+/*!*******************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayConcreteVariables.js ***!
+  \*******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 * @providesModule RelayConcreteVariables
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _extends3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/extends */ 202));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	/**
+	 * Determines the variables that are in scope for a fragment given the variables
+	 * in scope at the root query as well as any arguments applied at the fragment
+	 * spread via `@arguments`.
+	 *
+	 * Note that this is analagous to determining function arguments given a function call.
+	 */
+	function getFragmentVariables(fragment, rootVariables, argumentVariables) {
+	  var variables = void 0;
+	  fragment.argumentDefinitions.forEach(function (definition) {
+	    if (argumentVariables.hasOwnProperty(definition.name)) {
+	      return;
+	    }
+	    variables = variables || (0, _extends3['default'])({}, argumentVariables);
+	    switch (definition.kind) {
+	      case 'LocalArgument':
+	        variables[definition.name] = definition.defaultValue;
+	        break;
+	      case 'RootArgument':
+	        __webpack_require__(/*! fbjs/lib/invariant */ 193)(rootVariables.hasOwnProperty(definition.name), 'RelayConcreteVariables: Expected a defined query variable for `$%s` ' + 'in fragment `%s`.', definition.name, fragment.name);
+	        variables[definition.name] = rootVariables[definition.name];
+	        break;
+	      default:
+	        __webpack_require__(/*! fbjs/lib/invariant */ 193)(false, 'RelayConcreteVariables: Unexpected node kind `%s` in fragment `%s`.', definition.kind, fragment.name);
+	    }
+	  });
+	  return variables || argumentVariables;
+	}
+	
+	/**
+	 * Determines the variables that are in scope for a given operation given values
+	 * for some/all of its arguments. Extraneous input variables are filtered from
+	 * the output, and missing variables are set to default values (if given in the
+	 * operation's definition).
+	 */
+	function getOperationVariables(operation, variables) {
+	  var operationVariables = {};
+	  operation.query.argumentDefinitions.forEach(function (def) {
+	    var value = def.defaultValue;
+	    if (variables[def.name] != null) {
+	      value = variables[def.name];
+	    }
+	    operationVariables[def.name] = value;
+	    if (process.env.NODE_ENV !== 'production') {
+	      __webpack_require__(/*! fbjs/lib/warning */ 189)(value != null || def.type[def.type.length - 1] !== '!', 'RelayConcreteVariables: Expected a value for non-nullable variable ' + '`$%s: %s` on operation `%s`, got `%s`. Make sure you supply a ' + 'value for all non-nullable arguments.', def.name, def.type, operation.name, JSON.stringify(value));
+	    }
+	  });
+	  return operationVariables;
+	}
+	
+	module.exports = {
+	  getFragmentVariables: getFragmentVariables,
+	  getOperationVariables: getOperationVariables
+	};
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 4)))
+
+/***/ }),
+/* 242 */
+/*!****************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayModernSelector.js ***!
+  \****************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayModernSelector
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _require = __webpack_require__(/*! ./RelayConcreteVariables */ 241),
+	    getFragmentVariables = _require.getFragmentVariables;
+	
+	var _require2 = __webpack_require__(/*! ./RelayStoreUtils */ 195),
+	    FRAGMENTS_KEY = _require2.FRAGMENTS_KEY,
+	    ID_KEY = _require2.ID_KEY;
+	
+	/**
+	 * @public
+	 *
+	 * Given the result `item` from a parent that fetched `fragment`, creates a
+	 * selector that can be used to read the results of that fragment for that item.
+	 *
+	 * Example:
+	 *
+	 * Given two fragments as follows:
+	 *
+	 * ```
+	 * fragment Parent on User {
+	 *   id
+	 *   ...Child
+	 * }
+	 * fragment Child on User {
+	 *   name
+	 * }
+	 * ```
+	 *
+	 * And given some object `parent` that is the results of `Parent` for id "4",
+	 * the results of `Child` can be accessed by first getting a selector and then
+	 * using that selector to `lookup()` the results against the environment:
+	 *
+	 * ```
+	 * const childSelector = getSelector(queryVariables, Child, parent);
+	 * const childData = environment.lookup(childSelector).data;
+	 * ```
+	 */
+	function getSelector(operationVariables, fragment, item) {
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(typeof item === 'object' && item !== null && !Array.isArray(item), 'RelayModernSelector: Expected value for fragment `%s` to be an object, got ' + '`%s`.', fragment.name, JSON.stringify(item));
+	  var dataID = item[ID_KEY];
+	  var fragments = item[FRAGMENTS_KEY];
+	  if (typeof dataID === 'string' && typeof fragments === 'object' && fragments !== null && typeof fragments[fragment.name] === 'object' && fragments[fragment.name] !== null) {
+	    var argumentVariables = fragments[fragment.name];
+	    var fragmentVariables = getFragmentVariables(fragment, operationVariables, argumentVariables);
+	    return {
+	      dataID: dataID,
+	      node: fragment,
+	      variables: fragmentVariables
+	    };
+	  }
+	  __webpack_require__(/*! fbjs/lib/warning */ 189)(false, 'RelayModernSelector: Expected object to contain data for fragment `%s`, got ' + '`%s`. Make sure that the parent operation/fragment included fragment ' + '`...%s`.', fragment.name, JSON.stringify(item), fragment.name);
+	  return null;
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Given the result `items` from a parent that fetched `fragment`, creates a
+	 * selector that can be used to read the results of that fragment on those
+	 * items. This is similar to `getSelector` but for "plural" fragments that
+	 * expect an array of results and therefore return an array of selectors.
+	 */
+	function getSelectorList(operationVariables, fragment, items) {
+	  var selectors = null;
+	  items.forEach(function (item) {
+	    var selector = item != null ? getSelector(operationVariables, fragment, item) : null;
+	    if (selector != null) {
+	      selectors = selectors || [];
+	      selectors.push(selector);
+	    }
+	  });
+	  return selectors;
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Given a mapping of keys -> results and a mapping of keys -> fragments,
+	 * extracts the selectors for those fragments from the results.
+	 *
+	 * The canonical use-case for this function is ReactRelayFragmentContainer, which
+	 * uses this function to convert (props, fragments) into selectors so that it
+	 * can read the results to pass to the inner component.
+	 */
+	function getSelectorsFromObject(operationVariables, fragments, object) {
+	  var selectors = {};
+	  __webpack_require__(/*! fbjs/lib/forEachObject */ 225)(fragments, function (fragment, key) {
+	    var item = object[key];
+	    if (item == null) {
+	      selectors[key] = item;
+	    } else if (fragment.metadata && fragment.metadata.plural === true) {
+	      __webpack_require__(/*! fbjs/lib/invariant */ 193)(Array.isArray(item), 'RelayModernSelector: Expected value for key `%s` to be an array, got `%s`. ' + 'Remove `@relay(plural: true)` from fragment `%s` to allow the prop to be an object.', key, JSON.stringify(item), fragment.name);
+	      selectors[key] = getSelectorList(operationVariables, fragment, item);
+	    } else {
+	      __webpack_require__(/*! fbjs/lib/invariant */ 193)(!Array.isArray(item), 'RelayModernFragmentSpecResolver: Expected value for key `%s` to be an object, got `%s`. ' + 'Add `@relay(plural: true)` to fragment `%s` to allow the prop to be an array of items.', key, JSON.stringify(item), fragment.name);
+	      selectors[key] = getSelector(operationVariables, fragment, item);
+	    }
+	  });
+	  return selectors;
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Given a mapping of keys -> results and a mapping of keys -> fragments,
+	 * extracts a mapping of keys -> id(s) of the results.
+	 *
+	 * Similar to `getSelectorsFromObject()`, this function can be useful in
+	 * determining the "identity" of the props passed to a component.
+	 */
+	function getDataIDsFromObject(fragments, object) {
+	  var ids = {};
+	  __webpack_require__(/*! fbjs/lib/forEachObject */ 225)(fragments, function (fragment, key) {
+	    var item = object[key];
+	    if (item == null) {
+	      ids[key] = item;
+	    } else if (fragment.metadata && fragment.metadata.plural === true) {
+	      __webpack_require__(/*! fbjs/lib/invariant */ 193)(Array.isArray(item), 'RelayModernSelector: Expected value for key `%s` to be an array, got `%s`. ' + 'Remove `@relay(plural: true)` from fragment `%s` to allow the prop to be an object.', key, JSON.stringify(item), fragment.name);
+	      ids[key] = getDataIDs(fragment, item);
+	    } else {
+	      __webpack_require__(/*! fbjs/lib/invariant */ 193)(!Array.isArray(item), 'RelayModernFragmentSpecResolver: Expected value for key `%s` to be an object, got `%s`. ' + 'Add `@relay(plural: true)` to fragment `%s` to allow the prop to be an array of items.', key, JSON.stringify(item), fragment.name);
+	      ids[key] = getDataID(fragment, item);
+	    }
+	  });
+	  return ids;
+	}
+	
+	/**
+	 * @internal
+	 */
+	function getDataIDs(fragment, items) {
+	  var ids = void 0;
+	  items.forEach(function (item) {
+	    var id = item != null ? getDataID(fragment, item) : null;
+	    if (id != null) {
+	      ids = ids || [];
+	      ids.push(id);
+	    }
+	  });
+	  return ids || null;
+	}
+	
+	/**
+	 * @internal
+	 */
+	function getDataID(fragment, item) {
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(typeof item === 'object' && item !== null && !Array.isArray(item), 'RelayModernSelector: Expected value for fragment `%s` to be an object, got ' + '`%s`.', fragment.name, JSON.stringify(item));
+	  var dataID = item[ID_KEY];
+	  if (typeof dataID === 'string') {
+	    return dataID;
+	  }
+	  __webpack_require__(/*! fbjs/lib/warning */ 189)(false, 'RelayModernSelector: Expected object to contain data for fragment `%s`, got ' + '`%s`. Make sure that the parent operation/fragment included fragment ' + '`...%s`.', fragment.name, JSON.stringify(item), fragment.name);
+	  return null;
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Given a mapping of keys -> results and a mapping of keys -> fragments,
+	 * extracts the merged variables that would be in scope for those
+	 * fragments/results.
+	 *
+	 * This can be useful in determing what varaibles were used to fetch the data
+	 * for a Relay container, for example.
+	 */
+	function getVariablesFromObject(operationVariables, fragments, object) {
+	  var variables = {};
+	  __webpack_require__(/*! fbjs/lib/forEachObject */ 225)(fragments, function (fragment, key) {
+	    var item = object[key];
+	    if (item == null) {
+	      return;
+	    } else if (fragment.metadata && fragment.metadata.plural === true) {
+	      __webpack_require__(/*! fbjs/lib/invariant */ 193)(Array.isArray(item), 'RelayModernSelector: Expected value for key `%s` to be an array, got `%s`. ' + 'Remove `@relay(plural: true)` from fragment `%s` to allow the prop to be an object.', key, JSON.stringify(item), fragment.name);
+	      item.forEach(function (value) {
+	        if (value != null) {
+	          var itemVariables = getVariables(operationVariables, fragment, value);
+	          if (itemVariables) {
+	            Object.assign(variables, itemVariables);
+	          }
+	        }
+	      });
+	    } else {
+	      __webpack_require__(/*! fbjs/lib/invariant */ 193)(!Array.isArray(item), 'RelayModernFragmentSpecResolver: Expected value for key `%s` to be an object, got `%s`. ' + 'Add `@relay(plural: true)` to fragment `%s` to allow the prop to be an array of items.', key, JSON.stringify(item), fragment.name);
+	      var itemVariables = getVariables(operationVariables, fragment, item);
+	      if (itemVariables) {
+	        Object.assign(variables, itemVariables);
+	      }
+	    }
+	  });
+	  return variables;
+	}
+	
+	/**
+	 * @internal
+	 */
+	function getVariables(operationVariables, fragment, item) {
+	  var selector = getSelector(operationVariables, fragment, item);
+	  return selector ? selector.variables : null;
+	}
+	
+	/**
+	 * @public
+	 *
+	 * Determine if two selectors are equal (represent the same selection). Note
+	 * that this function returns `false` when the two queries/fragments are
+	 * different objects, even if they select the same fields.
+	 */
+	function areEqualSelectors(thisSelector, thatSelector) {
+	  return thisSelector.dataID === thatSelector.dataID && thisSelector.node === thatSelector.node && __webpack_require__(/*! fbjs/lib/areEqual */ 227)(thisSelector.variables, thatSelector.variables);
+	}
+	
+	module.exports = {
+	  areEqualSelectors: areEqualSelectors,
+	  getDataIDsFromObject: getDataIDsFromObject,
+	  getSelector: getSelector,
+	  getSelectorList: getSelectorList,
+	  getSelectorsFromObject: getSelectorsFromObject,
+	  getVariablesFromObject: getVariablesFromObject
+	};
+
+/***/ }),
+/* 243 */
+/*!****************************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayModernFragmentSpecResolver.js ***!
+  \****************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayModernFragmentSpecResolver
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _extends3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/extends */ 202));
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _require = __webpack_require__(/*! ./RelayModernSelector */ 242),
+	    areEqualSelectors = _require.areEqualSelectors,
+	    getSelectorsFromObject = _require.getSelectorsFromObject;
+	
+	/**
+	 * A utility for resolving and subscribing to the results of a fragment spec
+	 * (key -> fragment mapping) given some "props" that determine the root ID
+	 * and variables to use when reading each fragment. When props are changed via
+	 * `setProps()`, the resolver will update its results and subscriptions
+	 * accordingly. Internally, the resolver:
+	 * - Converts the fragment map & props map into a map of `Selector`s.
+	 * - Removes any resolvers for any props that became null.
+	 * - Creates resolvers for any props that became non-null.
+	 * - Updates resolvers with the latest props.
+	 *
+	 * This utility is implemented as an imperative, stateful API for performance
+	 * reasons: reusing previous resolvers, callback functions, and subscriptions
+	 * all helps to reduce object allocation and thereby decrease GC time.
+	 *
+	 * The `resolve()` function is also lazy and memoized: changes in the store mark
+	 * the resolver as stale and notify the caller, and the actual results are
+	 * recomputed the first time `resolve()` is called.
+	 */
+	var RelayModernFragmentSpecResolver = function () {
+	  function RelayModernFragmentSpecResolver(context, fragments, props, callback) {
+	    var _this = this;
+	
+	    (0, _classCallCheck3['default'])(this, RelayModernFragmentSpecResolver);
+	
+	    this._onChange = function () {
+	      _this._stale = true;
+	      _this._callback();
+	    };
+	
+	    this._callback = callback;
+	    this._context = context;
+	    this._data = {};
+	    this._fragments = fragments;
+	    this._props = props;
+	    this._resolvers = {};
+	    this._stale = false;
+	
+	    this.setProps(props);
+	  }
+	
+	  RelayModernFragmentSpecResolver.prototype.dispose = function dispose() {
+	    __webpack_require__(/*! fbjs/lib/forEachObject */ 225)(this._resolvers, disposeCallback);
+	  };
+	
+	  RelayModernFragmentSpecResolver.prototype.resolve = function resolve() {
+	    var _this2 = this;
+	
+	    if (this._stale) {
+	      // Avoid mapping the object multiple times, which could occur if data for
+	      // multiple keys changes in the same event loop.
+	      var prevData = this._data;
+	      var nextData = void 0;
+	      __webpack_require__(/*! fbjs/lib/forEachObject */ 225)(this._resolvers, function (resolver, key) {
+	        var prevItem = prevData[key];
+	        if (resolver) {
+	          var nextItem = resolver.resolve();
+	          if (nextData || nextItem !== prevItem) {
+	            nextData = nextData || (0, _extends3['default'])({}, prevData);
+	            nextData[key] = nextItem;
+	          }
+	        } else {
+	          var prop = _this2._props[key];
+	          var _nextItem = prop !== undefined ? prop : null;
+	          if (nextData || !__webpack_require__(/*! ./isScalarAndEqual */ 244)(_nextItem, prevItem)) {
+	            nextData = nextData || (0, _extends3['default'])({}, prevData);
+	            nextData[key] = _nextItem;
+	          }
+	        }
+	      });
+	      this._data = nextData || prevData;
+	      this._stale = false;
+	    }
+	    return this._data;
+	  };
+	
+	  RelayModernFragmentSpecResolver.prototype.setProps = function setProps(props) {
+	    var _this3 = this;
+	
+	    var selectors = getSelectorsFromObject(this._context.variables, this._fragments, props);
+	    __webpack_require__(/*! fbjs/lib/forEachObject */ 225)(selectors, function (selector, key) {
+	      var resolver = _this3._resolvers[key];
+	      if (selector == null) {
+	        if (resolver != null) {
+	          resolver.dispose();
+	        }
+	        resolver = null;
+	      } else if (Array.isArray(selector)) {
+	        if (resolver == null) {
+	          resolver = new SelectorListResolver(_this3._context.environment, selector, _this3._onChange);
+	        } else {
+	          __webpack_require__(/*! fbjs/lib/invariant */ 193)(resolver instanceof SelectorListResolver, 'RelayModernFragmentSpecResolver: Expected prop `%s` to always be an array.', key);
+	          resolver.setSelectors(selector);
+	        }
+	      } else {
+	        if (resolver == null) {
+	          resolver = new SelectorResolver(_this3._context.environment, selector, _this3._onChange);
+	        } else {
+	          __webpack_require__(/*! fbjs/lib/invariant */ 193)(resolver instanceof SelectorResolver, 'RelayModernFragmentSpecResolver: Expected prop `%s` to always be an object.', key);
+	          resolver.setSelector(selector);
+	        }
+	      }
+	      _this3._resolvers[key] = resolver;
+	    });
+	    this._props = props;
+	    this._stale = true;
+	  };
+	
+	  RelayModernFragmentSpecResolver.prototype.setVariables = function setVariables(variables) {
+	    __webpack_require__(/*! fbjs/lib/forEachObject */ 225)(this._resolvers, function (resolver) {
+	      if (resolver) {
+	        resolver.setVariables(variables);
+	      }
+	    });
+	    this._stale = true;
+	  };
+	
+	  return RelayModernFragmentSpecResolver;
+	}();
+	
+	/**
+	 * A resolver for a single Selector.
+	 */
+	
+	
+	var SelectorResolver = function () {
+	  function SelectorResolver(environment, selector, callback) {
+	    (0, _classCallCheck3['default'])(this, SelectorResolver);
+	
+	    _initialiseProps.call(this);
+	
+	    var snapshot = environment.lookup(selector);
+	    this._callback = callback;
+	    this._data = snapshot.data;
+	    this._environment = environment;
+	    this._selector = selector;
+	    this._subscription = environment.subscribe(snapshot, this._onChange);
+	  }
+	
+	  SelectorResolver.prototype.dispose = function dispose() {
+	    if (this._subscription) {
+	      this._subscription.dispose();
+	      this._subscription = null;
+	    }
+	  };
+	
+	  SelectorResolver.prototype.resolve = function resolve() {
+	    return this._data;
+	  };
+	
+	  SelectorResolver.prototype.setSelector = function setSelector(selector) {
+	    if (this._subscription != null && areEqualSelectors(selector, this._selector)) {
+	      return;
+	    }
+	    this.dispose();
+	    var snapshot = this._environment.lookup(selector);
+	    this._data = snapshot.data;
+	    this._selector = selector;
+	    this._subscription = this._environment.subscribe(snapshot, this._onChange);
+	  };
+	
+	  SelectorResolver.prototype.setVariables = function setVariables(variables) {
+	    var selector = (0, _extends3['default'])({}, this._selector, {
+	      variables: variables
+	    });
+	    this.setSelector(selector);
+	  };
+	
+	  return SelectorResolver;
+	}();
+	
+	/**
+	 * A resolver for an array of Selectors.
+	 */
+	
+	
+	var _initialiseProps = function _initialiseProps() {
+	  var _this5 = this;
+	
+	  this._onChange = function (snapshot) {
+	    _this5._data = snapshot.data;
+	    _this5._callback();
+	  };
+	};
+	
+	var SelectorListResolver = function () {
+	  function SelectorListResolver(environment, selectors, callback) {
+	    var _this4 = this;
+	
+	    (0, _classCallCheck3['default'])(this, SelectorListResolver);
+	
+	    this._onChange = function (data) {
+	      _this4._stale = true;
+	      _this4._callback();
+	    };
+	
+	    this._callback = callback;
+	    this._data = [];
+	    this._environment = environment;
+	    this._resolvers = [];
+	    this._stale = true;
+	
+	    this.setSelectors(selectors);
+	  }
+	
+	  SelectorListResolver.prototype.dispose = function dispose() {
+	    this._resolvers.forEach(disposeCallback);
+	  };
+	
+	  SelectorListResolver.prototype.resolve = function resolve() {
+	    if (this._stale) {
+	      // Avoid mapping the array multiple times, which could occur if data for
+	      // multiple indices changes in the same event loop.
+	      var prevData = this._data;
+	      var nextData = void 0;
+	      for (var ii = 0; ii < this._resolvers.length; ii++) {
+	        var prevItem = prevData[ii];
+	        var nextItem = this._resolvers[ii].resolve();
+	        if (nextData || nextItem !== prevItem) {
+	          nextData = nextData || prevData.slice(0, ii);
+	          nextData.push(nextItem);
+	        }
+	      }
+	      this._data = nextData || prevData;
+	      this._stale = false;
+	    }
+	    return this._data;
+	  };
+	
+	  SelectorListResolver.prototype.setSelectors = function setSelectors(selectors) {
+	    while (this._resolvers.length > selectors.length) {
+	      var resolver = this._resolvers.pop();
+	      resolver.dispose();
+	    }
+	    for (var ii = 0; ii < selectors.length; ii++) {
+	      if (ii < this._resolvers.length) {
+	        this._resolvers[ii].setSelector(selectors[ii]);
+	      } else {
+	        this._resolvers[ii] = new SelectorResolver(this._environment, selectors[ii], this._onChange);
+	      }
+	    }
+	    this._stale = true;
+	  };
+	
+	  SelectorListResolver.prototype.setVariables = function setVariables(variables) {
+	    this._resolvers.forEach(function (resolver) {
+	      return resolver.setVariables(variables);
+	    });
+	    this._stale = true;
+	  };
+	
+	  return SelectorListResolver;
+	}();
+	
+	function disposeCallback(disposable) {
+	  disposable && disposable.dispose();
+	}
+	
+	module.exports = RelayModernFragmentSpecResolver;
+
+/***/ }),
+/* 244 */
+/*!*************************************************!*\
+  !*** ./~/relay-runtime/lib/isScalarAndEqual.js ***!
+  \*************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 * @providesModule isScalarAndEqual
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * A fast test to determine if two values are equal scalars:
+	 * - compares scalars such as booleans, strings, numbers by value
+	 * - compares functions by identity
+	 * - returns false for complex values, since these cannot be cheaply tested for
+	 *   equality (use `areEquals` instead)
+	 */
+	
+	function isScalarAndEqual(valueA, valueB) {
+	  return valueA === valueB && (valueA === null || typeof valueA !== 'object');
+	}
+	
+	module.exports = isScalarAndEqual;
+
+/***/ }),
+/* 245 */
+/*!******************************************!*\
+  !*** ./~/relay-runtime/lib/isPromise.js ***!
+  \******************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule isPromise
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	function isPromise(p) {
+	  return !!p && typeof p.then === 'function';
+	}
+	
+	module.exports = isPromise;
+
+/***/ }),
+/* 246 */
+/*!*********************************************!*\
+  !*** ./~/relay-runtime/lib/RelayNetwork.js ***!
+  \*********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayNetwork
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _require = __webpack_require__(/*! ./RelayStoreUtils */ 195),
+	    ROOT_ID = _require.ROOT_ID;
+	
+	/**
+	 * Creates an implementation of the `Network` interface defined in
+	 * `RelayNetworkTypes` given a single `fetch` function.
+	 */
+	function create(fetch, subscribe) {
+	  function request(operation, variables, cacheConfig, uploadables) {
+	    var onSuccess = function onSuccess(payload) {
+	      return normalizePayload(operation, variables, payload);
+	    };
+	    var response = fetch(operation, variables, cacheConfig, uploadables);
+	    if (__webpack_require__(/*! ./isPromise */ 245)(response)) {
+	      return response.then(onSuccess);
+	    } else if (response instanceof Error) {
+	      return response;
+	    } else {
+	      return onSuccess(response);
+	    }
+	  }
+	
+	  function requestStream(operation, variables, cacheConfig, _ref) {
+	    var onCompleted = _ref.onCompleted,
+	        onError = _ref.onError,
+	        _onNext = _ref.onNext;
+	
+	    if (operation.query.operation === 'subscription') {
+	      __webpack_require__(/*! fbjs/lib/invariant */ 193)(subscribe, 'The default network layer does not support GraphQL Subscriptions. To use ' + 'Subscriptions, provide a custom network layer.');
+	      return subscribe(operation, variables, null, {
+	        onCompleted: onCompleted,
+	        onError: onError,
+	        onNext: function onNext(payload) {
+	          var relayPayload = void 0;
+	          try {
+	            relayPayload = normalizePayload(operation, variables, payload);
+	          } catch (err) {
+	            onError && onError(err);
+	            return;
+	          }
+	          _onNext && _onNext(relayPayload);
+	        }
+	      });
+	    }
+	
+	    var pollInterval = cacheConfig && cacheConfig.poll;
+	    if (pollInterval != null) {
+	      return doFetchWithPolling(request, operation, variables, { onCompleted: onCompleted, onError: onError, onNext: _onNext }, pollInterval);
+	    }
+	
+	    var isDisposed = false;
+	    var onRequestSuccess = function onRequestSuccess(payload) {
+	      if (isDisposed) {
+	        return;
+	      }
+	      var relayPayload = void 0;
+	      try {
+	        relayPayload = normalizePayload(operation, variables, payload);
+	      } catch (err) {
+	        onError && onError(err);
+	        return;
+	      }
+	      _onNext && _onNext(relayPayload);
+	      onCompleted && onCompleted();
+	    };
+	
+	    var onRequestError = function onRequestError(error) {
+	      if (isDisposed) {
+	        return;
+	      }
+	      onError && onError(error);
+	    };
+	
+	    var requestResponse = fetch(operation, variables, cacheConfig);
+	    if (__webpack_require__(/*! ./isPromise */ 245)(requestResponse)) {
+	      requestResponse.then(onRequestSuccess)['catch'](onRequestError);
+	    } else if (requestResponse instanceof Error) {
+	      onRequestError(requestResponse);
+	    } else {
+	      onRequestSuccess(requestResponse);
+	    }
+	    return {
+	      dispose: function dispose() {
+	        isDisposed = true;
+	      }
+	    };
+	  }
+	
+	  return {
+	    fetch: fetch,
+	    request: request,
+	    requestStream: requestStream
+	  };
+	}
+	
+	function doFetchWithPolling(request, operation, variables, _ref2, pollInterval) {
+	  var onCompleted = _ref2.onCompleted,
+	      onError = _ref2.onError,
+	      onNext = _ref2.onNext;
+	
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(pollInterval > 0, 'RelayNetwork: Expected pollInterval to be positive, got `%s`.', pollInterval);
+	  var isDisposed = false;
+	  var timeout = null;
+	  var dispose = function dispose() {
+	    if (!isDisposed) {
+	      isDisposed = true;
+	      timeout && clearTimeout(timeout);
+	    }
+	  };
+	  function poll() {
+	    var requestResponse = request(operation, variables, { force: true });
+	    if (!__webpack_require__(/*! ./isPromise */ 245)(requestResponse)) {
+	      requestResponse = requestResponse instanceof Error ? Promise.reject(requestResponse) : Promise.resolve(requestResponse);
+	    }
+	    var onRequestSuccess = function onRequestSuccess(payload) {
+	      onNext && onNext(payload);
+	      timeout = setTimeout(poll, pollInterval);
+	    };
+	    var onRequestError = function onRequestError(error) {
+	      dispose();
+	      onError && onError(error);
+	    };
+	    requestResponse.then(function (payload) {
+	      onRequestSuccess(payload);
+	    }, onRequestError)['catch'](rethrow);
+	  }
+	  poll();
+	
+	  return { dispose: dispose };
+	}
+	
+	function normalizePayload(operation, variables, payload) {
+	  var data = payload.data,
+	      errors = payload.errors;
+	
+	  if (data != null) {
+	    return __webpack_require__(/*! ./normalizeRelayPayload */ 231)({
+	      dataID: ROOT_ID,
+	      node: operation.query,
+	      variables: variables
+	    }, data, errors, { handleStrippedNulls: true });
+	  }
+	  var error = __webpack_require__(/*! ./RelayError */ 247).create('RelayNetwork', 'No data returned for operation `%s`, got error(s):\n%s\n\nSee the error ' + '`source` property for more information.', operation.name, errors ? errors.map(function (_ref3) {
+	    var message = _ref3.message;
+	    return message;
+	  }).join('\n') : '(No errors)');
+	  error.source = { errors: errors, operation: operation, variables: variables };
+	  throw error;
+	}
+	
+	function rethrow(err) {
+	  setTimeout(function () {
+	    throw err;
+	  }, 0);
+	}
+	
+	module.exports = { create: create };
+
+/***/ }),
+/* 247 */
+/*!*******************************************!*\
+  !*** ./~/relay-runtime/lib/RelayError.js ***!
+  \*******************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayError
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _toConsumableArray3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/toConsumableArray */ 248));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	/**
+	 * @internal
+	 *
+	 * Factory methods for constructing errors in Relay.
+	 */
+	var RelayError = {
+	  create: function create(name, format) {
+	    for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+	      args[_key - 2] = arguments[_key];
+	    }
+	
+	    return createError('mustfix', name, format, args);
+	  },
+	  createWarning: function createWarning(name, format) {
+	    for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+	      args[_key2 - 2] = arguments[_key2];
+	    }
+	
+	    return createError('warn', name, format, args);
+	  }
+	};
+	
+	/**
+	 * @private
+	 */
+	function createError(type, name, format, args) {
+	  /*eslint-disable fb-www/sprintf-like-args */
+	  var error = new Error(__webpack_require__(/*! fbjs/lib/sprintf */ 271).apply(undefined, [format].concat((0, _toConsumableArray3['default'])(args))));
+	  /*eslint-enable fb-www/sprintf-like-args */
+	  error.name = name;
+	  error.type = type;
+	  error.framesToPop = 2;
+	  return error;
+	}
+	
+	module.exports = RelayError;
+
+/***/ }),
+/* 248 */
+/*!******************************************************!*\
+  !*** ./~/babel-runtime/helpers/toConsumableArray.js ***!
+  \******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	exports.__esModule = true;
+	
+	var _from = __webpack_require__(/*! ../core-js/array/from */ 249);
+	
+	var _from2 = _interopRequireDefault(_from);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function (arr) {
+	  if (Array.isArray(arr)) {
+	    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+	      arr2[i] = arr[i];
+	    }
+	
+	    return arr2;
+	  } else {
+	    return (0, _from2.default)(arr);
+	  }
+	};
+
+/***/ }),
+/* 249 */
+/*!***********************************************!*\
+  !*** ./~/babel-runtime/core-js/array/from.js ***!
+  \***********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(/*! core-js/library/fn/array/from */ 250), __esModule: true };
+
+/***/ }),
+/* 250 */
+/*!********************************************!*\
+  !*** ./~/core-js/library/fn/array/from.js ***!
+  \********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	__webpack_require__(/*! ../../modules/es6.string.iterator */ 251);
+	__webpack_require__(/*! ../../modules/es6.array.from */ 264);
+	module.exports = __webpack_require__(/*! ../../modules/_core */ 175).Array.from;
+
+/***/ }),
+/* 251 */
+/*!**********************************************************!*\
+  !*** ./~/core-js/library/modules/es6.string.iterator.js ***!
+  \**********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var $at  = __webpack_require__(/*! ./_string-at */ 252)(true);
+	
+	// 21.1.3.27 String.prototype[@@iterator]()
+	__webpack_require__(/*! ./_iter-define */ 253)(String, 'String', function(iterated){
+	  this._t = String(iterated); // target
+	  this._i = 0;                // next index
+	// 21.1.5.2.1 %StringIteratorPrototype%.next()
+	}, function(){
+	  var O     = this._t
+	    , index = this._i
+	    , point;
+	  if(index >= O.length)return {value: undefined, done: true};
+	  point = $at(O, index);
+	  this._i += point.length;
+	  return {value: point, done: false};
+	});
+
+/***/ }),
+/* 252 */
+/*!*************************************************!*\
+  !*** ./~/core-js/library/modules/_string-at.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var toInteger = __webpack_require__(/*! ./_to-integer */ 216)
+	  , defined   = __webpack_require__(/*! ./_defined */ 213);
+	// true  -> String#at
+	// false -> String#codePointAt
+	module.exports = function(TO_STRING){
+	  return function(that, pos){
+	    var s = String(defined(that))
+	      , i = toInteger(pos)
+	      , l = s.length
+	      , a, b;
+	    if(i < 0 || i >= l)return TO_STRING ? '' : undefined;
+	    a = s.charCodeAt(i);
+	    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
+	      ? TO_STRING ? s.charAt(i) : a
+	      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
+	  };
+	};
+
+/***/ }),
+/* 253 */
+/*!***************************************************!*\
+  !*** ./~/core-js/library/modules/_iter-define.js ***!
+  \***************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var LIBRARY        = __webpack_require__(/*! ./_library */ 254)
+	  , $export        = __webpack_require__(/*! ./_export */ 173)
+	  , redefine       = __webpack_require__(/*! ./_redefine */ 255)
+	  , hide           = __webpack_require__(/*! ./_hide */ 178)
+	  , has            = __webpack_require__(/*! ./_has */ 209)
+	  , Iterators      = __webpack_require__(/*! ./_iterators */ 256)
+	  , $iterCreate    = __webpack_require__(/*! ./_iter-create */ 257)
+	  , setToStringTag = __webpack_require__(/*! ./_set-to-string-tag */ 261)
+	  , getPrototypeOf = __webpack_require__(/*! ./_object-gpo */ 263)
+	  , ITERATOR       = __webpack_require__(/*! ./_wks */ 262)('iterator')
+	  , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
+	  , FF_ITERATOR    = '@@iterator'
+	  , KEYS           = 'keys'
+	  , VALUES         = 'values';
+	
+	var returnThis = function(){ return this; };
+	
+	module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED){
+	  $iterCreate(Constructor, NAME, next);
+	  var getMethod = function(kind){
+	    if(!BUGGY && kind in proto)return proto[kind];
+	    switch(kind){
+	      case KEYS: return function keys(){ return new Constructor(this, kind); };
+	      case VALUES: return function values(){ return new Constructor(this, kind); };
+	    } return function entries(){ return new Constructor(this, kind); };
+	  };
+	  var TAG        = NAME + ' Iterator'
+	    , DEF_VALUES = DEFAULT == VALUES
+	    , VALUES_BUG = false
+	    , proto      = Base.prototype
+	    , $native    = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT]
+	    , $default   = $native || getMethod(DEFAULT)
+	    , $entries   = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined
+	    , $anyNative = NAME == 'Array' ? proto.entries || $native : $native
+	    , methods, key, IteratorPrototype;
+	  // Fix native
+	  if($anyNative){
+	    IteratorPrototype = getPrototypeOf($anyNative.call(new Base));
+	    if(IteratorPrototype !== Object.prototype){
+	      // Set @@toStringTag to native iterators
+	      setToStringTag(IteratorPrototype, TAG, true);
+	      // fix for some old engines
+	      if(!LIBRARY && !has(IteratorPrototype, ITERATOR))hide(IteratorPrototype, ITERATOR, returnThis);
+	    }
+	  }
+	  // fix Array#{values, @@iterator}.name in V8 / FF
+	  if(DEF_VALUES && $native && $native.name !== VALUES){
+	    VALUES_BUG = true;
+	    $default = function values(){ return $native.call(this); };
+	  }
+	  // Define iterator
+	  if((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])){
+	    hide(proto, ITERATOR, $default);
+	  }
+	  // Plug for library
+	  Iterators[NAME] = $default;
+	  Iterators[TAG]  = returnThis;
+	  if(DEFAULT){
+	    methods = {
+	      values:  DEF_VALUES ? $default : getMethod(VALUES),
+	      keys:    IS_SET     ? $default : getMethod(KEYS),
+	      entries: $entries
+	    };
+	    if(FORCED)for(key in methods){
+	      if(!(key in proto))redefine(proto, key, methods[key]);
+	    } else $export($export.P + $export.F * (BUGGY || VALUES_BUG), NAME, methods);
+	  }
+	  return methods;
+	};
+
+/***/ }),
+/* 254 */
+/*!***********************************************!*\
+  !*** ./~/core-js/library/modules/_library.js ***!
+  \***********************************************/
+/***/ (function(module, exports) {
+
+	module.exports = true;
+
+/***/ }),
+/* 255 */
+/*!************************************************!*\
+  !*** ./~/core-js/library/modules/_redefine.js ***!
+  \************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(/*! ./_hide */ 178);
+
+/***/ }),
+/* 256 */
+/*!*************************************************!*\
+  !*** ./~/core-js/library/modules/_iterators.js ***!
+  \*************************************************/
+/***/ (function(module, exports) {
+
+	module.exports = {};
+
+/***/ }),
+/* 257 */
+/*!***************************************************!*\
+  !*** ./~/core-js/library/modules/_iter-create.js ***!
+  \***************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var create         = __webpack_require__(/*! ./_object-create */ 258)
+	  , descriptor     = __webpack_require__(/*! ./_property-desc */ 187)
+	  , setToStringTag = __webpack_require__(/*! ./_set-to-string-tag */ 261)
+	  , IteratorPrototype = {};
+	
+	// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
+	__webpack_require__(/*! ./_hide */ 178)(IteratorPrototype, __webpack_require__(/*! ./_wks */ 262)('iterator'), function(){ return this; });
+	
+	module.exports = function(Constructor, NAME, next){
+	  Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
+	  setToStringTag(Constructor, NAME + ' Iterator');
+	};
+
+/***/ }),
+/* 258 */
+/*!*****************************************************!*\
+  !*** ./~/core-js/library/modules/_object-create.js ***!
+  \*****************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+	var anObject    = __webpack_require__(/*! ./_an-object */ 180)
+	  , dPs         = __webpack_require__(/*! ./_object-dps */ 259)
+	  , enumBugKeys = __webpack_require__(/*! ./_enum-bug-keys */ 221)
+	  , IE_PROTO    = __webpack_require__(/*! ./_shared-key */ 218)('IE_PROTO')
+	  , Empty       = function(){ /* empty */ }
+	  , PROTOTYPE   = 'prototype';
+	
+	// Create object with fake `null` prototype: use iframe Object with cleared prototype
+	var createDict = function(){
+	  // Thrash, waste and sodomy: IE GC bug
+	  var iframe = __webpack_require__(/*! ./_dom-create */ 185)('iframe')
+	    , i      = enumBugKeys.length
+	    , lt     = '<'
+	    , gt     = '>'
+	    , iframeDocument;
+	  iframe.style.display = 'none';
+	  __webpack_require__(/*! ./_html */ 260).appendChild(iframe);
+	  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
+	  // createDict = iframe.contentWindow.Object;
+	  // html.removeChild(iframe);
+	  iframeDocument = iframe.contentWindow.document;
+	  iframeDocument.open();
+	  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
+	  iframeDocument.close();
+	  createDict = iframeDocument.F;
+	  while(i--)delete createDict[PROTOTYPE][enumBugKeys[i]];
+	  return createDict();
+	};
+	
+	module.exports = Object.create || function create(O, Properties){
+	  var result;
+	  if(O !== null){
+	    Empty[PROTOTYPE] = anObject(O);
+	    result = new Empty;
+	    Empty[PROTOTYPE] = null;
+	    // add "__proto__" for Object.getPrototypeOf polyfill
+	    result[IE_PROTO] = O;
+	  } else result = createDict();
+	  return Properties === undefined ? result : dPs(result, Properties);
+	};
+
+
+/***/ }),
+/* 259 */
+/*!**************************************************!*\
+  !*** ./~/core-js/library/modules/_object-dps.js ***!
+  \**************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var dP       = __webpack_require__(/*! ./_object-dp */ 179)
+	  , anObject = __webpack_require__(/*! ./_an-object */ 180)
+	  , getKeys  = __webpack_require__(/*! ./_object-keys */ 207);
+	
+	module.exports = __webpack_require__(/*! ./_descriptors */ 183) ? Object.defineProperties : function defineProperties(O, Properties){
+	  anObject(O);
+	  var keys   = getKeys(Properties)
+	    , length = keys.length
+	    , i = 0
+	    , P;
+	  while(length > i)dP.f(O, P = keys[i++], Properties[P]);
+	  return O;
+	};
+
+/***/ }),
+/* 260 */
+/*!********************************************!*\
+  !*** ./~/core-js/library/modules/_html.js ***!
+  \********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(/*! ./_global */ 174).document && document.documentElement;
+
+/***/ }),
+/* 261 */
+/*!*********************************************************!*\
+  !*** ./~/core-js/library/modules/_set-to-string-tag.js ***!
+  \*********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var def = __webpack_require__(/*! ./_object-dp */ 179).f
+	  , has = __webpack_require__(/*! ./_has */ 209)
+	  , TAG = __webpack_require__(/*! ./_wks */ 262)('toStringTag');
+	
+	module.exports = function(it, tag, stat){
+	  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
+	};
+
+/***/ }),
+/* 262 */
+/*!*******************************************!*\
+  !*** ./~/core-js/library/modules/_wks.js ***!
+  \*******************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var store      = __webpack_require__(/*! ./_shared */ 219)('wks')
+	  , uid        = __webpack_require__(/*! ./_uid */ 220)
+	  , Symbol     = __webpack_require__(/*! ./_global */ 174).Symbol
+	  , USE_SYMBOL = typeof Symbol == 'function';
+	
+	var $exports = module.exports = function(name){
+	  return store[name] || (store[name] =
+	    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
+	};
+	
+	$exports.store = store;
+
+/***/ }),
+/* 263 */
+/*!**************************************************!*\
+  !*** ./~/core-js/library/modules/_object-gpo.js ***!
+  \**************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
+	var has         = __webpack_require__(/*! ./_has */ 209)
+	  , toObject    = __webpack_require__(/*! ./_to-object */ 224)
+	  , IE_PROTO    = __webpack_require__(/*! ./_shared-key */ 218)('IE_PROTO')
+	  , ObjectProto = Object.prototype;
+	
+	module.exports = Object.getPrototypeOf || function(O){
+	  O = toObject(O);
+	  if(has(O, IE_PROTO))return O[IE_PROTO];
+	  if(typeof O.constructor == 'function' && O instanceof O.constructor){
+	    return O.constructor.prototype;
+	  } return O instanceof Object ? ObjectProto : null;
+	};
+
+/***/ }),
+/* 264 */
+/*!*****************************************************!*\
+  !*** ./~/core-js/library/modules/es6.array.from.js ***!
+  \*****************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var ctx            = __webpack_require__(/*! ./_ctx */ 176)
+	  , $export        = __webpack_require__(/*! ./_export */ 173)
+	  , toObject       = __webpack_require__(/*! ./_to-object */ 224)
+	  , call           = __webpack_require__(/*! ./_iter-call */ 265)
+	  , isArrayIter    = __webpack_require__(/*! ./_is-array-iter */ 266)
+	  , toLength       = __webpack_require__(/*! ./_to-length */ 215)
+	  , createProperty = __webpack_require__(/*! ./_create-property */ 267)
+	  , getIterFn      = __webpack_require__(/*! ./core.get-iterator-method */ 268);
+	
+	$export($export.S + $export.F * !__webpack_require__(/*! ./_iter-detect */ 270)(function(iter){ Array.from(iter); }), 'Array', {
+	  // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
+	  from: function from(arrayLike/*, mapfn = undefined, thisArg = undefined*/){
+	    var O       = toObject(arrayLike)
+	      , C       = typeof this == 'function' ? this : Array
+	      , aLen    = arguments.length
+	      , mapfn   = aLen > 1 ? arguments[1] : undefined
+	      , mapping = mapfn !== undefined
+	      , index   = 0
+	      , iterFn  = getIterFn(O)
+	      , length, result, step, iterator;
+	    if(mapping)mapfn = ctx(mapfn, aLen > 2 ? arguments[2] : undefined, 2);
+	    // if object isn't iterable or it's array with default iterator - use simple case
+	    if(iterFn != undefined && !(C == Array && isArrayIter(iterFn))){
+	      for(iterator = iterFn.call(O), result = new C; !(step = iterator.next()).done; index++){
+	        createProperty(result, index, mapping ? call(iterator, mapfn, [step.value, index], true) : step.value);
+	      }
+	    } else {
+	      length = toLength(O.length);
+	      for(result = new C(length); length > index; index++){
+	        createProperty(result, index, mapping ? mapfn(O[index], index) : O[index]);
+	      }
+	    }
+	    result.length = index;
+	    return result;
+	  }
+	});
+
+
+/***/ }),
+/* 265 */
+/*!*************************************************!*\
+  !*** ./~/core-js/library/modules/_iter-call.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// call something on iterator step with safe closing on error
+	var anObject = __webpack_require__(/*! ./_an-object */ 180);
+	module.exports = function(iterator, fn, value, entries){
+	  try {
+	    return entries ? fn(anObject(value)[0], value[1]) : fn(value);
+	  // 7.4.6 IteratorClose(iterator, completion)
+	  } catch(e){
+	    var ret = iterator['return'];
+	    if(ret !== undefined)anObject(ret.call(iterator));
+	    throw e;
+	  }
+	};
+
+/***/ }),
+/* 266 */
+/*!*****************************************************!*\
+  !*** ./~/core-js/library/modules/_is-array-iter.js ***!
+  \*****************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// check on default Array iterator
+	var Iterators  = __webpack_require__(/*! ./_iterators */ 256)
+	  , ITERATOR   = __webpack_require__(/*! ./_wks */ 262)('iterator')
+	  , ArrayProto = Array.prototype;
+	
+	module.exports = function(it){
+	  return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
+	};
+
+/***/ }),
+/* 267 */
+/*!*******************************************************!*\
+  !*** ./~/core-js/library/modules/_create-property.js ***!
+  \*******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var $defineProperty = __webpack_require__(/*! ./_object-dp */ 179)
+	  , createDesc      = __webpack_require__(/*! ./_property-desc */ 187);
+	
+	module.exports = function(object, index, value){
+	  if(index in object)$defineProperty.f(object, index, createDesc(0, value));
+	  else object[index] = value;
+	};
+
+/***/ }),
+/* 268 */
+/*!***************************************************************!*\
+  !*** ./~/core-js/library/modules/core.get-iterator-method.js ***!
+  \***************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var classof   = __webpack_require__(/*! ./_classof */ 269)
+	  , ITERATOR  = __webpack_require__(/*! ./_wks */ 262)('iterator')
+	  , Iterators = __webpack_require__(/*! ./_iterators */ 256);
+	module.exports = __webpack_require__(/*! ./_core */ 175).getIteratorMethod = function(it){
+	  if(it != undefined)return it[ITERATOR]
+	    || it['@@iterator']
+	    || Iterators[classof(it)];
+	};
+
+/***/ }),
+/* 269 */
+/*!***********************************************!*\
+  !*** ./~/core-js/library/modules/_classof.js ***!
+  \***********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// getting tag from 19.1.3.6 Object.prototype.toString()
+	var cof = __webpack_require__(/*! ./_cof */ 212)
+	  , TAG = __webpack_require__(/*! ./_wks */ 262)('toStringTag')
+	  // ES3 wrong here
+	  , ARG = cof(function(){ return arguments; }()) == 'Arguments';
+	
+	// fallback for IE11 Script Access Denied error
+	var tryGet = function(it, key){
+	  try {
+	    return it[key];
+	  } catch(e){ /* empty */ }
+	};
+	
+	module.exports = function(it){
+	  var O, T, B;
+	  return it === undefined ? 'Undefined' : it === null ? 'Null'
+	    // @@toStringTag case
+	    : typeof (T = tryGet(O = Object(it), TAG)) == 'string' ? T
+	    // builtinTag case
+	    : ARG ? cof(O)
+	    // ES3 arguments fallback
+	    : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+	};
+
+/***/ }),
+/* 270 */
+/*!***************************************************!*\
+  !*** ./~/core-js/library/modules/_iter-detect.js ***!
+  \***************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var ITERATOR     = __webpack_require__(/*! ./_wks */ 262)('iterator')
+	  , SAFE_CLOSING = false;
+	
+	try {
+	  var riter = [7][ITERATOR]();
+	  riter['return'] = function(){ SAFE_CLOSING = true; };
+	  Array.from(riter, function(){ throw 2; });
+	} catch(e){ /* empty */ }
+	
+	module.exports = function(exec, skipClosing){
+	  if(!skipClosing && !SAFE_CLOSING)return false;
+	  var safe = false;
+	  try {
+	    var arr  = [7]
+	      , iter = arr[ITERATOR]();
+	    iter.next = function(){ return {done: safe = true}; };
+	    arr[ITERATOR] = function(){ return iter; };
+	    exec(arr);
+	  } catch(e){ /* empty */ }
+	  return safe;
+	};
+
+/***/ }),
+/* 271 */
+/*!***********************************************!*\
+  !*** ./~/relay-runtime/~/fbjs/lib/sprintf.js ***!
+  \***********************************************/
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @typechecks
+	 */
+	
+	/**
+	 * Simple function for formatting strings.
+	 *
+	 * Replaces placeholders with values passed as extra arguments
+	 *
+	 * @param {string} format the base string
+	 * @param ...args the values to insert
+	 * @return {string} the replaced string
+	 */
+	function sprintf(format) {
+	  for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	    args[_key - 1] = arguments[_key];
+	  }
+	
+	  var index = 0;
+	  return format.replace(/%s/g, function (match) {
+	    return args[index++];
+	  });
+	}
+	
+	module.exports = sprintf;
+
+/***/ }),
+/* 272 */
+/*!********************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayQueryResponseCache.js ***!
+  \********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayQueryResponseCache
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	/**
+	 * A cache for storing query responses, featuring:
+	 * - `get` with TTL
+	 * - cache size limiting, with least-recently *updated* entries purged first
+	 */
+	var RelayQueryResponseCache = function () {
+	  function RelayQueryResponseCache(_ref) {
+	    var size = _ref.size,
+	        ttl = _ref.ttl;
+	    (0, _classCallCheck3['default'])(this, RelayQueryResponseCache);
+	
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(size > 0, 'RelayQueryResponseCache: Expected the max cache size to be > 0, got ' + '`%s`.', size);
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(ttl > 0, 'RelayQueryResponseCache: Expected the max ttl to be > 0, got `%s`.', ttl);
+	    this._responses = new Map();
+	    this._size = size;
+	    this._ttl = ttl;
+	  }
+	
+	  RelayQueryResponseCache.prototype.clear = function clear() {
+	    this._responses.clear();
+	  };
+	
+	  RelayQueryResponseCache.prototype.get = function get(queryID, variables) {
+	    var _this = this;
+	
+	    var cacheKey = getCacheKey(queryID, variables);
+	    this._responses.forEach(function (response, key) {
+	      if (!isCurrent(response.fetchTime, _this._ttl)) {
+	        _this._responses['delete'](key);
+	      }
+	    });
+	    var response = this._responses.get(cacheKey);
+	    return response != null ? response.payload : null;
+	  };
+	
+	  RelayQueryResponseCache.prototype.set = function set(queryID, variables, payload) {
+	    var fetchTime = Date.now();
+	    var cacheKey = getCacheKey(queryID, variables);
+	    this._responses['delete'](cacheKey); // deletion resets key ordering
+	    this._responses.set(cacheKey, {
+	      fetchTime: fetchTime,
+	      payload: payload
+	    });
+	    // Purge least-recently updated key when max size reached
+	    if (this._responses.size > this._size) {
+	      var firstKey = this._responses.keys().next();
+	      if (!firstKey.done) {
+	        this._responses['delete'](firstKey.value);
+	      }
+	    }
+	  };
+	
+	  return RelayQueryResponseCache;
+	}();
+	
+	function getCacheKey(queryID, variables) {
+	  return __webpack_require__(/*! ./stableJSONStringify */ 197)({ queryID: queryID, variables: variables });
+	}
+	
+	/**
+	 * Determine whether a response fetched at `fetchTime` is still valid given
+	 * some `ttl`.
+	 */
+	function isCurrent(fetchTime, ttl) {
+	  return fetchTime + ttl >= Date.now();
+	}
+	
+	module.exports = RelayQueryResponseCache;
+
+/***/ }),
+/* 273 */
+/*!****************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayMarkSweepStore.js ***!
+  \****************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayMarkSweepStore
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _extends3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/extends */ 202));
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _require = __webpack_require__(/*! ./RelayStoreUtils */ 195),
+	    UNPUBLISH_RECORD_SENTINEL = _require.UNPUBLISH_RECORD_SENTINEL;
+	
+	/**
+	 * @public
+	 *
+	 * An implementation of the `Store` interface defined in `RelayStoreTypes`.
+	 *
+	 * Note that a Store takes ownership of all records provided to it: other
+	 * objects may continue to hold a reference to such records but may not mutate
+	 * them. The static Relay core is architected to avoid mutating records that may have been
+	 * passed to a store: operations that mutate records will either create fresh
+	 * records or clone existing records and modify the clones. Record immutability
+	 * is also enforced in development mode by freezing all records passed to a store.
+	 */
+	var RelayMarkSweepStore = function () {
+	  function RelayMarkSweepStore(source) {
+	    (0, _classCallCheck3['default'])(this, RelayMarkSweepStore);
+	
+	    // Prevent mutation of a record from outside the store.
+	    if (process.env.NODE_ENV !== 'production') {
+	      var storeIDs = source.getRecordIDs();
+	      for (var ii = 0; ii < storeIDs.length; ii++) {
+	        var record = source.get(storeIDs[ii]);
+	        if (record) {
+	          __webpack_require__(/*! ./RelayModernRecord */ 226).freeze(record);
+	        }
+	      }
+	    }
+	    this._hasScheduledGC = false;
+	    this._index = 0;
+	    this._recordSource = source;
+	    this._roots = new Map();
+	    this._subscriptions = new Set();
+	    this._updatedRecordIDs = {};
+	  }
+	
+	  RelayMarkSweepStore.prototype.getSource = function getSource() {
+	    return this._recordSource;
+	  };
+	
+	  RelayMarkSweepStore.prototype.check = function check(selector) {
+	    return __webpack_require__(/*! ./RelayAsyncLoader */ 274).check(this._recordSource, this._recordSource, selector);
+	  };
+	
+	  RelayMarkSweepStore.prototype.retain = function retain(selector) {
+	    var _this = this;
+	
+	    var index = this._index++;
+	    var dispose = function dispose() {
+	      _this._roots['delete'](index);
+	      _this._scheduleGC();
+	    };
+	    this._roots.set(index, selector);
+	    return { dispose: dispose };
+	  };
+	
+	  RelayMarkSweepStore.prototype.lookup = function lookup(selector) {
+	    var snapshot = __webpack_require__(/*! ./RelayReader */ 237).read(this._recordSource, selector);
+	    if (process.env.NODE_ENV !== 'production') {
+	      __webpack_require__(/*! ./deepFreeze */ 228)(snapshot);
+	    }
+	    return snapshot;
+	  };
+	
+	  RelayMarkSweepStore.prototype.notify = function notify() {
+	    var _this2 = this;
+	
+	    this._subscriptions.forEach(function (subscription) {
+	      _this2._updateSubscription(subscription);
+	    });
+	    this._updatedRecordIDs = {};
+	  };
+	
+	  RelayMarkSweepStore.prototype.publish = function publish(source) {
+	    updateTargetFromSource(this._recordSource, source, this._updatedRecordIDs);
+	  };
+	
+	  RelayMarkSweepStore.prototype.resolve = function resolve(target, selector, callback) {
+	    __webpack_require__(/*! ./RelayAsyncLoader */ 274).load(this._recordSource, target, selector, callback);
+	  };
+	
+	  RelayMarkSweepStore.prototype.subscribe = function subscribe(snapshot, callback) {
+	    var _this3 = this;
+	
+	    var subscription = { callback: callback, snapshot: snapshot };
+	    var dispose = function dispose() {
+	      _this3._subscriptions['delete'](subscription);
+	    };
+	    this._subscriptions.add(subscription);
+	    return { dispose: dispose };
+	  };
+	
+	  RelayMarkSweepStore.prototype._updateSubscription = function _updateSubscription(subscription) {
+	    var callback = subscription.callback,
+	        snapshot = subscription.snapshot;
+	
+	    if (!__webpack_require__(/*! ./hasOverlappingIDs */ 276)(snapshot, this._updatedRecordIDs)) {
+	      return;
+	    }
+	
+	    var _RelayReader$read = __webpack_require__(/*! ./RelayReader */ 237).read(this._recordSource, snapshot),
+	        data = _RelayReader$read.data,
+	        seenRecords = _RelayReader$read.seenRecords;
+	
+	    var nextData = __webpack_require__(/*! ./recycleNodesInto */ 277)(snapshot.data, data);
+	    var nextSnapshot = (0, _extends3['default'])({}, snapshot, {
+	      data: nextData,
+	      seenRecords: seenRecords
+	    });
+	    if (process.env.NODE_ENV !== 'production') {
+	      __webpack_require__(/*! ./deepFreeze */ 228)(nextSnapshot);
+	    }
+	    subscription.snapshot = nextSnapshot;
+	    if (nextSnapshot.data !== snapshot.data) {
+	      callback(nextSnapshot);
+	    }
+	  };
+	
+	  RelayMarkSweepStore.prototype._scheduleGC = function _scheduleGC() {
+	    var _this4 = this;
+	
+	    if (this._hasScheduledGC) {
+	      return;
+	    }
+	    this._hasScheduledGC = true;
+	    __webpack_require__(/*! fbjs/lib/resolveImmediate */ 278)(function () {
+	      _this4._gc();
+	      _this4._hasScheduledGC = false;
+	    });
+	  };
+	
+	  RelayMarkSweepStore.prototype._gc = function _gc() {
+	    var _this5 = this;
+	
+	    var references = new Set();
+	    // Mark all records that are traversable from a root
+	    this._roots.forEach(function (selector) {
+	      __webpack_require__(/*! ./RelayReferenceMarker */ 290).mark(_this5._recordSource, selector, references);
+	    });
+	    // Short-circuit if *nothing* is referenced
+	    if (!references.size) {
+	      this._recordSource.clear();
+	      return;
+	    }
+	    // Evict any unreferenced nodes
+	    var storeIDs = this._recordSource.getRecordIDs();
+	    for (var ii = 0; ii < storeIDs.length; ii++) {
+	      var dataID = storeIDs[ii];
+	      if (!references.has(dataID)) {
+	        this._recordSource.remove(dataID);
+	      }
+	    }
+	  };
+	
+	  return RelayMarkSweepStore;
+	}();
+	
+	/**
+	 * Updates the target with information from source, also updating a mapping of
+	 * which records in the target were changed as a result.
+	 */
+	
+	
+	function updateTargetFromSource(target, source, updatedRecordIDs) {
+	  var dataIDs = source.getRecordIDs();
+	  for (var ii = 0; ii < dataIDs.length; ii++) {
+	    var dataID = dataIDs[ii];
+	    var sourceRecord = source.get(dataID);
+	    var targetRecord = target.get(dataID);
+	    // Prevent mutation of a record from outside the store.
+	    if (process.env.NODE_ENV !== 'production') {
+	      if (sourceRecord) {
+	        __webpack_require__(/*! ./RelayModernRecord */ 226).freeze(sourceRecord);
+	      }
+	    }
+	    if (sourceRecord === UNPUBLISH_RECORD_SENTINEL) {
+	      // Unpublish a record
+	      target.remove(dataID);
+	      updatedRecordIDs[dataID] = true;
+	    } else if (sourceRecord && targetRecord) {
+	      var nextRecord = __webpack_require__(/*! ./RelayModernRecord */ 226).update(targetRecord, sourceRecord);
+	      if (nextRecord !== targetRecord) {
+	        // Prevent mutation of a record from outside the store.
+	        if (process.env.NODE_ENV !== 'production') {
+	          __webpack_require__(/*! ./RelayModernRecord */ 226).freeze(nextRecord);
+	        }
+	        updatedRecordIDs[dataID] = true;
+	        target.set(dataID, nextRecord);
+	      }
+	    } else if (sourceRecord === null) {
+	      target['delete'](dataID);
+	      if (targetRecord !== null) {
+	        updatedRecordIDs[dataID] = true;
+	      }
+	    } else if (sourceRecord) {
+	      target.set(dataID, sourceRecord);
+	      updatedRecordIDs[dataID] = true;
+	    } // don't add explicit undefined
+	  }
+	}
+	
+	__webpack_require__(/*! ./RelayProfiler */ 234).instrumentMethods(RelayMarkSweepStore.prototype, {
+	  lookup: 'RelayMarkSweepStore.prototype.lookup',
+	  notify: 'RelayMarkSweepStore.prototype.notify',
+	  publish: 'RelayMarkSweepStore.prototype.publish',
+	  retain: 'RelayMarkSweepStore.prototype.retain',
+	  subscribe: 'RelayMarkSweepStore.prototype.subscribe'
+	});
+	
+	module.exports = RelayMarkSweepStore;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 4)))
+
+/***/ }),
+/* 274 */
+/*!*************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayAsyncLoader.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayAsyncLoader
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var CONDITION = __webpack_require__(/*! ./RelayConcreteNode */ 196).CONDITION,
+	    INLINE_FRAGMENT = __webpack_require__(/*! ./RelayConcreteNode */ 196).INLINE_FRAGMENT,
+	    LINKED_FIELD = __webpack_require__(/*! ./RelayConcreteNode */ 196).LINKED_FIELD,
+	    LINKED_HANDLE = __webpack_require__(/*! ./RelayConcreteNode */ 196).LINKED_HANDLE,
+	    SCALAR_FIELD = __webpack_require__(/*! ./RelayConcreteNode */ 196).SCALAR_FIELD;
+	
+	var getStorageKey = __webpack_require__(/*! ./RelayStoreUtils */ 195).getStorageKey;
+	
+	/**
+	 * Attempts to synchronously check whether the records required to fulfill the
+	 * given `selector` are present in `source` (synchronous checks, for example,
+	 * are possible with the `RelayInMemoryRecordSource`).
+	 *
+	 * If so, returns `true`, and the records will be present in `target`;
+	 * otherwise `false`.
+	 */
+	
+	
+	function check(source, target, selector) {
+	  var state = null;
+	  var dataID = selector.dataID,
+	      node = selector.node,
+	      variables = selector.variables;
+	
+	  function callback(loadingState) {
+	    state = loadingState;
+	  }
+	  var loader = new RelayAsyncLoader(source, target, variables, callback);
+	  var disposable = loader.load(node, dataID);
+	  disposable.dispose();
+	  return !!(state && state.status === 'complete');
+	}
+	
+	/**
+	 * Load the records required to fulfill the given `selector` from `source` and add
+	 * them to `target`, calling the provided callback exactly once with an argument
+	 * as follows:
+	 * - {status: 'aborted'}: If `dispose()` was called on the Disposable returned
+	 *   by `load` before loading the required records could be completed.
+	 * - {status: 'complete'}: If a cached value/record was found for all fields in
+	 *   the selector.
+	 * - {status: 'error', error}: If an error occured loading any record from
+	 *   source.
+	 * - {status: 'missing'}: If any value/record was missing.
+	 *
+	 * Note that the callback may be called synchronously *or* asynchronously.
+	 */
+	function load(source, target, selector, callback) {
+	  var dataID = selector.dataID,
+	      node = selector.node,
+	      variables = selector.variables;
+	
+	  var loader = new RelayAsyncLoader(source, target, variables, callback);
+	  return loader.load(node, dataID);
+	}
+	
+	/**
+	 * @private
+	 */
+	
+	var RelayAsyncLoader = function () {
+	  function RelayAsyncLoader(source, target, variables, callback) {
+	    (0, _classCallCheck3['default'])(this, RelayAsyncLoader);
+	
+	    this._callback = callback;
+	    this._done = false;
+	    this._loadingCount = 0;
+	    this._source = source;
+	    this._target = target;
+	    this._variables = variables;
+	  }
+	
+	  RelayAsyncLoader.prototype.load = function load(node, dataID) {
+	    var _this = this;
+	
+	    var dispose = function dispose() {
+	      return _this._handleAbort();
+	    };
+	    this._traverse(node, dataID);
+	    return { dispose: dispose };
+	  };
+	
+	  RelayAsyncLoader.prototype._getVariableValue = function _getVariableValue(name) {
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(this._variables.hasOwnProperty(name), 'RelayAsyncLoader(): Undefined variable `%s`.', name);
+	    return this._variables[name];
+	  };
+	
+	  RelayAsyncLoader.prototype._handleComplete = function _handleComplete() {
+	    if (!this._done) {
+	      this._done = true;
+	      this._callback({ status: 'complete' });
+	    }
+	  };
+	
+	  RelayAsyncLoader.prototype._handleError = function _handleError(error) {
+	    if (!this._done) {
+	      this._done = true;
+	      this._callback({
+	        error: error,
+	        status: 'error'
+	      });
+	    }
+	  };
+	
+	  RelayAsyncLoader.prototype._handleMissing = function _handleMissing() {
+	    if (!this._done) {
+	      this._done = true;
+	      this._callback({ status: 'missing' });
+	    }
+	  };
+	
+	  RelayAsyncLoader.prototype._handleAbort = function _handleAbort() {
+	    if (!this._done) {
+	      this._done = true;
+	      this._callback({ status: 'aborted' });
+	    }
+	  };
+	
+	  RelayAsyncLoader.prototype._traverse = function _traverse(node, dataID) {
+	    // Don't load the same node twice:
+	    if (!this._target.has(dataID)) {
+	      this._loadAndTraverse(node, dataID);
+	    } else {
+	      this._loadingCount++;
+	      var record = this._target.get(dataID);
+	      if (record) {
+	        this._traverseSelections(node.selections, record);
+	      }
+	      this._loadingCount--;
+	      if (this._loadingCount === 0) {
+	        this._handleComplete();
+	      }
+	    }
+	  };
+	
+	  RelayAsyncLoader.prototype._loadAndTraverse = function _loadAndTraverse(node, dataID) {
+	    var _this2 = this;
+	
+	    this._loadingCount++;
+	    this._source.load(dataID, function (error, record) {
+	      if (_this2._done) {
+	        return;
+	      }
+	      if (error) {
+	        _this2._handleError(error);
+	      } else if (record === undefined) {
+	        _this2._handleMissing();
+	      } else {
+	        if (record === null) {
+	          _this2._target['delete'](dataID);
+	        } else {
+	          _this2._target.set(dataID, record);
+	          _this2._traverseSelections(node.selections, record);
+	        }
+	        _this2._loadingCount--;
+	        if (_this2._loadingCount === 0) {
+	          _this2._handleComplete();
+	        }
+	      }
+	    });
+	  };
+	
+	  RelayAsyncLoader.prototype._traverseSelections = function _traverseSelections(selections, record) {
+	    var _this3 = this;
+	
+	    selections.every(function (selection) {
+	      switch (selection.kind) {
+	        case SCALAR_FIELD:
+	          _this3._prepareScalar(selection, record);
+	          break;
+	        case LINKED_FIELD:
+	          if (selection.plural) {
+	            _this3._preparePluralLink(selection, record);
+	          } else {
+	            _this3._prepareLink(selection, record);
+	          }
+	          break;
+	        case CONDITION:
+	          var conditionValue = _this3._getVariableValue(selection.condition);
+	          if (conditionValue === selection.passingValue) {
+	            _this3._traverseSelections(selection.selections, record);
+	          }
+	          break;
+	        case INLINE_FRAGMENT:
+	          var typeName = __webpack_require__(/*! ./RelayModernRecord */ 226).getType(record);
+	          if (typeName != null && typeName === selection.type) {
+	            _this3._traverseSelections(selection.selections, record);
+	          }
+	          break;
+	        case LINKED_HANDLE:
+	          // Handles have no selections themselves; traverse the original field
+	          // where the handle was set-up instead.
+	          var handleField = __webpack_require__(/*! ./cloneRelayHandleSourceField */ 275)(selection, selections, _this3._variables);
+	          if (handleField.plural) {
+	            _this3._preparePluralLink(handleField, record);
+	          } else {
+	            _this3._prepareLink(handleField, record);
+	          }
+	          break;
+	        default:
+	          __webpack_require__(/*! fbjs/lib/invariant */ 193)(selection.kind === SCALAR_FIELD, 'RelayAsyncLoader(): Unexpected ast kind `%s`.', selection.kind);
+	      }
+	      return !_this3._done;
+	    });
+	  };
+	
+	  RelayAsyncLoader.prototype._prepareScalar = function _prepareScalar(field, record) {
+	    var storageKey = getStorageKey(field, this._variables);
+	    var fieldValue = __webpack_require__(/*! ./RelayModernRecord */ 226).getValue(record, storageKey);
+	    if (fieldValue === undefined) {
+	      this._handleMissing();
+	    }
+	  };
+	
+	  RelayAsyncLoader.prototype._prepareLink = function _prepareLink(field, record) {
+	    var storageKey = getStorageKey(field, this._variables);
+	    var linkedID = __webpack_require__(/*! ./RelayModernRecord */ 226).getLinkedRecordID(record, storageKey);
+	
+	    if (linkedID === undefined) {
+	      this._handleMissing();
+	    } else if (linkedID != null) {
+	      this._traverse(field, linkedID);
+	    }
+	  };
+	
+	  RelayAsyncLoader.prototype._preparePluralLink = function _preparePluralLink(field, record) {
+	    var _this4 = this;
+	
+	    var storageKey = getStorageKey(field, this._variables);
+	    var linkedIDs = __webpack_require__(/*! ./RelayModernRecord */ 226).getLinkedRecordIDs(record, storageKey);
+	
+	    if (linkedIDs === undefined) {
+	      this._handleMissing();
+	    } else if (linkedIDs) {
+	      linkedIDs.forEach(function (linkedID) {
+	        if (linkedID != null) {
+	          _this4._traverse(field, linkedID);
+	        }
+	      });
+	    }
+	  };
+	
+	  return RelayAsyncLoader;
+	}();
+	
+	module.exports = {
+	  check: check,
+	  load: load
+	};
+
+/***/ }),
+/* 275 */
+/*!************************************************************!*\
+  !*** ./~/relay-runtime/lib/cloneRelayHandleSourceField.js ***!
+  \************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule cloneRelayHandleSourceField
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _extends3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/extends */ 202));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _require = __webpack_require__(/*! ./RelayStoreUtils */ 195),
+	    getHandleFilterValues = _require.getHandleFilterValues;
+	
+	var LINKED_FIELD = __webpack_require__(/*! ./RelayConcreteNode */ 196).LINKED_FIELD;
+	
+	/**
+	 * @private
+	 *
+	 * Creates a clone of the supplied `handleField` by finding the original linked
+	 * field (on which the handle was declared) among the sibling `selections`, and
+	 * copying its selections into the clone.
+	 */
+	
+	
+	function cloneRelayHandleSourceField(handleField, selections, variables) {
+	  var sourceField = selections.find(function (source) {
+	    return source.kind === LINKED_FIELD && source.name === handleField.name && source.alias === handleField.alias && __webpack_require__(/*! fbjs/lib/areEqual */ 227)(source.args, handleField.args);
+	  });
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(sourceField && sourceField.kind === LINKED_FIELD, 'cloneRelayHandleSourceField: Expected a corresponding source field for ' + 'handle `%s`.', handleField.handle);
+	  var handleKey = __webpack_require__(/*! ./getRelayHandleKey */ 191)(handleField.handle, handleField.key, handleField.name);
+	  if (handleField.filters && handleField.filters.length > 0) {
+	    var filterValues = getHandleFilterValues(handleField.args || [], handleField.filters, variables);
+	    handleKey = __webpack_require__(/*! ./formatStorageKey */ 233)(handleKey, filterValues);
+	  }
+	
+	  var clonedField = (0, _extends3['default'])({}, sourceField, {
+	    args: null,
+	    name: handleKey,
+	    storageKey: handleKey
+	  });
+	  return clonedField;
+	}
+	
+	module.exports = cloneRelayHandleSourceField;
+
+/***/ }),
+/* 276 */
+/*!**************************************************!*\
+  !*** ./~/relay-runtime/lib/hasOverlappingIDs.js ***!
+  \**************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule hasOverlappingIDs
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	function hasOverlappingIDs(snapshot, updatedRecordIDs) {
+	  var keys = Object.keys(snapshot.seenRecords);
+	  for (var ii = 0; ii < keys.length; ii++) {
+	    if (updatedRecordIDs.hasOwnProperty(keys[ii])) {
+	      return true;
+	    }
+	  }
+	  return false;
+	}
+	
+	module.exports = hasOverlappingIDs;
+
+/***/ }),
+/* 277 */
+/*!*************************************************!*\
+  !*** ./~/relay-runtime/lib/recycleNodesInto.js ***!
+  \*************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule recycleNodesInto
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Recycles subtrees from `prevData` by replacing equal subtrees in `nextData`.
+	 */
+	
+	function recycleNodesInto(prevData, nextData) {
+	  if (prevData === nextData || typeof prevData !== 'object' || !prevData || typeof nextData !== 'object' || !nextData) {
+	    return nextData;
+	  }
+	  var canRecycle = false;
+	
+	  // Assign local variables to preserve Flow type refinement.
+	  var prevArray = Array.isArray(prevData) ? prevData : null;
+	  var nextArray = Array.isArray(nextData) ? nextData : null;
+	  if (prevArray && nextArray) {
+	    canRecycle = nextArray.reduce(function (wasEqual, nextItem, ii) {
+	      var prevValue = prevArray[ii];
+	      var nextValue = recycleNodesInto(prevValue, nextItem);
+	      if (nextValue !== nextArray[ii]) {
+	        nextArray[ii] = nextValue;
+	      }
+	      return wasEqual && nextArray[ii] === prevArray[ii];
+	    }, true) && prevArray.length === nextArray.length;
+	  } else if (!prevArray && !nextArray) {
+	    // Assign local variables to preserve Flow type refinement.
+	    var prevObject = prevData;
+	    var nextObject = nextData;
+	    var prevKeys = Object.keys(prevObject);
+	    var nextKeys = Object.keys(nextObject);
+	    canRecycle = nextKeys.reduce(function (wasEqual, key) {
+	      var prevValue = prevObject[key];
+	      var nextValue = recycleNodesInto(prevValue, nextObject[key]);
+	      if (nextValue !== nextObject[key]) {
+	        nextObject[key] = nextValue;
+	      }
+	      return wasEqual && nextObject[key] === prevObject[key];
+	    }, true) && prevKeys.length === nextKeys.length;
+	  }
+	  return canRecycle ? prevData : nextData;
+	}
+	
+	module.exports = recycleNodesInto;
+
+/***/ }),
+/* 278 */
+/*!********************************************************!*\
+  !*** ./~/relay-runtime/~/fbjs/lib/resolveImmediate.js ***!
+  \********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var Promise = __webpack_require__(/*! ./Promise */ 279);
+	
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 */
+	
+	var resolvedPromise = Promise.resolve();
+	
+	/**
+	 * An alternative to setImmediate based on Promise.
+	 */
+	function resolveImmediate(callback) {
+	  resolvedPromise.then(callback)["catch"](throwNext);
+	}
+	
+	function throwNext(error) {
+	  setTimeout(function () {
+	    throw error;
+	  }, 0);
+	}
+	
+	module.exports = resolveImmediate;
+
+/***/ }),
+/* 279 */
+/*!***********************************************!*\
+  !*** ./~/relay-runtime/~/fbjs/lib/Promise.js ***!
+  \***********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 */
+	
+	module.exports = __webpack_require__(/*! promise */ 280);
+
+/***/ }),
+/* 280 */
+/*!****************************!*\
+  !*** ./~/promise/index.js ***!
+  \****************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	module.exports = __webpack_require__(/*! ./lib */ 281)
+
+
+/***/ }),
+/* 281 */
+/*!********************************!*\
+  !*** ./~/promise/lib/index.js ***!
+  \********************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	module.exports = __webpack_require__(/*! ./core.js */ 282);
+	__webpack_require__(/*! ./done.js */ 284);
+	__webpack_require__(/*! ./finally.js */ 285);
+	__webpack_require__(/*! ./es6-extensions.js */ 286);
+	__webpack_require__(/*! ./node-extensions.js */ 287);
+	__webpack_require__(/*! ./synchronous.js */ 289);
+
+
+/***/ }),
+/* 282 */
+/*!*******************************!*\
+  !*** ./~/promise/lib/core.js ***!
+  \*******************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var asap = __webpack_require__(/*! asap/raw */ 283);
+	
+	function noop() {}
+	
+	// States:
+	//
+	// 0 - pending
+	// 1 - fulfilled with _value
+	// 2 - rejected with _value
+	// 3 - adopted the state of another promise, _value
+	//
+	// once the state is no longer pending (0) it is immutable
+	
+	// All `_` prefixed properties will be reduced to `_{random number}`
+	// at build time to obfuscate them and discourage their use.
+	// We don't use symbols or Object.defineProperty to fully hide them
+	// because the performance isn't good enough.
+	
+	
+	// to avoid using try/catch inside critical functions, we
+	// extract them to here.
+	var LAST_ERROR = null;
+	var IS_ERROR = {};
+	function getThen(obj) {
+	  try {
+	    return obj.then;
+	  } catch (ex) {
+	    LAST_ERROR = ex;
+	    return IS_ERROR;
+	  }
+	}
+	
+	function tryCallOne(fn, a) {
+	  try {
+	    return fn(a);
+	  } catch (ex) {
+	    LAST_ERROR = ex;
+	    return IS_ERROR;
+	  }
+	}
+	function tryCallTwo(fn, a, b) {
+	  try {
+	    fn(a, b);
+	  } catch (ex) {
+	    LAST_ERROR = ex;
+	    return IS_ERROR;
+	  }
+	}
+	
+	module.exports = Promise;
+	
+	function Promise(fn) {
+	  if (typeof this !== 'object') {
+	    throw new TypeError('Promises must be constructed via new');
+	  }
+	  if (typeof fn !== 'function') {
+	    throw new TypeError('Promise constructor\'s argument is not a function');
+	  }
+	  this._40 = 0;
+	  this._65 = 0;
+	  this._55 = null;
+	  this._72 = null;
+	  if (fn === noop) return;
+	  doResolve(fn, this);
+	}
+	Promise._37 = null;
+	Promise._87 = null;
+	Promise._61 = noop;
+	
+	Promise.prototype.then = function(onFulfilled, onRejected) {
+	  if (this.constructor !== Promise) {
+	    return safeThen(this, onFulfilled, onRejected);
+	  }
+	  var res = new Promise(noop);
+	  handle(this, new Handler(onFulfilled, onRejected, res));
+	  return res;
+	};
+	
+	function safeThen(self, onFulfilled, onRejected) {
+	  return new self.constructor(function (resolve, reject) {
+	    var res = new Promise(noop);
+	    res.then(resolve, reject);
+	    handle(self, new Handler(onFulfilled, onRejected, res));
+	  });
+	}
+	function handle(self, deferred) {
+	  while (self._65 === 3) {
+	    self = self._55;
+	  }
+	  if (Promise._37) {
+	    Promise._37(self);
+	  }
+	  if (self._65 === 0) {
+	    if (self._40 === 0) {
+	      self._40 = 1;
+	      self._72 = deferred;
+	      return;
+	    }
+	    if (self._40 === 1) {
+	      self._40 = 2;
+	      self._72 = [self._72, deferred];
+	      return;
+	    }
+	    self._72.push(deferred);
+	    return;
+	  }
+	  handleResolved(self, deferred);
+	}
+	
+	function handleResolved(self, deferred) {
+	  asap(function() {
+	    var cb = self._65 === 1 ? deferred.onFulfilled : deferred.onRejected;
+	    if (cb === null) {
+	      if (self._65 === 1) {
+	        resolve(deferred.promise, self._55);
+	      } else {
+	        reject(deferred.promise, self._55);
+	      }
+	      return;
+	    }
+	    var ret = tryCallOne(cb, self._55);
+	    if (ret === IS_ERROR) {
+	      reject(deferred.promise, LAST_ERROR);
+	    } else {
+	      resolve(deferred.promise, ret);
+	    }
+	  });
+	}
+	function resolve(self, newValue) {
+	  // Promise Resolution Procedure: https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
+	  if (newValue === self) {
+	    return reject(
+	      self,
+	      new TypeError('A promise cannot be resolved with itself.')
+	    );
+	  }
+	  if (
+	    newValue &&
+	    (typeof newValue === 'object' || typeof newValue === 'function')
+	  ) {
+	    var then = getThen(newValue);
+	    if (then === IS_ERROR) {
+	      return reject(self, LAST_ERROR);
+	    }
+	    if (
+	      then === self.then &&
+	      newValue instanceof Promise
+	    ) {
+	      self._65 = 3;
+	      self._55 = newValue;
+	      finale(self);
+	      return;
+	    } else if (typeof then === 'function') {
+	      doResolve(then.bind(newValue), self);
+	      return;
+	    }
+	  }
+	  self._65 = 1;
+	  self._55 = newValue;
+	  finale(self);
+	}
+	
+	function reject(self, newValue) {
+	  self._65 = 2;
+	  self._55 = newValue;
+	  if (Promise._87) {
+	    Promise._87(self, newValue);
+	  }
+	  finale(self);
+	}
+	function finale(self) {
+	  if (self._40 === 1) {
+	    handle(self, self._72);
+	    self._72 = null;
+	  }
+	  if (self._40 === 2) {
+	    for (var i = 0; i < self._72.length; i++) {
+	      handle(self, self._72[i]);
+	    }
+	    self._72 = null;
+	  }
+	}
+	
+	function Handler(onFulfilled, onRejected, promise){
+	  this.onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : null;
+	  this.onRejected = typeof onRejected === 'function' ? onRejected : null;
+	  this.promise = promise;
+	}
+	
+	/**
+	 * Take a potentially misbehaving resolver function and make sure
+	 * onFulfilled and onRejected are only called once.
+	 *
+	 * Makes no guarantees about asynchrony.
+	 */
+	function doResolve(fn, promise) {
+	  var done = false;
+	  var res = tryCallTwo(fn, function (value) {
+	    if (done) return;
+	    done = true;
+	    resolve(promise, value);
+	  }, function (reason) {
+	    if (done) return;
+	    done = true;
+	    reject(promise, reason);
+	  });
+	  if (!done && res === IS_ERROR) {
+	    done = true;
+	    reject(promise, LAST_ERROR);
+	  }
+	}
+
+
+/***/ }),
+/* 283 */
+/*!*******************************!*\
+  !*** ./~/asap/browser-raw.js ***!
+  \*******************************/
+/***/ (function(module, exports) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {"use strict";
+	
+	// Use the fastest means possible to execute a task in its own turn, with
+	// priority over other events including IO, animation, reflow, and redraw
+	// events in browsers.
+	//
+	// An exception thrown by a task will permanently interrupt the processing of
+	// subsequent tasks. The higher level `asap` function ensures that if an
+	// exception is thrown by a task, that the task queue will continue flushing as
+	// soon as possible, but if you use `rawAsap` directly, you are responsible to
+	// either ensure that no exceptions are thrown from your task, or to manually
+	// call `rawAsap.requestFlush` if an exception is thrown.
+	module.exports = rawAsap;
+	function rawAsap(task) {
+	    if (!queue.length) {
+	        requestFlush();
+	        flushing = true;
+	    }
+	    // Equivalent to push, but avoids a function call.
+	    queue[queue.length] = task;
+	}
+	
+	var queue = [];
+	// Once a flush has been requested, no further calls to `requestFlush` are
+	// necessary until the next `flush` completes.
+	var flushing = false;
+	// `requestFlush` is an implementation-specific method that attempts to kick
+	// off a `flush` event as quickly as possible. `flush` will attempt to exhaust
+	// the event queue before yielding to the browser's own event loop.
+	var requestFlush;
+	// The position of the next task to execute in the task queue. This is
+	// preserved between calls to `flush` so that it can be resumed if
+	// a task throws an exception.
+	var index = 0;
+	// If a task schedules additional tasks recursively, the task queue can grow
+	// unbounded. To prevent memory exhaustion, the task queue will periodically
+	// truncate already-completed tasks.
+	var capacity = 1024;
+	
+	// The flush function processes all tasks that have been scheduled with
+	// `rawAsap` unless and until one of those tasks throws an exception.
+	// If a task throws an exception, `flush` ensures that its state will remain
+	// consistent and will resume where it left off when called again.
+	// However, `flush` does not make any arrangements to be called again if an
+	// exception is thrown.
+	function flush() {
+	    while (index < queue.length) {
+	        var currentIndex = index;
+	        // Advance the index before calling the task. This ensures that we will
+	        // begin flushing on the next task the task throws an error.
+	        index = index + 1;
+	        queue[currentIndex].call();
+	        // Prevent leaking memory for long chains of recursive calls to `asap`.
+	        // If we call `asap` within tasks scheduled by `asap`, the queue will
+	        // grow, but to avoid an O(n) walk for every task we execute, we don't
+	        // shift tasks off the queue after they have been executed.
+	        // Instead, we periodically shift 1024 tasks off the queue.
+	        if (index > capacity) {
+	            // Manually shift all values starting at the index back to the
+	            // beginning of the queue.
+	            for (var scan = 0, newLength = queue.length - index; scan < newLength; scan++) {
+	                queue[scan] = queue[scan + index];
+	            }
+	            queue.length -= index;
+	            index = 0;
+	        }
+	    }
+	    queue.length = 0;
+	    index = 0;
+	    flushing = false;
+	}
+	
+	// `requestFlush` is implemented using a strategy based on data collected from
+	// every available SauceLabs Selenium web driver worker at time of writing.
+	// https://docs.google.com/spreadsheets/d/1mG-5UYGup5qxGdEMWkhP6BWCz053NUb2E1QoUTU16uA/edit#gid=783724593
+	
+	// Safari 6 and 6.1 for desktop, iPad, and iPhone are the only browsers that
+	// have WebKitMutationObserver but not un-prefixed MutationObserver.
+	// Must use `global` or `self` instead of `window` to work in both frames and web
+	// workers. `global` is a provision of Browserify, Mr, Mrs, or Mop.
+	
+	/* globals self */
+	var scope = typeof global !== "undefined" ? global : self;
+	var BrowserMutationObserver = scope.MutationObserver || scope.WebKitMutationObserver;
+	
+	// MutationObservers are desirable because they have high priority and work
+	// reliably everywhere they are implemented.
+	// They are implemented in all modern browsers.
+	//
+	// - Android 4-4.3
+	// - Chrome 26-34
+	// - Firefox 14-29
+	// - Internet Explorer 11
+	// - iPad Safari 6-7.1
+	// - iPhone Safari 7-7.1
+	// - Safari 6-7
+	if (typeof BrowserMutationObserver === "function") {
+	    requestFlush = makeRequestCallFromMutationObserver(flush);
+	
+	// MessageChannels are desirable because they give direct access to the HTML
+	// task queue, are implemented in Internet Explorer 10, Safari 5.0-1, and Opera
+	// 11-12, and in web workers in many engines.
+	// Although message channels yield to any queued rendering and IO tasks, they
+	// would be better than imposing the 4ms delay of timers.
+	// However, they do not work reliably in Internet Explorer or Safari.
+	
+	// Internet Explorer 10 is the only browser that has setImmediate but does
+	// not have MutationObservers.
+	// Although setImmediate yields to the browser's renderer, it would be
+	// preferrable to falling back to setTimeout since it does not have
+	// the minimum 4ms penalty.
+	// Unfortunately there appears to be a bug in Internet Explorer 10 Mobile (and
+	// Desktop to a lesser extent) that renders both setImmediate and
+	// MessageChannel useless for the purposes of ASAP.
+	// https://github.com/kriskowal/q/issues/396
+	
+	// Timers are implemented universally.
+	// We fall back to timers in workers in most engines, and in foreground
+	// contexts in the following browsers.
+	// However, note that even this simple case requires nuances to operate in a
+	// broad spectrum of browsers.
+	//
+	// - Firefox 3-13
+	// - Internet Explorer 6-9
+	// - iPad Safari 4.3
+	// - Lynx 2.8.7
+	} else {
+	    requestFlush = makeRequestCallFromTimer(flush);
+	}
+	
+	// `requestFlush` requests that the high priority event queue be flushed as
+	// soon as possible.
+	// This is useful to prevent an error thrown in a task from stalling the event
+	// queue if the exception handled by Node.js’s
+	// `process.on("uncaughtException")` or by a domain.
+	rawAsap.requestFlush = requestFlush;
+	
+	// To request a high priority event, we induce a mutation observer by toggling
+	// the text of a text node between "1" and "-1".
+	function makeRequestCallFromMutationObserver(callback) {
+	    var toggle = 1;
+	    var observer = new BrowserMutationObserver(callback);
+	    var node = document.createTextNode("");
+	    observer.observe(node, {characterData: true});
+	    return function requestCall() {
+	        toggle = -toggle;
+	        node.data = toggle;
+	    };
+	}
+	
+	// The message channel technique was discovered by Malte Ubl and was the
+	// original foundation for this library.
+	// http://www.nonblocking.io/2011/06/windownexttick.html
+	
+	// Safari 6.0.5 (at least) intermittently fails to create message ports on a
+	// page's first load. Thankfully, this version of Safari supports
+	// MutationObservers, so we don't need to fall back in that case.
+	
+	// function makeRequestCallFromMessageChannel(callback) {
+	//     var channel = new MessageChannel();
+	//     channel.port1.onmessage = callback;
+	//     return function requestCall() {
+	//         channel.port2.postMessage(0);
+	//     };
+	// }
+	
+	// For reasons explained above, we are also unable to use `setImmediate`
+	// under any circumstances.
+	// Even if we were, there is another bug in Internet Explorer 10.
+	// It is not sufficient to assign `setImmediate` to `requestFlush` because
+	// `setImmediate` must be called *by name* and therefore must be wrapped in a
+	// closure.
+	// Never forget.
+	
+	// function makeRequestCallFromSetImmediate(callback) {
+	//     return function requestCall() {
+	//         setImmediate(callback);
+	//     };
+	// }
+	
+	// Safari 6.0 has a problem where timers will get lost while the user is
+	// scrolling. This problem does not impact ASAP because Safari 6.0 supports
+	// mutation observers, so that implementation is used instead.
+	// However, if we ever elect to use timers in Safari, the prevalent work-around
+	// is to add a scroll event listener that calls for a flush.
+	
+	// `setTimeout` does not call the passed callback if the delay is less than
+	// approximately 7 in web workers in Firefox 8 through 18, and sometimes not
+	// even then.
+	
+	function makeRequestCallFromTimer(callback) {
+	    return function requestCall() {
+	        // We dispatch a timeout with a specified delay of 0 for engines that
+	        // can reliably accommodate that request. This will usually be snapped
+	        // to a 4 milisecond delay, but once we're flushing, there's no delay
+	        // between events.
+	        var timeoutHandle = setTimeout(handleTimer, 0);
+	        // However, since this timer gets frequently dropped in Firefox
+	        // workers, we enlist an interval handle that will try to fire
+	        // an event 20 times per second until it succeeds.
+	        var intervalHandle = setInterval(handleTimer, 50);
+	
+	        function handleTimer() {
+	            // Whichever timer succeeds will cancel both timers and
+	            // execute the callback.
+	            clearTimeout(timeoutHandle);
+	            clearInterval(intervalHandle);
+	            callback();
+	        }
+	    };
+	}
+	
+	// This is for `asap.js` only.
+	// Its name will be periodically randomized to break any code that depends on
+	// its existence.
+	rawAsap.makeRequestCallFromTimer = makeRequestCallFromTimer;
+	
+	// ASAP was originally a nextTick shim included in Q. This was factored out
+	// into this ASAP package. It was later adapted to RSVP which made further
+	// amendments. These decisions, particularly to marginalize MessageChannel and
+	// to capture the MutationObserver implementation in a closure, were integrated
+	// back into ASAP proper.
+	// https://github.com/tildeio/rsvp.js/blob/cddf7232546a9cf858524b75cde6f9edf72620a7/lib/rsvp/asap.js
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ }),
+/* 284 */
+/*!*******************************!*\
+  !*** ./~/promise/lib/done.js ***!
+  \*******************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Promise = __webpack_require__(/*! ./core.js */ 282);
+	
+	module.exports = Promise;
+	Promise.prototype.done = function (onFulfilled, onRejected) {
+	  var self = arguments.length ? this.then.apply(this, arguments) : this;
+	  self.then(null, function (err) {
+	    setTimeout(function () {
+	      throw err;
+	    }, 0);
+	  });
+	};
+
+
+/***/ }),
+/* 285 */
+/*!**********************************!*\
+  !*** ./~/promise/lib/finally.js ***!
+  \**********************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Promise = __webpack_require__(/*! ./core.js */ 282);
+	
+	module.exports = Promise;
+	Promise.prototype['finally'] = function (f) {
+	  return this.then(function (value) {
+	    return Promise.resolve(f()).then(function () {
+	      return value;
+	    });
+	  }, function (err) {
+	    return Promise.resolve(f()).then(function () {
+	      throw err;
+	    });
+	  });
+	};
+
+
+/***/ }),
+/* 286 */
+/*!*****************************************!*\
+  !*** ./~/promise/lib/es6-extensions.js ***!
+  \*****************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	//This file contains the ES6 extensions to the core Promises/A+ API
+	
+	var Promise = __webpack_require__(/*! ./core.js */ 282);
+	
+	module.exports = Promise;
+	
+	/* Static Functions */
+	
+	var TRUE = valuePromise(true);
+	var FALSE = valuePromise(false);
+	var NULL = valuePromise(null);
+	var UNDEFINED = valuePromise(undefined);
+	var ZERO = valuePromise(0);
+	var EMPTYSTRING = valuePromise('');
+	
+	function valuePromise(value) {
+	  var p = new Promise(Promise._61);
+	  p._65 = 1;
+	  p._55 = value;
+	  return p;
+	}
+	Promise.resolve = function (value) {
+	  if (value instanceof Promise) return value;
+	
+	  if (value === null) return NULL;
+	  if (value === undefined) return UNDEFINED;
+	  if (value === true) return TRUE;
+	  if (value === false) return FALSE;
+	  if (value === 0) return ZERO;
+	  if (value === '') return EMPTYSTRING;
+	
+	  if (typeof value === 'object' || typeof value === 'function') {
+	    try {
+	      var then = value.then;
+	      if (typeof then === 'function') {
+	        return new Promise(then.bind(value));
+	      }
+	    } catch (ex) {
+	      return new Promise(function (resolve, reject) {
+	        reject(ex);
+	      });
+	    }
+	  }
+	  return valuePromise(value);
+	};
+	
+	Promise.all = function (arr) {
+	  var args = Array.prototype.slice.call(arr);
+	
+	  return new Promise(function (resolve, reject) {
+	    if (args.length === 0) return resolve([]);
+	    var remaining = args.length;
+	    function res(i, val) {
+	      if (val && (typeof val === 'object' || typeof val === 'function')) {
+	        if (val instanceof Promise && val.then === Promise.prototype.then) {
+	          while (val._65 === 3) {
+	            val = val._55;
+	          }
+	          if (val._65 === 1) return res(i, val._55);
+	          if (val._65 === 2) reject(val._55);
+	          val.then(function (val) {
+	            res(i, val);
+	          }, reject);
+	          return;
+	        } else {
+	          var then = val.then;
+	          if (typeof then === 'function') {
+	            var p = new Promise(then.bind(val));
+	            p.then(function (val) {
+	              res(i, val);
+	            }, reject);
+	            return;
+	          }
+	        }
+	      }
+	      args[i] = val;
+	      if (--remaining === 0) {
+	        resolve(args);
+	      }
+	    }
+	    for (var i = 0; i < args.length; i++) {
+	      res(i, args[i]);
+	    }
+	  });
+	};
+	
+	Promise.reject = function (value) {
+	  return new Promise(function (resolve, reject) {
+	    reject(value);
+	  });
+	};
+	
+	Promise.race = function (values) {
+	  return new Promise(function (resolve, reject) {
+	    values.forEach(function(value){
+	      Promise.resolve(value).then(resolve, reject);
+	    });
+	  });
+	};
+	
+	/* Prototype Methods */
+	
+	Promise.prototype['catch'] = function (onRejected) {
+	  return this.then(null, onRejected);
+	};
+
+
+/***/ }),
+/* 287 */
+/*!******************************************!*\
+  !*** ./~/promise/lib/node-extensions.js ***!
+  \******************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	// This file contains then/promise specific extensions that are only useful
+	// for node.js interop
+	
+	var Promise = __webpack_require__(/*! ./core.js */ 282);
+	var asap = __webpack_require__(/*! asap */ 288);
+	
+	module.exports = Promise;
+	
+	/* Static Functions */
+	
+	Promise.denodeify = function (fn, argumentCount) {
+	  if (
+	    typeof argumentCount === 'number' && argumentCount !== Infinity
+	  ) {
+	    return denodeifyWithCount(fn, argumentCount);
+	  } else {
+	    return denodeifyWithoutCount(fn);
+	  }
+	};
+	
+	var callbackFn = (
+	  'function (err, res) {' +
+	  'if (err) { rj(err); } else { rs(res); }' +
+	  '}'
+	);
+	function denodeifyWithCount(fn, argumentCount) {
+	  var args = [];
+	  for (var i = 0; i < argumentCount; i++) {
+	    args.push('a' + i);
+	  }
+	  var body = [
+	    'return function (' + args.join(',') + ') {',
+	    'var self = this;',
+	    'return new Promise(function (rs, rj) {',
+	    'var res = fn.call(',
+	    ['self'].concat(args).concat([callbackFn]).join(','),
+	    ');',
+	    'if (res &&',
+	    '(typeof res === "object" || typeof res === "function") &&',
+	    'typeof res.then === "function"',
+	    ') {rs(res);}',
+	    '});',
+	    '};'
+	  ].join('');
+	  return Function(['Promise', 'fn'], body)(Promise, fn);
+	}
+	function denodeifyWithoutCount(fn) {
+	  var fnLength = Math.max(fn.length - 1, 3);
+	  var args = [];
+	  for (var i = 0; i < fnLength; i++) {
+	    args.push('a' + i);
+	  }
+	  var body = [
+	    'return function (' + args.join(',') + ') {',
+	    'var self = this;',
+	    'var args;',
+	    'var argLength = arguments.length;',
+	    'if (arguments.length > ' + fnLength + ') {',
+	    'args = new Array(arguments.length + 1);',
+	    'for (var i = 0; i < arguments.length; i++) {',
+	    'args[i] = arguments[i];',
+	    '}',
+	    '}',
+	    'return new Promise(function (rs, rj) {',
+	    'var cb = ' + callbackFn + ';',
+	    'var res;',
+	    'switch (argLength) {',
+	    args.concat(['extra']).map(function (_, index) {
+	      return (
+	        'case ' + (index) + ':' +
+	        'res = fn.call(' + ['self'].concat(args.slice(0, index)).concat('cb').join(',') + ');' +
+	        'break;'
+	      );
+	    }).join(''),
+	    'default:',
+	    'args[argLength] = cb;',
+	    'res = fn.apply(self, args);',
+	    '}',
+	    
+	    'if (res &&',
+	    '(typeof res === "object" || typeof res === "function") &&',
+	    'typeof res.then === "function"',
+	    ') {rs(res);}',
+	    '});',
+	    '};'
+	  ].join('');
+	
+	  return Function(
+	    ['Promise', 'fn'],
+	    body
+	  )(Promise, fn);
+	}
+	
+	Promise.nodeify = function (fn) {
+	  return function () {
+	    var args = Array.prototype.slice.call(arguments);
+	    var callback =
+	      typeof args[args.length - 1] === 'function' ? args.pop() : null;
+	    var ctx = this;
+	    try {
+	      return fn.apply(this, arguments).nodeify(callback, ctx);
+	    } catch (ex) {
+	      if (callback === null || typeof callback == 'undefined') {
+	        return new Promise(function (resolve, reject) {
+	          reject(ex);
+	        });
+	      } else {
+	        asap(function () {
+	          callback.call(ctx, ex);
+	        })
+	      }
+	    }
+	  }
+	};
+	
+	Promise.prototype.nodeify = function (callback, ctx) {
+	  if (typeof callback != 'function') return this;
+	
+	  this.then(function (value) {
+	    asap(function () {
+	      callback.call(ctx, null, value);
+	    });
+	  }, function (err) {
+	    asap(function () {
+	      callback.call(ctx, err);
+	    });
+	  });
+	};
+
+
+/***/ }),
+/* 288 */
+/*!********************************!*\
+  !*** ./~/asap/browser-asap.js ***!
+  \********************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	// rawAsap provides everything we need except exception management.
+	var rawAsap = __webpack_require__(/*! ./raw */ 283);
+	// RawTasks are recycled to reduce GC churn.
+	var freeTasks = [];
+	// We queue errors to ensure they are thrown in right order (FIFO).
+	// Array-as-queue is good enough here, since we are just dealing with exceptions.
+	var pendingErrors = [];
+	var requestErrorThrow = rawAsap.makeRequestCallFromTimer(throwFirstError);
+	
+	function throwFirstError() {
+	    if (pendingErrors.length) {
+	        throw pendingErrors.shift();
+	    }
+	}
+	
+	/**
+	 * Calls a task as soon as possible after returning, in its own event, with priority
+	 * over other events like animation, reflow, and repaint. An error thrown from an
+	 * event will not interrupt, nor even substantially slow down the processing of
+	 * other events, but will be rather postponed to a lower priority event.
+	 * @param {{call}} task A callable object, typically a function that takes no
+	 * arguments.
+	 */
+	module.exports = asap;
+	function asap(task) {
+	    var rawTask;
+	    if (freeTasks.length) {
+	        rawTask = freeTasks.pop();
+	    } else {
+	        rawTask = new RawTask();
+	    }
+	    rawTask.task = task;
+	    rawAsap(rawTask);
+	}
+	
+	// We wrap tasks with recyclable task objects.  A task object implements
+	// `call`, just like a function.
+	function RawTask() {
+	    this.task = null;
+	}
+	
+	// The sole purpose of wrapping the task is to catch the exception and recycle
+	// the task object after its single use.
+	RawTask.prototype.call = function () {
+	    try {
+	        this.task.call();
+	    } catch (error) {
+	        if (asap.onerror) {
+	            // This hook exists purely for testing purposes.
+	            // Its name will be periodically randomized to break any code that
+	            // depends on its existence.
+	            asap.onerror(error);
+	        } else {
+	            // In a web browser, exceptions are not fatal. However, to avoid
+	            // slowing down the queue of pending tasks, we rethrow the error in a
+	            // lower priority turn.
+	            pendingErrors.push(error);
+	            requestErrorThrow();
+	        }
+	    } finally {
+	        this.task = null;
+	        freeTasks[freeTasks.length] = this;
+	    }
+	};
+
+
+/***/ }),
+/* 289 */
+/*!**************************************!*\
+  !*** ./~/promise/lib/synchronous.js ***!
+  \**************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Promise = __webpack_require__(/*! ./core.js */ 282);
+	
+	module.exports = Promise;
+	Promise.enableSynchronous = function () {
+	  Promise.prototype.isPending = function() {
+	    return this.getState() == 0;
+	  };
+	
+	  Promise.prototype.isFulfilled = function() {
+	    return this.getState() == 1;
+	  };
+	
+	  Promise.prototype.isRejected = function() {
+	    return this.getState() == 2;
+	  };
+	
+	  Promise.prototype.getValue = function () {
+	    if (this._65 === 3) {
+	      return this._55.getValue();
+	    }
+	
+	    if (!this.isFulfilled()) {
+	      throw new Error('Cannot get a value of an unfulfilled promise.');
+	    }
+	
+	    return this._55;
+	  };
+	
+	  Promise.prototype.getReason = function () {
+	    if (this._65 === 3) {
+	      return this._55.getReason();
+	    }
+	
+	    if (!this.isRejected()) {
+	      throw new Error('Cannot get a rejection reason of a non-rejected promise.');
+	    }
+	
+	    return this._55;
+	  };
+	
+	  Promise.prototype.getState = function () {
+	    if (this._65 === 3) {
+	      return this._55.getState();
+	    }
+	    if (this._65 === -1 || this._65 === -2) {
+	      return 0;
+	    }
+	
+	    return this._65;
+	  };
+	};
+	
+	Promise.disableSynchronous = function() {
+	  Promise.prototype.isPending = undefined;
+	  Promise.prototype.isFulfilled = undefined;
+	  Promise.prototype.isRejected = undefined;
+	  Promise.prototype.getValue = undefined;
+	  Promise.prototype.getReason = undefined;
+	  Promise.prototype.getState = undefined;
+	};
+
+
+/***/ }),
+/* 290 */
+/*!*****************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayReferenceMarker.js ***!
+  \*****************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayReferenceMarker
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var CONDITION = __webpack_require__(/*! ./RelayConcreteNode */ 196).CONDITION,
+	    FRAGMENT_SPREAD = __webpack_require__(/*! ./RelayConcreteNode */ 196).FRAGMENT_SPREAD,
+	    INLINE_FRAGMENT = __webpack_require__(/*! ./RelayConcreteNode */ 196).INLINE_FRAGMENT,
+	    LINKED_FIELD = __webpack_require__(/*! ./RelayConcreteNode */ 196).LINKED_FIELD,
+	    LINKED_HANDLE = __webpack_require__(/*! ./RelayConcreteNode */ 196).LINKED_HANDLE,
+	    SCALAR_FIELD = __webpack_require__(/*! ./RelayConcreteNode */ 196).SCALAR_FIELD,
+	    SCALAR_HANDLE = __webpack_require__(/*! ./RelayConcreteNode */ 196).SCALAR_HANDLE;
+	
+	var getStorageKey = __webpack_require__(/*! ./RelayStoreUtils */ 195).getStorageKey;
+	
+	function mark(recordSource, selector, references) {
+	  var dataID = selector.dataID,
+	      node = selector.node,
+	      variables = selector.variables;
+	
+	  var marker = new RelayReferenceMarker(recordSource, variables, references);
+	  marker.mark(node, dataID);
+	}
+	
+	/**
+	 * @private
+	 */
+	
+	var RelayReferenceMarker = function () {
+	  function RelayReferenceMarker(recordSource, variables, references) {
+	    (0, _classCallCheck3['default'])(this, RelayReferenceMarker);
+	
+	    this._references = references;
+	    this._recordSource = recordSource;
+	    this._variables = variables;
+	  }
+	
+	  RelayReferenceMarker.prototype.mark = function mark(node, dataID) {
+	    this._traverse(node, dataID);
+	  };
+	
+	  RelayReferenceMarker.prototype._traverse = function _traverse(node, dataID) {
+	    this._references.add(dataID);
+	    var record = this._recordSource.get(dataID);
+	    if (record == null) {
+	      return;
+	    }
+	    this._traverseSelections(node.selections, record);
+	  };
+	
+	  RelayReferenceMarker.prototype._getVariableValue = function _getVariableValue(name) {
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(this._variables.hasOwnProperty(name), 'RelayReferenceMarker(): Undefined variable `%s`.', name);
+	    return this._variables[name];
+	  };
+	
+	  RelayReferenceMarker.prototype._traverseSelections = function _traverseSelections(selections, record) {
+	    var _this = this;
+	
+	    selections.forEach(function (selection) {
+	      if (selection.kind === LINKED_FIELD) {
+	        if (selection.plural) {
+	          _this._traversePluralLink(selection, record);
+	        } else {
+	          _this._traverseLink(selection, record);
+	        }
+	      } else if (selection.kind === CONDITION) {
+	        var conditionValue = _this._getVariableValue(selection.condition);
+	        if (conditionValue === selection.passingValue) {
+	          _this._traverseSelections(selection.selections, record);
+	        }
+	      } else if (selection.kind === INLINE_FRAGMENT) {
+	        var typeName = __webpack_require__(/*! ./RelayModernRecord */ 226).getType(record);
+	        if (typeName != null && typeName === selection.type) {
+	          _this._traverseSelections(selection.selections, record);
+	        }
+	      } else if (selection.kind === FRAGMENT_SPREAD) {
+	        __webpack_require__(/*! fbjs/lib/invariant */ 193)(false, 'RelayReferenceMarker(): Unexpected fragment spread `...%s`, ' + 'expected all fragments to be inlined.', selection.name);
+	      } else if (selection.kind === LINKED_HANDLE) {
+	        // The selections for a "handle" field are the same as those of the
+	        // original linked field where the handle was applied. Reference marking
+	        // therefore requires traversing the original field selections against
+	        // the synthesized client field.
+	        //
+	        // TODO: Instead of finding the source field in `selections`, change
+	        // the concrete structure to allow shared subtrees, and have the linked
+	        // handle directly refer to the same selections as the LinkedField that
+	        // it was split from.
+	        var handleField = __webpack_require__(/*! ./cloneRelayHandleSourceField */ 275)(selection, selections, _this._variables);
+	        if (handleField.plural) {
+	          _this._traversePluralLink(handleField, record);
+	        } else {
+	          _this._traverseLink(handleField, record);
+	        }
+	      } else {
+	        __webpack_require__(/*! fbjs/lib/invariant */ 193)(selection.kind === SCALAR_FIELD || selection.kind === SCALAR_HANDLE, 'RelayReferenceMarker(): Unexpected ast kind `%s`.', selection.kind);
+	      }
+	    });
+	  };
+	
+	  RelayReferenceMarker.prototype._traverseLink = function _traverseLink(field, record) {
+	    var storageKey = getStorageKey(field, this._variables);
+	    var linkedID = __webpack_require__(/*! ./RelayModernRecord */ 226).getLinkedRecordID(record, storageKey);
+	
+	    if (linkedID == null) {
+	      return;
+	    }
+	    this._traverse(field, linkedID);
+	  };
+	
+	  RelayReferenceMarker.prototype._traversePluralLink = function _traversePluralLink(field, record) {
+	    var _this2 = this;
+	
+	    var storageKey = getStorageKey(field, this._variables);
+	    var linkedIDs = __webpack_require__(/*! ./RelayModernRecord */ 226).getLinkedRecordIDs(record, storageKey);
+	
+	    if (linkedIDs == null) {
+	      return;
+	    }
+	    linkedIDs.forEach(function (linkedID) {
+	      if (linkedID != null) {
+	        _this2._traverse(field, linkedID);
+	      }
+	    });
+	  };
+	
+	  return RelayReferenceMarker;
+	}();
+	
+	module.exports = { mark: mark };
+
+/***/ }),
+/* 291 */
+/*!**************************************************!*\
+  !*** ./~/relay-runtime/lib/commitLocalUpdate.js ***!
+  \**************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule commitLocalUpdate
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	function commitLocalUpdate(environment, updater) {
+	  environment.commitUpdate(updater);
+	}
+	
+	module.exports = commitLocalUpdate;
+
+/***/ }),
+/* 292 */
+/*!**********************************************************!*\
+  !*** ./~/relay-runtime/lib/commitRelayModernMutation.js ***!
+  \**********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule commitRelayModernMutation
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Higher-level helper function to execute a mutation against a specific
+	 * environment.
+	 */
+	function commitRelayModernMutation(environment, config) {
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(__webpack_require__(/*! ./isRelayModernEnvironment */ 293)(environment), 'commitRelayModernMutation: expect `environment` to be an instance of ' + '`RelayModernEnvironment`.');
+	  var _environment$unstable = environment.unstable_internal,
+	      createOperationSelector = _environment$unstable.createOperationSelector,
+	      getOperation = _environment$unstable.getOperation;
+	
+	  var mutation = getOperation(config.mutation);
+	  var optimisticResponse = config.optimisticResponse,
+	      optimisticUpdater = config.optimisticUpdater,
+	      updater = config.updater;
+	  var configs = config.configs,
+	      onError = config.onError,
+	      variables = config.variables,
+	      uploadables = config.uploadables;
+	
+	  var operation = createOperationSelector(mutation, variables);
+	  // TODO: remove this check after we fix flow.
+	  if (typeof optimisticResponse === 'function') {
+	    optimisticResponse = optimisticResponse();
+	    __webpack_require__(/*! fbjs/lib/warning */ 189)(false, 'commitRelayModernMutatuion: Expected `optimisticResponse` to be an object, ' + 'received a function.');
+	  }
+	  if (optimisticResponse && mutation.query.selections && mutation.query.selections.length === 1 && mutation.query.selections[0].kind === 'LinkedField') {
+	    var mutationRoot = mutation.query.selections[0].name;
+	    __webpack_require__(/*! fbjs/lib/warning */ 189)(optimisticResponse[mutationRoot], 'commitRelayModernMutatuion: Expected `optimisticResponse` to be wrapped ' + 'in mutation name `%s`', mutationRoot);
+	  }
+	  if (configs) {
+	    var _setRelayModernMutati = __webpack_require__(/*! ./setRelayModernMutationConfigs */ 294)(configs, mutation, optimisticUpdater, updater);
+	
+	    optimisticUpdater = _setRelayModernMutati.optimisticUpdater;
+	    updater = _setRelayModernMutati.updater;
+	  }
+	  return environment.sendMutation({
+	    onError: onError,
+	    operation: operation,
+	    uploadables: uploadables,
+	    updater: updater,
+	    optimisticUpdater: optimisticUpdater,
+	    optimisticResponse: optimisticResponse,
+	    onCompleted: function onCompleted(errors) {
+	      var onCompleted = config.onCompleted;
+	
+	      if (onCompleted) {
+	        var snapshot = environment.lookup(operation.fragment);
+	        onCompleted(snapshot.data, errors);
+	      }
+	    }
+	  });
+	}
+	
+	module.exports = commitRelayModernMutation;
+
+/***/ }),
+/* 293 */
+/*!*********************************************************!*\
+  !*** ./~/relay-runtime/lib/isRelayModernEnvironment.js ***!
+  \*********************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule isRelayModernEnvironment
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Determine if a given value is an object that implements the `Environment`
+	 * interface defined in `RelayStoreTypes`.
+	 *
+	 * Use a sigil for detection to avoid a realm-specific instanceof check, and to
+	 * aid in module tree-shaking to avoid requiring all of RelayRuntime just to
+	 * detect its environment.
+	 */
+	
+	function isRelayModernEnvironment(environment) {
+	  return Boolean(environment && environment['@@RelayModernEnvironment']);
+	}
+	
+	module.exports = isRelayModernEnvironment;
+
+/***/ }),
+/* 294 */
+/*!**************************************************************!*\
+  !*** ./~/relay-runtime/lib/setRelayModernMutationConfigs.js ***!
+  \**************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule setRelayModernMutationConfigs
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	function setRelayModernMutationConfigs(configs, operation, optimisticUpdater, updater) {
+	  var configOptimisticUpdates = optimisticUpdater ? [optimisticUpdater] : [];
+	  var configUpdates = updater ? [updater] : [];
+	  configs.forEach(function (config) {
+	    switch (config.type) {
+	      case 'NODE_DELETE':
+	        var nodeDeleteResult = nodeDelete(config, operation);
+	        if (nodeDeleteResult) {
+	          configOptimisticUpdates.push(nodeDeleteResult);
+	          configUpdates.push(nodeDeleteResult);
+	        }
+	        break;
+	      case 'RANGE_ADD':
+	        var rangeAddResult = rangeAdd(config, operation);
+	        if (rangeAddResult) {
+	          configOptimisticUpdates.push(rangeAddResult);
+	          configUpdates.push(rangeAddResult);
+	        }
+	        break;
+	      case 'RANGE_DELETE':
+	        var rangeDeleteResult = rangeDelete(config, operation);
+	        if (rangeDeleteResult) {
+	          configOptimisticUpdates.push(rangeDeleteResult);
+	          configUpdates.push(rangeDeleteResult);
+	        }
+	        break;
+	    }
+	  });
+	  optimisticUpdater = function optimisticUpdater(store, data) {
+	    configOptimisticUpdates.forEach(function (eachOptimisticUpdater) {
+	      eachOptimisticUpdater(store, data);
+	    });
+	  };
+	  updater = function updater(store, data) {
+	    configUpdates.forEach(function (eachUpdater) {
+	      eachUpdater(store, data);
+	    });
+	  };
+	  return { optimisticUpdater: optimisticUpdater, updater: updater };
+	}
+	
+	function nodeDelete(config, operation) {
+	  var updater = void 0;
+	  if (config.type !== 'NODE_DELETE') {
+	    return;
+	  }
+	  var deletedIDFieldName = config.deletedIDFieldName;
+	
+	  var rootField = getRootField(operation);
+	  if (rootField) {
+	    updater = function updater(store, data) {
+	      var payload = store.getRootField(rootField);
+	      if (!payload) {
+	        return;
+	      }
+	      var deleteID = payload.getValue(deletedIDFieldName);
+	      var deleteIDs = Array.isArray(deleteID) ? deleteID : [deleteID];
+	      deleteIDs.forEach(function (id) {
+	        if (id && typeof id === 'string') {
+	          store['delete'](id);
+	        }
+	      });
+	    };
+	  }
+	  return updater;
+	}
+	
+	function rangeAdd(config, operation) {
+	  var updater = void 0;
+	  if (config.type !== 'RANGE_ADD') {
+	    return;
+	  }
+	  var parentID = config.parentID,
+	      connectionInfo = config.connectionInfo,
+	      edgeName = config.edgeName;
+	
+	  if (!parentID) {
+	    __webpack_require__(/*! fbjs/lib/warning */ 189)(false, 'setRelayModernMutationConfigs: For mutation config RANGE_ADD ' + 'to work you must include a parentID');
+	    return;
+	  }
+	  var rootField = getRootField(operation);
+	  if (connectionInfo && rootField) {
+	    updater = function updater(store, data) {
+	      var parent = store.get(parentID);
+	      if (parent) {
+	        var payload = store.getRootField(rootField);
+	        if (!payload) {
+	          return;
+	        }
+	        var newEdge = payload.getLinkedRecord(edgeName);
+	        var _iteratorNormalCompletion = true;
+	        var _didIteratorError = false;
+	        var _iteratorError = undefined;
+	
+	        try {
+	          for (var _iterator = connectionInfo[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var info = _step.value;
+	
+	            if (newEdge) {
+	              var connection = __webpack_require__(/*! ./RelayConnectionHandler */ 166).getConnection(parent, info.key, info.filters);
+	              if (!connection) {
+	                return;
+	              }
+	              switch (info.rangeBehavior) {
+	                case 'append':
+	                  __webpack_require__(/*! ./RelayConnectionHandler */ 166).insertEdgeAfter(connection, newEdge);
+	                  break;
+	                case 'ignore':
+	                  // Do nothing
+	                  break;
+	                case 'prepend':
+	                  __webpack_require__(/*! ./RelayConnectionHandler */ 166).insertEdgeBefore(connection, newEdge);
+	                  break;
+	                default:
+	                  __webpack_require__(/*! fbjs/lib/warning */ 189)(false, 'setRelayModernMutationConfigs: RANGE_ADD range behavior ' + ('\'' + info.rangeBehavior + '\' will not work as expected in RelayModern, ') + "supported range behaviors are 'append', 'prepend', and " + "'ignore'");
+	                  break;
+	              }
+	            }
+	          }
+	        } catch (err) {
+	          _didIteratorError = true;
+	          _iteratorError = err;
+	        } finally {
+	          try {
+	            if (!_iteratorNormalCompletion && _iterator['return']) {
+	              _iterator['return']();
+	            }
+	          } finally {
+	            if (_didIteratorError) {
+	              throw _iteratorError;
+	            }
+	          }
+	        }
+	      }
+	    };
+	  }
+	  return updater;
+	}
+	
+	function rangeDelete(config, operation) {
+	  var updater = void 0;
+	  if (config.type !== 'RANGE_DELETE') {
+	    return;
+	  }
+	  var parentID = config.parentID,
+	      connectionKeys = config.connectionKeys,
+	      pathToConnection = config.pathToConnection,
+	      deletedIDFieldName = config.deletedIDFieldName;
+	
+	  if (!parentID) {
+	    __webpack_require__(/*! fbjs/lib/warning */ 189)(false, 'setRelayModernMutationConfigs: For mutation config RANGE_DELETE ' + 'to work you must include a parentID');
+	    return;
+	  }
+	  var rootField = getRootField(operation);
+	  if (rootField) {
+	    updater = function updater(store, data) {
+	      if (data) {
+	        var deleteIDs = [];
+	        var deletedIDField = data[rootField];
+	        if (deletedIDField && Array.isArray(deletedIDFieldName)) {
+	          var _iteratorNormalCompletion2 = true;
+	          var _didIteratorError2 = false;
+	          var _iteratorError2 = undefined;
+	
+	          try {
+	            for (var _iterator2 = deletedIDFieldName[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	              var eachField = _step2.value;
+	
+	              if (deletedIDField && typeof deletedIDField === 'object') {
+	                deletedIDField = deletedIDField[eachField];
+	              }
+	            }
+	          } catch (err) {
+	            _didIteratorError2 = true;
+	            _iteratorError2 = err;
+	          } finally {
+	            try {
+	              if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+	                _iterator2['return']();
+	              }
+	            } finally {
+	              if (_didIteratorError2) {
+	                throw _iteratorError2;
+	              }
+	            }
+	          }
+	
+	          if (Array.isArray(deletedIDField)) {
+	            deletedIDField.forEach(function (idObject) {
+	              if (idObject && idObject.id && typeof idObject === 'object' && typeof idObject.id === 'string') {
+	                deleteIDs.push(idObject.id);
+	              }
+	            });
+	          } else if (deletedIDField && deletedIDField.id && typeof deletedIDField.id === 'string') {
+	            deleteIDs.push(deletedIDField.id);
+	          }
+	        } else if (deletedIDField && typeof deletedIDFieldName === 'string' && typeof deletedIDField === 'object') {
+	          deletedIDField = deletedIDField[deletedIDFieldName];
+	          if (typeof deletedIDField === 'string') {
+	            deleteIDs.push(deletedIDField);
+	          } else if (Array.isArray(deletedIDField)) {
+	            deletedIDField.forEach(function (id) {
+	              if (typeof id === 'string') {
+	                deleteIDs.push(id);
+	              }
+	            });
+	          }
+	        }
+	        deleteNode(parentID, connectionKeys, pathToConnection, store, deleteIDs);
+	      }
+	    };
+	  }
+	  return updater;
+	}
+	
+	function deleteNode(parentID, connectionKeys, pathToConnection, store, deleteIDs) {
+	  __webpack_require__(/*! fbjs/lib/warning */ 189)(connectionKeys, 'setRelayModernMutationConfigs: RANGE_DELETE must provide a ' + 'connectionKeys');
+	  var parent = store.get(parentID);
+	  if (!parent) {
+	    return;
+	  }
+	  if (pathToConnection.length >= 2) {
+	    var recordProxy = parent;
+	    for (var i = 1; i < pathToConnection.length - 1; i++) {
+	      if (recordProxy) {
+	        recordProxy = recordProxy.getLinkedRecord(pathToConnection[i]);
+	      }
+	    }
+	    // Should never enter loop except edge cases
+	    if (connectionKeys && recordProxy) {
+	      var _iteratorNormalCompletion3 = true;
+	      var _didIteratorError3 = false;
+	      var _iteratorError3 = undefined;
+	
+	      try {
+	        var _loop = function _loop() {
+	          var key = _step3.value;
+	
+	          var connection = __webpack_require__(/*! ./RelayConnectionHandler */ 166).getConnection(recordProxy, key.key, key.filters);
+	          if (connection) {
+	            deleteIDs.forEach(function (deleteID) {
+	              __webpack_require__(/*! ./RelayConnectionHandler */ 166).deleteNode(connection, deleteID);
+	            });
+	            return 'break';
+	          }
+	        };
+	
+	        for (var _iterator3 = connectionKeys[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	          var _ret = _loop();
+	
+	          if (_ret === 'break') break;
+	        }
+	      } catch (err) {
+	        _didIteratorError3 = true;
+	        _iteratorError3 = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion3 && _iterator3['return']) {
+	            _iterator3['return']();
+	          }
+	        } finally {
+	          if (_didIteratorError3) {
+	            throw _iteratorError3;
+	          }
+	        }
+	      }
+	    } else {
+	      __webpack_require__(/*! fbjs/lib/warning */ 189)(false, 'setRelayModernMutationConfigs: RANGE_DELETE ' + 'pathToConnection is incorrect. Unable to find connection with ' + 'parentID: %s and path: %s', parentID, pathToConnection.toString());
+	    }
+	  } else {
+	    __webpack_require__(/*! fbjs/lib/warning */ 189)(false, 'setRelayModernMutationConfigs: RANGE_DELETE ' + 'pathToConnection must include at least parent and connection');
+	  }
+	}
+	
+	function getRootField(operation) {
+	  var rootField = void 0;
+	  if (operation.fragment && operation.fragment.selections && operation.fragment.selections.length > 0 && operation.fragment.selections[0].kind === 'LinkedField') {
+	    rootField = operation.fragment.selections[0].name;
+	  }
+	  return rootField;
+	}
+	
+	module.exports = setRelayModernMutationConfigs;
+
+/***/ }),
+/* 295 */
+/*!******************************************************!*\
+  !*** ./~/relay-runtime/lib/fetchRelayModernQuery.js ***!
+  \******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule fetchRelayModernQuery
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * A helper function to fetch the results of a query. Note that results for
+	 * fragment spreads are masked: fields must be explicitly listed in the query in
+	 * order to be accessible in the result object.
+	 *
+	 * NOTE: This module is primarily intended for integrating with classic APIs.
+	 * Most product code should use a Renderer or Container.
+	 *
+	 * TODO(t16875667): The return type should be `Promise<?SelectorData>`, but
+	 * that's not really helpful as `SelectorData` is essentially just `mixed`. We
+	 * can probably leverage generated flow types here to return the real expected
+	 * shape.
+	 */
+	function fetchRelayModernQuery(environment, taggedNode, variables, cacheConfig) {
+	  __webpack_require__(/*! fbjs/lib/invariant */ 193)(environment.unstable_internal, 'fetchRelayModernQuery: Expected a valid Relay environment, got `%s`.', environment);
+	  var _environment$unstable = environment.unstable_internal,
+	      createOperationSelector = _environment$unstable.createOperationSelector,
+	      getOperation = _environment$unstable.getOperation;
+	
+	  var query = getOperation(taggedNode);
+	  var operation = createOperationSelector(query, variables);
+	  return new Promise(function (resolve, reject) {
+	    environment.sendQuery({
+	      cacheConfig: cacheConfig,
+	      onError: reject,
+	      onCompleted: function onCompleted() {
+	        try {
+	          var snapshot = environment.lookup(operation.fragment);
+	          resolve(snapshot.data);
+	        } catch (e) {
+	          reject(e);
+	        }
+	      },
+	
+	      operation: operation
+	    });
+	  });
+	}
+	
+	module.exports = fetchRelayModernQuery;
+
+/***/ }),
+/* 296 */
+/*!*********************************************************!*\
+  !*** ./~/relay-runtime/lib/requestRelaySubscription.js ***!
+  \*********************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule requestRelaySubscription
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	function requestRelaySubscription(environment, config) {
+	  var _environment$unstable = environment.unstable_internal,
+	      createOperationSelector = _environment$unstable.createOperationSelector,
+	      getOperation = _environment$unstable.getOperation;
+	
+	  var subscription = getOperation(config.subscription);
+	  var onCompleted = config.onCompleted,
+	      onError = config.onError,
+	      onNext = config.onNext,
+	      updater = config.updater,
+	      variables = config.variables;
+	
+	  var operation = createOperationSelector(subscription, variables);
+	  return environment.sendSubscription({
+	    onCompleted: onCompleted,
+	    onError: onError,
+	    onNext: function (_onNext) {
+	      function onNext(_x) {
+	        return _onNext.apply(this, arguments);
+	      }
+	
+	      onNext.toString = function () {
+	        return _onNext.toString();
+	      };
+	
+	      return onNext;
+	    }(function (payload) {
+	      if (onNext) {
+	        var snapshot = environment.lookup(operation.fragment);
+	        onNext(snapshot.data);
+	      }
+	    }),
+	
+	    updater: updater,
+	    operation: operation
+	  });
+	}
+	
+	module.exports = requestRelaySubscription;
+
+/***/ }),
+/* 297 */
+/*!***********************************************************!*\
+  !*** ./~/relay-runtime/lib/RelayRecordSourceInspector.js ***!
+  \***********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayRecordSourceInspector
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _require = __webpack_require__(/*! ./RelayStoreUtils */ 195),
+	    ROOT_ID = _require.ROOT_ID,
+	    ROOT_TYPE = _require.ROOT_TYPE;
+	
+	var _require2 = __webpack_require__(/*! ./RelayStoreUtils */ 195),
+	    REF_KEY = _require2.REF_KEY,
+	    REFS_KEY = _require2.REFS_KEY;
+	
+	/**
+	 * A class intended for introspecting a RecordSource and its Records during
+	 * development.
+	 */
+	var RelayRecordSourceInspector = function () {
+	  RelayRecordSourceInspector.getForEnvironment = function getForEnvironment(environment) {
+	    return new RelayRecordSourceInspector(environment.getStore().getSource());
+	  };
+	
+	  function RelayRecordSourceInspector(source) {
+	    (0, _classCallCheck3['default'])(this, RelayRecordSourceInspector);
+	
+	    this._proxies = {};
+	    this._source = source;
+	  }
+	
+	  /**
+	   * Returns an inspector for the record with the given id, or null/undefined if
+	   * that record is deleted/unfetched.
+	   */
+	
+	
+	  RelayRecordSourceInspector.prototype.get = function get(dataID) {
+	    if (!this._proxies.hasOwnProperty(dataID)) {
+	      var record = this._source.get(dataID);
+	      if (record != null) {
+	        this._proxies[dataID] = new RecordInspector(this, record);
+	      } else {
+	        this._proxies[dataID] = record;
+	      }
+	    }
+	    return this._proxies[dataID];
+	  };
+	
+	  /**
+	   * Returns a list of "<id>: <type>" for each record in the store that has an
+	   * `id`.
+	   */
+	
+	
+	  RelayRecordSourceInspector.prototype.getNodes = function getNodes() {
+	    var _this = this;
+	
+	    var nodes = [];
+	    this._source.getRecordIDs().forEach(function (dataID) {
+	      if (dataID.indexOf('client:') === 0) {
+	        return;
+	      }
+	      var record = _this._source.get(dataID);
+	      nodes.push(RecordSummary.createFromRecord(dataID, record));
+	    });
+	    return nodes;
+	  };
+	
+	  /**
+	   * Returns a list of "<id>: <type>" for all records in the store including
+	   * those that do not have an `id`.
+	   */
+	
+	
+	  RelayRecordSourceInspector.prototype.getRecords = function getRecords() {
+	    var _this2 = this;
+	
+	    return this._source.getRecordIDs().map(function (dataID) {
+	      var record = _this2._source.get(dataID);
+	      return RecordSummary.createFromRecord(dataID, record);
+	    });
+	  };
+	
+	  /**
+	   * Returns an inspector for the synthesized "root" object, allowing access to
+	   * e.g. the `viewer` object or the results of other fields on the "Query"
+	   * type.
+	   */
+	
+	
+	  RelayRecordSourceInspector.prototype.getRoot = function getRoot() {
+	    var root = this.get(ROOT_ID);
+	    __webpack_require__(/*! fbjs/lib/invariant */ 193)(root && root.getType() === ROOT_TYPE, 'RelayRecordSourceProxy#getRoot(): Expected the source to contain a ' + 'root record.');
+	    // Make viewer more accessible: if a record is not present on the original
+	    // field name but is present on the viewer handle field, rewrite the getter
+	    // to make `root.viewer` work.
+	    if (root.viewer == null) {
+	      var viewerHandle = __webpack_require__(/*! ./getRelayHandleKey */ 191)('viewer', null, 'viewer');
+	      var unsafeRoot = root; // to access getter properties
+	      if (unsafeRoot[viewerHandle] != null) {
+	        Object.defineProperty(unsafeRoot, 'viewer', {
+	          configurable: true,
+	          enumerable: true,
+	          get: function get() {
+	            return unsafeRoot[viewerHandle];
+	          }
+	        });
+	      }
+	    }
+	    return root;
+	  };
+	
+	  return RelayRecordSourceInspector;
+	}();
+	
+	/**
+	 * Internal class for inspecting a single Record.
+	 */
+	
+	
+	var RecordInspector = function () {
+	  function RecordInspector(sourceInspector, record) {
+	    var _this3 = this;
+	
+	    (0, _classCallCheck3['default'])(this, RecordInspector);
+	
+	    this._record = record;
+	    this._sourceInspector = sourceInspector;
+	
+	    // Make it easier to inspect the record in a debugger console:
+	    // defined properties appear in autocomplete when typing "obj."
+	    __webpack_require__(/*! fbjs/lib/forEachObject */ 225)(record, function (value, key) {
+	      var identifier = key.replace(/[^_a-zA-Z0-9]/g, '_');
+	      if (typeof value === 'object' && value !== null) {
+	        if (value.hasOwnProperty(REF_KEY)) {
+	          Object.defineProperty(_this3, identifier, {
+	            configurable: true,
+	            enumerable: true,
+	            get: function get() {
+	              return this.getLinkedRecord(key);
+	            }
+	          });
+	        } else if (value.hasOwnProperty(REFS_KEY)) {
+	          Object.defineProperty(_this3, identifier, {
+	            configurable: true,
+	            enumerable: true,
+	            get: function get() {
+	              return this.getLinkedRecords(key);
+	            }
+	          });
+	        }
+	      } else {
+	        Object.defineProperty(_this3, identifier, {
+	          configurable: true,
+	          enumerable: true,
+	          get: function get() {
+	            return this.getValue(key);
+	          }
+	        });
+	      }
+	    });
+	  }
+	
+	  /**
+	   * Get the cache id of the given record. For types that implement the `Node`
+	   * interface (or that have an `id`) this will be `id`, for other types it will be
+	   * a synthesized identifier based on the field path from the nearest ancestor
+	   * record that does have an `id`.
+	   */
+	
+	
+	  RecordInspector.prototype.getDataID = function getDataID() {
+	    return __webpack_require__(/*! ./RelayModernRecord */ 226).getDataID(this._record);
+	  };
+	
+	  /**
+	   * Returns a list of the fields that have been fetched on the current record.
+	   */
+	
+	
+	  RecordInspector.prototype.getFields = function getFields() {
+	    return Object.keys(this._record).sort();
+	  };
+	
+	  /**
+	   * Returns the type of the record.
+	   */
+	
+	
+	  RecordInspector.prototype.getType = function getType() {
+	    return __webpack_require__(/*! ./RelayModernRecord */ 226).getType(this._record);
+	  };
+	
+	  /**
+	   * Returns a copy of the internal representation of the record.
+	   */
+	
+	
+	  RecordInspector.prototype.inspect = function inspect() {
+	    return __webpack_require__(/*! ./simpleClone */ 298)(this._record);
+	  };
+	
+	  /**
+	   * Returns the value of a scalar field. May throw if the given field is
+	   * present but not actually scalar.
+	   */
+	
+	
+	  RecordInspector.prototype.getValue = function getValue(name, args) {
+	    var storageKey = args ? __webpack_require__(/*! ./formatStorageKey */ 233)(name, args) : name;
+	    return __webpack_require__(/*! ./RelayModernRecord */ 226).getValue(this._record, storageKey);
+	  };
+	
+	  /**
+	   * Returns an inspector for the given scalar "linked" field (a field whose
+	   * value is another Record instead of a scalar). May throw if the field is
+	   * present but not a scalar linked record.
+	   */
+	
+	
+	  RecordInspector.prototype.getLinkedRecord = function getLinkedRecord(name, args) {
+	    var storageKey = args ? __webpack_require__(/*! ./formatStorageKey */ 233)(name, args) : name;
+	    var linkedID = __webpack_require__(/*! ./RelayModernRecord */ 226).getLinkedRecordID(this._record, storageKey);
+	    return linkedID != null ? this._sourceInspector.get(linkedID) : linkedID;
+	  };
+	
+	  /**
+	   * Returns an array of inspectors for the given plural "linked" field (a field
+	   * whose value is an array of Records instead of a scalar). May throw if the
+	   * field is  present but not a plural linked record.
+	   */
+	
+	
+	  RecordInspector.prototype.getLinkedRecords = function getLinkedRecords(name, args) {
+	    var _this4 = this;
+	
+	    var storageKey = args ? __webpack_require__(/*! ./formatStorageKey */ 233)(name, args) : name;
+	    var linkedIDs = __webpack_require__(/*! ./RelayModernRecord */ 226).getLinkedRecordIDs(this._record, storageKey);
+	    if (linkedIDs == null) {
+	      return linkedIDs;
+	    }
+	    return linkedIDs.map(function (linkedID) {
+	      return linkedID != null ? _this4._sourceInspector.get(linkedID) : linkedID;
+	    });
+	  };
+	
+	  return RecordInspector;
+	}();
+	
+	/**
+	 * An internal class to provide a console-friendly string representation of a
+	 * Record.
+	 */
+	
+	
+	var RecordSummary = function () {
+	  RecordSummary.createFromRecord = function createFromRecord(id, record) {
+	    var type = record ? __webpack_require__(/*! ./RelayModernRecord */ 226).getType(record) : null;
+	    return new RecordSummary(id, type);
+	  };
+	
+	  function RecordSummary(id, type) {
+	    (0, _classCallCheck3['default'])(this, RecordSummary);
+	
+	    this.id = id;
+	    this.type = type;
+	  }
+	
+	  RecordSummary.prototype.toString = function toString() {
+	    return this.type ? this.id + ': ' + this.type : this.id;
+	  };
+	
+	  return RecordSummary;
+	}();
+	
+	module.exports = RelayRecordSourceInspector;
+
+/***/ }),
+/* 298 */
+/*!********************************************!*\
+  !*** ./~/relay-runtime/lib/simpleClone.js ***!
+  \********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule simpleClone
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * A helper to create a deep clone of a value, plain Object, or array of such.
+	 *
+	 * Does not support RegExp, Date, other classes, or self-referential values.
+	 */
+	function simpleClone(value) {
+	  if (Array.isArray(value)) {
+	    return value.map(simpleClone);
+	  } else if (value && typeof value === 'object') {
+	    return __webpack_require__(/*! fbjs/lib/mapObject */ 299)(value, simpleClone);
+	  } else {
+	    return value;
+	  }
+	}
+	
+	module.exports = simpleClone;
+
+/***/ }),
+/* 299 */
+/*!*************************************************!*\
+  !*** ./~/relay-runtime/~/fbjs/lib/mapObject.js ***!
+  \*************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 */
+	
+	'use strict';
+	
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
+	
+	/**
+	 * Executes the provided `callback` once for each enumerable own property in the
+	 * object and constructs a new object from the results. The `callback` is
+	 * invoked with three arguments:
+	 *
+	 *  - the property value
+	 *  - the property name
+	 *  - the object being traversed
+	 *
+	 * Properties that are added after the call to `mapObject` will not be visited
+	 * by `callback`. If the values of existing properties are changed, the value
+	 * passed to `callback` will be the value at the time `mapObject` visits them.
+	 * Properties that are deleted before being visited are not visited.
+	 *
+	 * @grep function objectMap()
+	 * @grep function objMap()
+	 *
+	 * @param {?object} object
+	 * @param {function} callback
+	 * @param {*} context
+	 * @return {?object}
+	 */
+	function mapObject(object, callback, context) {
+	  if (!object) {
+	    return null;
+	  }
+	  var result = {};
+	  for (var name in object) {
+	    if (hasOwnProperty.call(object, name)) {
+	      result[name] = callback.call(context, object[name], name, object);
+	    }
+	  }
+	  return result;
+	}
+	
+	module.exports = mapObject;
+
+/***/ }),
+/* 300 */
+/*!**********************************************!*\
+  !*** ./~/relay-runtime/lib/RelayDebugger.js ***!
+  \**********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayDebugger
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var RelayDebugger = function () {
+	  function RelayDebugger() {
+	    (0, _classCallCheck3['default'])(this, RelayDebugger);
+	
+	    this._idCounter = 1;
+	    this._envDebuggers = new Map();
+	  }
+	
+	  RelayDebugger.prototype.registerEnvironment = function registerEnvironment(env) {
+	    var idString = 'RelayModernEnvironment' + this._idCounter++;
+	    this._envDebuggers.set(idString, new EnvironmentDebugger(env));
+	    return idString;
+	  };
+	
+	  RelayDebugger.prototype.getEnvironmentDebugger = function getEnvironmentDebugger(id) {
+	    var envDebugger = this._envDebuggers.get(id);
+	    if (!envDebugger) {
+	      throw new Error('No registered environment: ' + id);
+	    }
+	
+	    return envDebugger;
+	  };
+	
+	  RelayDebugger.prototype.getRegisteredEnvironmentIds = function getRegisteredEnvironmentIds() {
+	    return Array.from(this._envDebuggers.keys());
+	  };
+	
+	  return RelayDebugger;
+	}();
+	
+	var EnvironmentDebugger = function () {
+	  function EnvironmentDebugger(environment) {
+	    (0, _classCallCheck3['default'])(this, EnvironmentDebugger);
+	
+	    this._environment = environment;
+	  }
+	
+	  EnvironmentDebugger.prototype.getEnvironment = function getEnvironment() {
+	    return this._environment;
+	  };
+	
+	  EnvironmentDebugger.prototype.getMatchingRecords = function getMatchingRecords(matchStr, matchType) {
+	    var inspector = __webpack_require__(/*! ./RelayRecordSourceInspector */ 297).getForEnvironment(this._environment);
+	
+	    function isMatching(record) {
+	      if (matchType === 'idtype') {
+	        return record.id.includes(matchStr) || !!record.type && record.type.includes(matchStr);
+	      }
+	      if (matchType === 'id') {
+	        return record.id.includes(matchStr);
+	      }
+	      if (matchType === 'type') {
+	        return !!record.type && record.type.includes(matchStr);
+	      }
+	      if (matchType === 'predicate') {
+	        var recordInspector = inspector.get(record.id);
+	        var fields = recordInspector && recordInspector.inspect();
+	        if (typeof fields === 'object' && fields !== null) {
+	          throw new Error('Not implemented');
+	        }
+	        return false;
+	      }
+	      throw new Error('Unknown match type: ' + matchType);
+	    }
+	
+	    return inspector.getRecords().filter(isMatching);
+	  };
+	
+	  EnvironmentDebugger.prototype.getRecord = function getRecord(id) {
+	    var inspector = __webpack_require__(/*! ./RelayRecordSourceInspector */ 297).getForEnvironment(this._environment);
+	    var recordInspector = inspector.get(id);
+	    return recordInspector && recordInspector.inspect();
+	  };
+	
+	  return EnvironmentDebugger;
+	}();
+	
+	module.exports = RelayDebugger;
+
+/***/ }),
+/* 301 */
+/*!******************************************************!*\
+  !*** ./~/react-relay/lib/ReactRelayQueryRenderer.js ***!
+  \******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactRelayQueryRenderer
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _extends3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/extends */ 202));
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	var _possibleConstructorReturn3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ 302));
+	
+	var _inherits3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/inherits */ 325));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	/**
+	 * @public
+	 *
+	 * Orchestrates fetching and rendering data for a single view or view hierarchy:
+	 * - Fetches the query/variables using the given network implementation.
+	 * - Normalizes the response(s) to that query, publishing them to the given
+	 *   store.
+	 * - Renders the pending/fail/success states with the provided render function.
+	 * - Subscribes for updates to the root data and re-renders with any changes.
+	 */
+	var ReactRelayQueryRenderer = function (_React$Component) {
+	  (0, _inherits3['default'])(ReactRelayQueryRenderer, _React$Component);
+	
+	  function ReactRelayQueryRenderer(props, context) {
+	    (0, _classCallCheck3['default'])(this, ReactRelayQueryRenderer);
+	
+	    var _this = (0, _possibleConstructorReturn3['default'])(this, _React$Component.call(this, props, context));
+	
+	    _this._onChange = function (snapshot) {
+	      _this.setState({
+	        readyState: (0, _extends3['default'])({}, _this.state.readyState, {
+	          props: snapshot.data
+	        })
+	      });
+	    };
+	
+	    var query = props.query,
+	        variables = props.variables;
+	    // TODO (#16225453) QueryRenderer works with old and new environment, but
+	    // the flow typing doesn't quite work abstracted.
+	    // $FlowFixMe
+	
+	    var environment = props.environment;
+	    var operation = null;
+	    if (query) {
+	      var _environment$unstable = environment.unstable_internal,
+	          createOperationSelector = _environment$unstable.createOperationSelector,
+	          getOperation = _environment$unstable.getOperation;
+	
+	      query = getOperation(query);
+	      operation = createOperationSelector(query, variables);
+	      variables = operation.variables;
+	    }
+	
+	    _this._pendingFetch = null;
+	    _this._relayContext = {
+	      environment: environment,
+	      variables: variables
+	    };
+	    _this._rootSubscription = null;
+	    _this._selectionReference = null;
+	    if (query) {
+	      _this.state = {
+	        readyState: getDefaultState()
+	      };
+	    } else {
+	      _this.state = {
+	        readyState: {
+	          error: null,
+	          props: {},
+	          retry: null
+	        }
+	      };
+	    }
+	
+	    if (operation) {
+	      var _readyState = _this._fetch(operation, props.cacheConfig);
+	      if (_readyState) {
+	        _this.state = { readyState: _readyState };
+	      }
+	    }
+	    return _this;
+	  }
+	
+	  ReactRelayQueryRenderer.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+	    if (nextProps.query !== this.props.query || nextProps.environment !== this.props.environment || !__webpack_require__(/*! fbjs/lib/areEqual */ 333)(nextProps.variables, this.props.variables)) {
+	      var _query = nextProps.query,
+	          _variables = nextProps.variables;
+	      // TODO (#16225453) QueryRenderer works with old and new environment, but
+	      // the flow typing doesn't quite work abstracted.
+	      // $FlowFixMe
+	
+	      var _environment = nextProps.environment;
+	      if (_query) {
+	        var _environment$unstable2 = _environment.unstable_internal,
+	            createOperationSelector = _environment$unstable2.createOperationSelector,
+	            getOperation = _environment$unstable2.getOperation;
+	
+	        var operation = createOperationSelector(getOperation(_query), _variables);
+	        this._relayContext = {
+	          environment: _environment,
+	          variables: operation.variables
+	        };
+	        var _readyState2 = this._fetch(operation, nextProps.cacheConfig);
+	        this.setState({
+	          readyState: _readyState2 || getDefaultState()
+	        });
+	      } else {
+	        this._relayContext = {
+	          environment: _environment,
+	          variables: _variables
+	        };
+	        this._release();
+	        this.setState({
+	          readyState: {
+	            error: null,
+	            props: {},
+	            retry: null
+	          }
+	        });
+	      }
+	    }
+	  };
+	
+	  ReactRelayQueryRenderer.prototype.componentWillUnmount = function componentWillUnmount() {
+	    this._release();
+	  };
+	
+	  ReactRelayQueryRenderer.prototype.shouldComponentUpdate = function shouldComponentUpdate(nextProps, nextState) {
+	    return nextProps.render !== this.props.render || nextState.readyState !== this.state.readyState;
+	  };
+	
+	  ReactRelayQueryRenderer.prototype._release = function _release() {
+	    if (this._pendingFetch) {
+	      this._pendingFetch.dispose();
+	      this._pendingFetch = null;
+	    }
+	    if (this._rootSubscription) {
+	      this._rootSubscription.dispose();
+	      this._rootSubscription = null;
+	    }
+	    if (this._selectionReference) {
+	      this._selectionReference.dispose();
+	      this._selectionReference = null;
+	    }
+	  };
+	
+	  ReactRelayQueryRenderer.prototype._fetch = function _fetch(operation, cacheConfig) {
+	    var _this2 = this;
+	
+	    var environment = this._relayContext.environment;
+	
+	    // Immediately retain the results of the new query to prevent relevant data
+	    // from being freed. This is not strictly required if all new data is
+	    // fetched in a single step, but is necessary if the network could attempt
+	    // to incrementally load data (ex: multiple query entries or incrementally
+	    // loading records from disk cache).
+	
+	    var nextReference = environment.retain(operation.root);
+	
+	    var readyState = getDefaultState();
+	    var snapshot = void 0; // results of the root fragment
+	    var isOnNextCalled = false;
+	    var isFunctionReturned = false;
+	    var onCompleted = function onCompleted() {
+	      _this2._pendingFetch = null;
+	    };
+	    var onError = function onError(error) {
+	      readyState = {
+	        error: error,
+	        props: null,
+	        retry: function retry() {
+	          _this2._fetch(operation, cacheConfig);
+	        }
+	      };
+	      if (_this2._selectionReference) {
+	        _this2._selectionReference.dispose();
+	      }
+	      _this2._pendingFetch = null;
+	      _this2._selectionReference = nextReference;
+	      _this2.setState({ readyState: readyState });
+	    };
+	    var onNext = function onNext() {
+	      // `onNext` can be called multiple times by network layers that support
+	      // data subscriptions. Wait until the first payload to render `props` and
+	      // subscribe for data updates.
+	      if (snapshot) {
+	        return;
+	      }
+	      snapshot = environment.lookup(operation.fragment);
+	      readyState = {
+	        error: null,
+	        props: snapshot.data,
+	        retry: function retry() {
+	          _this2._fetch(operation, cacheConfig);
+	        }
+	      };
+	
+	      if (_this2._selectionReference) {
+	        _this2._selectionReference.dispose();
+	      }
+	      _this2._rootSubscription = environment.subscribe(snapshot, _this2._onChange);
+	      _this2._selectionReference = nextReference;
+	      // This line should be called only once.
+	      isOnNextCalled = true;
+	      if (isFunctionReturned) {
+	        _this2.setState({ readyState: readyState });
+	      }
+	    };
+	
+	    if (this._pendingFetch) {
+	      this._pendingFetch.dispose();
+	    }
+	    if (this._rootSubscription) {
+	      this._rootSubscription.dispose();
+	    }
+	    var request = environment.streamQuery({
+	      cacheConfig: cacheConfig,
+	      onCompleted: onCompleted,
+	      onError: onError,
+	      onNext: onNext,
+	      operation: operation
+	    });
+	    this._pendingFetch = {
+	      dispose: function dispose() {
+	        request.dispose();
+	        nextReference.dispose();
+	      }
+	    };
+	    isFunctionReturned = true;
+	    return isOnNextCalled ? readyState : null;
+	  };
+	
+	  ReactRelayQueryRenderer.prototype.getChildContext = function getChildContext() {
+	    return {
+	      relay: this._relayContext
+	    };
+	  };
+	
+	  ReactRelayQueryRenderer.prototype.render = function render() {
+	    // Note that the root fragment results in `readyState.props` is already
+	    // frozen by the store; this call is to freeze the readyState object and
+	    // error property if set.
+	    if (process.env.NODE_ENV !== 'production') {
+	      __webpack_require__(/*! ./deepFreeze */ 334)(this.state.readyState);
+	    }
+	    return this.props.render(this.state.readyState);
+	  };
+	
+	  return ReactRelayQueryRenderer;
+	}(__webpack_require__(/*! react */ 1).Component);
+	
+	ReactRelayQueryRenderer.childContextTypes = {
+	  relay: __webpack_require__(/*! ./RelayPropTypes */ 335).Relay
+	};
+	
+	function getDefaultState() {
+	  return {
+	    error: null,
+	    props: null,
+	    retry: null
+	  };
+	}
+	
+	module.exports = ReactRelayQueryRenderer;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 4)))
+
+/***/ }),
+/* 302 */
+/*!**************************************************************!*\
+  !*** ./~/babel-runtime/helpers/possibleConstructorReturn.js ***!
+  \**************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	exports.__esModule = true;
+	
+	var _typeof2 = __webpack_require__(/*! ../helpers/typeof */ 303);
+	
+	var _typeof3 = _interopRequireDefault(_typeof2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function (self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }
+	
+	  return call && ((typeof call === "undefined" ? "undefined" : (0, _typeof3.default)(call)) === "object" || typeof call === "function") ? call : self;
+	};
+
+/***/ }),
+/* 303 */
+/*!*******************************************!*\
+  !*** ./~/babel-runtime/helpers/typeof.js ***!
+  \*******************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	exports.__esModule = true;
+	
+	var _iterator = __webpack_require__(/*! ../core-js/symbol/iterator */ 304);
+	
+	var _iterator2 = _interopRequireDefault(_iterator);
+	
+	var _symbol = __webpack_require__(/*! ../core-js/symbol */ 311);
+	
+	var _symbol2 = _interopRequireDefault(_symbol);
+	
+	var _typeof = typeof _symbol2.default === "function" && typeof _iterator2.default === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj; };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.default) === "symbol" ? function (obj) {
+	  return typeof obj === "undefined" ? "undefined" : _typeof(obj);
+	} : function (obj) {
+	  return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
+	};
+
+/***/ }),
+/* 304 */
+/*!****************************************************!*\
+  !*** ./~/babel-runtime/core-js/symbol/iterator.js ***!
+  \****************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(/*! core-js/library/fn/symbol/iterator */ 305), __esModule: true };
+
+/***/ }),
+/* 305 */
+/*!*************************************************!*\
+  !*** ./~/core-js/library/fn/symbol/iterator.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	__webpack_require__(/*! ../../modules/es6.string.iterator */ 251);
+	__webpack_require__(/*! ../../modules/web.dom.iterable */ 306);
+	module.exports = __webpack_require__(/*! ../../modules/_wks-ext */ 310).f('iterator');
+
+/***/ }),
+/* 306 */
+/*!*******************************************************!*\
+  !*** ./~/core-js/library/modules/web.dom.iterable.js ***!
+  \*******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	__webpack_require__(/*! ./es6.array.iterator */ 307);
+	var global        = __webpack_require__(/*! ./_global */ 174)
+	  , hide          = __webpack_require__(/*! ./_hide */ 178)
+	  , Iterators     = __webpack_require__(/*! ./_iterators */ 256)
+	  , TO_STRING_TAG = __webpack_require__(/*! ./_wks */ 262)('toStringTag');
+	
+	for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList', 'CSSRuleList'], i = 0; i < 5; i++){
+	  var NAME       = collections[i]
+	    , Collection = global[NAME]
+	    , proto      = Collection && Collection.prototype;
+	  if(proto && !proto[TO_STRING_TAG])hide(proto, TO_STRING_TAG, NAME);
+	  Iterators[NAME] = Iterators.Array;
+	}
+
+/***/ }),
+/* 307 */
+/*!*********************************************************!*\
+  !*** ./~/core-js/library/modules/es6.array.iterator.js ***!
+  \*********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var addToUnscopables = __webpack_require__(/*! ./_add-to-unscopables */ 308)
+	  , step             = __webpack_require__(/*! ./_iter-step */ 309)
+	  , Iterators        = __webpack_require__(/*! ./_iterators */ 256)
+	  , toIObject        = __webpack_require__(/*! ./_to-iobject */ 210);
+	
+	// 22.1.3.4 Array.prototype.entries()
+	// 22.1.3.13 Array.prototype.keys()
+	// 22.1.3.29 Array.prototype.values()
+	// 22.1.3.30 Array.prototype[@@iterator]()
+	module.exports = __webpack_require__(/*! ./_iter-define */ 253)(Array, 'Array', function(iterated, kind){
+	  this._t = toIObject(iterated); // target
+	  this._i = 0;                   // next index
+	  this._k = kind;                // kind
+	// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
+	}, function(){
+	  var O     = this._t
+	    , kind  = this._k
+	    , index = this._i++;
+	  if(!O || index >= O.length){
+	    this._t = undefined;
+	    return step(1);
+	  }
+	  if(kind == 'keys'  )return step(0, index);
+	  if(kind == 'values')return step(0, O[index]);
+	  return step(0, [index, O[index]]);
+	}, 'values');
+	
+	// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
+	Iterators.Arguments = Iterators.Array;
+	
+	addToUnscopables('keys');
+	addToUnscopables('values');
+	addToUnscopables('entries');
+
+/***/ }),
+/* 308 */
+/*!**********************************************************!*\
+  !*** ./~/core-js/library/modules/_add-to-unscopables.js ***!
+  \**********************************************************/
+/***/ (function(module, exports) {
+
+	module.exports = function(){ /* empty */ };
+
+/***/ }),
+/* 309 */
+/*!*************************************************!*\
+  !*** ./~/core-js/library/modules/_iter-step.js ***!
+  \*************************************************/
+/***/ (function(module, exports) {
+
+	module.exports = function(done, value){
+	  return {value: value, done: !!done};
+	};
+
+/***/ }),
+/* 310 */
+/*!***********************************************!*\
+  !*** ./~/core-js/library/modules/_wks-ext.js ***!
+  \***********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	exports.f = __webpack_require__(/*! ./_wks */ 262);
+
+/***/ }),
+/* 311 */
+/*!*******************************************!*\
+  !*** ./~/babel-runtime/core-js/symbol.js ***!
+  \*******************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(/*! core-js/library/fn/symbol */ 312), __esModule: true };
+
+/***/ }),
+/* 312 */
+/*!**********************************************!*\
+  !*** ./~/core-js/library/fn/symbol/index.js ***!
+  \**********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	__webpack_require__(/*! ../../modules/es6.symbol */ 313);
+	__webpack_require__(/*! ../../modules/es6.object.to-string */ 322);
+	__webpack_require__(/*! ../../modules/es7.symbol.async-iterator */ 323);
+	__webpack_require__(/*! ../../modules/es7.symbol.observable */ 324);
+	module.exports = __webpack_require__(/*! ../../modules/_core */ 175).Symbol;
+
+/***/ }),
+/* 313 */
+/*!*************************************************!*\
+  !*** ./~/core-js/library/modules/es6.symbol.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	// ECMAScript 6 symbols shim
+	var global         = __webpack_require__(/*! ./_global */ 174)
+	  , has            = __webpack_require__(/*! ./_has */ 209)
+	  , DESCRIPTORS    = __webpack_require__(/*! ./_descriptors */ 183)
+	  , $export        = __webpack_require__(/*! ./_export */ 173)
+	  , redefine       = __webpack_require__(/*! ./_redefine */ 255)
+	  , META           = __webpack_require__(/*! ./_meta */ 314).KEY
+	  , $fails         = __webpack_require__(/*! ./_fails */ 184)
+	  , shared         = __webpack_require__(/*! ./_shared */ 219)
+	  , setToStringTag = __webpack_require__(/*! ./_set-to-string-tag */ 261)
+	  , uid            = __webpack_require__(/*! ./_uid */ 220)
+	  , wks            = __webpack_require__(/*! ./_wks */ 262)
+	  , wksExt         = __webpack_require__(/*! ./_wks-ext */ 310)
+	  , wksDefine      = __webpack_require__(/*! ./_wks-define */ 315)
+	  , keyOf          = __webpack_require__(/*! ./_keyof */ 316)
+	  , enumKeys       = __webpack_require__(/*! ./_enum-keys */ 317)
+	  , isArray        = __webpack_require__(/*! ./_is-array */ 318)
+	  , anObject       = __webpack_require__(/*! ./_an-object */ 180)
+	  , toIObject      = __webpack_require__(/*! ./_to-iobject */ 210)
+	  , toPrimitive    = __webpack_require__(/*! ./_to-primitive */ 186)
+	  , createDesc     = __webpack_require__(/*! ./_property-desc */ 187)
+	  , _create        = __webpack_require__(/*! ./_object-create */ 258)
+	  , gOPNExt        = __webpack_require__(/*! ./_object-gopn-ext */ 319)
+	  , $GOPD          = __webpack_require__(/*! ./_object-gopd */ 321)
+	  , $DP            = __webpack_require__(/*! ./_object-dp */ 179)
+	  , $keys          = __webpack_require__(/*! ./_object-keys */ 207)
+	  , gOPD           = $GOPD.f
+	  , dP             = $DP.f
+	  , gOPN           = gOPNExt.f
+	  , $Symbol        = global.Symbol
+	  , $JSON          = global.JSON
+	  , _stringify     = $JSON && $JSON.stringify
+	  , PROTOTYPE      = 'prototype'
+	  , HIDDEN         = wks('_hidden')
+	  , TO_PRIMITIVE   = wks('toPrimitive')
+	  , isEnum         = {}.propertyIsEnumerable
+	  , SymbolRegistry = shared('symbol-registry')
+	  , AllSymbols     = shared('symbols')
+	  , OPSymbols      = shared('op-symbols')
+	  , ObjectProto    = Object[PROTOTYPE]
+	  , USE_NATIVE     = typeof $Symbol == 'function'
+	  , QObject        = global.QObject;
+	// Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
+	var setter = !QObject || !QObject[PROTOTYPE] || !QObject[PROTOTYPE].findChild;
+	
+	// fallback for old Android, https://code.google.com/p/v8/issues/detail?id=687
+	var setSymbolDesc = DESCRIPTORS && $fails(function(){
+	  return _create(dP({}, 'a', {
+	    get: function(){ return dP(this, 'a', {value: 7}).a; }
+	  })).a != 7;
+	}) ? function(it, key, D){
+	  var protoDesc = gOPD(ObjectProto, key);
+	  if(protoDesc)delete ObjectProto[key];
+	  dP(it, key, D);
+	  if(protoDesc && it !== ObjectProto)dP(ObjectProto, key, protoDesc);
+	} : dP;
+	
+	var wrap = function(tag){
+	  var sym = AllSymbols[tag] = _create($Symbol[PROTOTYPE]);
+	  sym._k = tag;
+	  return sym;
+	};
+	
+	var isSymbol = USE_NATIVE && typeof $Symbol.iterator == 'symbol' ? function(it){
+	  return typeof it == 'symbol';
+	} : function(it){
+	  return it instanceof $Symbol;
+	};
+	
+	var $defineProperty = function defineProperty(it, key, D){
+	  if(it === ObjectProto)$defineProperty(OPSymbols, key, D);
+	  anObject(it);
+	  key = toPrimitive(key, true);
+	  anObject(D);
+	  if(has(AllSymbols, key)){
+	    if(!D.enumerable){
+	      if(!has(it, HIDDEN))dP(it, HIDDEN, createDesc(1, {}));
+	      it[HIDDEN][key] = true;
+	    } else {
+	      if(has(it, HIDDEN) && it[HIDDEN][key])it[HIDDEN][key] = false;
+	      D = _create(D, {enumerable: createDesc(0, false)});
+	    } return setSymbolDesc(it, key, D);
+	  } return dP(it, key, D);
+	};
+	var $defineProperties = function defineProperties(it, P){
+	  anObject(it);
+	  var keys = enumKeys(P = toIObject(P))
+	    , i    = 0
+	    , l = keys.length
+	    , key;
+	  while(l > i)$defineProperty(it, key = keys[i++], P[key]);
+	  return it;
+	};
+	var $create = function create(it, P){
+	  return P === undefined ? _create(it) : $defineProperties(_create(it), P);
+	};
+	var $propertyIsEnumerable = function propertyIsEnumerable(key){
+	  var E = isEnum.call(this, key = toPrimitive(key, true));
+	  if(this === ObjectProto && has(AllSymbols, key) && !has(OPSymbols, key))return false;
+	  return E || !has(this, key) || !has(AllSymbols, key) || has(this, HIDDEN) && this[HIDDEN][key] ? E : true;
+	};
+	var $getOwnPropertyDescriptor = function getOwnPropertyDescriptor(it, key){
+	  it  = toIObject(it);
+	  key = toPrimitive(key, true);
+	  if(it === ObjectProto && has(AllSymbols, key) && !has(OPSymbols, key))return;
+	  var D = gOPD(it, key);
+	  if(D && has(AllSymbols, key) && !(has(it, HIDDEN) && it[HIDDEN][key]))D.enumerable = true;
+	  return D;
+	};
+	var $getOwnPropertyNames = function getOwnPropertyNames(it){
+	  var names  = gOPN(toIObject(it))
+	    , result = []
+	    , i      = 0
+	    , key;
+	  while(names.length > i){
+	    if(!has(AllSymbols, key = names[i++]) && key != HIDDEN && key != META)result.push(key);
+	  } return result;
+	};
+	var $getOwnPropertySymbols = function getOwnPropertySymbols(it){
+	  var IS_OP  = it === ObjectProto
+	    , names  = gOPN(IS_OP ? OPSymbols : toIObject(it))
+	    , result = []
+	    , i      = 0
+	    , key;
+	  while(names.length > i){
+	    if(has(AllSymbols, key = names[i++]) && (IS_OP ? has(ObjectProto, key) : true))result.push(AllSymbols[key]);
+	  } return result;
+	};
+	
+	// 19.4.1.1 Symbol([description])
+	if(!USE_NATIVE){
+	  $Symbol = function Symbol(){
+	    if(this instanceof $Symbol)throw TypeError('Symbol is not a constructor!');
+	    var tag = uid(arguments.length > 0 ? arguments[0] : undefined);
+	    var $set = function(value){
+	      if(this === ObjectProto)$set.call(OPSymbols, value);
+	      if(has(this, HIDDEN) && has(this[HIDDEN], tag))this[HIDDEN][tag] = false;
+	      setSymbolDesc(this, tag, createDesc(1, value));
+	    };
+	    if(DESCRIPTORS && setter)setSymbolDesc(ObjectProto, tag, {configurable: true, set: $set});
+	    return wrap(tag);
+	  };
+	  redefine($Symbol[PROTOTYPE], 'toString', function toString(){
+	    return this._k;
+	  });
+	
+	  $GOPD.f = $getOwnPropertyDescriptor;
+	  $DP.f   = $defineProperty;
+	  __webpack_require__(/*! ./_object-gopn */ 320).f = gOPNExt.f = $getOwnPropertyNames;
+	  __webpack_require__(/*! ./_object-pie */ 223).f  = $propertyIsEnumerable;
+	  __webpack_require__(/*! ./_object-gops */ 222).f = $getOwnPropertySymbols;
+	
+	  if(DESCRIPTORS && !__webpack_require__(/*! ./_library */ 254)){
+	    redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
+	  }
+	
+	  wksExt.f = function(name){
+	    return wrap(wks(name));
+	  }
+	}
+	
+	$export($export.G + $export.W + $export.F * !USE_NATIVE, {Symbol: $Symbol});
+	
+	for(var symbols = (
+	  // 19.4.2.2, 19.4.2.3, 19.4.2.4, 19.4.2.6, 19.4.2.8, 19.4.2.9, 19.4.2.10, 19.4.2.11, 19.4.2.12, 19.4.2.13, 19.4.2.14
+	  'hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables'
+	).split(','), i = 0; symbols.length > i; )wks(symbols[i++]);
+	
+	for(var symbols = $keys(wks.store), i = 0; symbols.length > i; )wksDefine(symbols[i++]);
+	
+	$export($export.S + $export.F * !USE_NATIVE, 'Symbol', {
+	  // 19.4.2.1 Symbol.for(key)
+	  'for': function(key){
+	    return has(SymbolRegistry, key += '')
+	      ? SymbolRegistry[key]
+	      : SymbolRegistry[key] = $Symbol(key);
+	  },
+	  // 19.4.2.5 Symbol.keyFor(sym)
+	  keyFor: function keyFor(key){
+	    if(isSymbol(key))return keyOf(SymbolRegistry, key);
+	    throw TypeError(key + ' is not a symbol!');
+	  },
+	  useSetter: function(){ setter = true; },
+	  useSimple: function(){ setter = false; }
+	});
+	
+	$export($export.S + $export.F * !USE_NATIVE, 'Object', {
+	  // 19.1.2.2 Object.create(O [, Properties])
+	  create: $create,
+	  // 19.1.2.4 Object.defineProperty(O, P, Attributes)
+	  defineProperty: $defineProperty,
+	  // 19.1.2.3 Object.defineProperties(O, Properties)
+	  defineProperties: $defineProperties,
+	  // 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
+	  getOwnPropertyDescriptor: $getOwnPropertyDescriptor,
+	  // 19.1.2.7 Object.getOwnPropertyNames(O)
+	  getOwnPropertyNames: $getOwnPropertyNames,
+	  // 19.1.2.8 Object.getOwnPropertySymbols(O)
+	  getOwnPropertySymbols: $getOwnPropertySymbols
+	});
+	
+	// 24.3.2 JSON.stringify(value [, replacer [, space]])
+	$JSON && $export($export.S + $export.F * (!USE_NATIVE || $fails(function(){
+	  var S = $Symbol();
+	  // MS Edge converts symbol values to JSON as {}
+	  // WebKit converts symbol values to JSON as null
+	  // V8 throws on boxed symbols
+	  return _stringify([S]) != '[null]' || _stringify({a: S}) != '{}' || _stringify(Object(S)) != '{}';
+	})), 'JSON', {
+	  stringify: function stringify(it){
+	    if(it === undefined || isSymbol(it))return; // IE8 returns string on undefined
+	    var args = [it]
+	      , i    = 1
+	      , replacer, $replacer;
+	    while(arguments.length > i)args.push(arguments[i++]);
+	    replacer = args[1];
+	    if(typeof replacer == 'function')$replacer = replacer;
+	    if($replacer || !isArray(replacer))replacer = function(key, value){
+	      if($replacer)value = $replacer.call(this, key, value);
+	      if(!isSymbol(value))return value;
+	    };
+	    args[1] = replacer;
+	    return _stringify.apply($JSON, args);
+	  }
+	});
+	
+	// 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
+	$Symbol[PROTOTYPE][TO_PRIMITIVE] || __webpack_require__(/*! ./_hide */ 178)($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
+	// 19.4.3.5 Symbol.prototype[@@toStringTag]
+	setToStringTag($Symbol, 'Symbol');
+	// 20.2.1.9 Math[@@toStringTag]
+	setToStringTag(Math, 'Math', true);
+	// 24.3.3 JSON[@@toStringTag]
+	setToStringTag(global.JSON, 'JSON', true);
+
+/***/ }),
+/* 314 */
+/*!********************************************!*\
+  !*** ./~/core-js/library/modules/_meta.js ***!
+  \********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var META     = __webpack_require__(/*! ./_uid */ 220)('meta')
+	  , isObject = __webpack_require__(/*! ./_is-object */ 181)
+	  , has      = __webpack_require__(/*! ./_has */ 209)
+	  , setDesc  = __webpack_require__(/*! ./_object-dp */ 179).f
+	  , id       = 0;
+	var isExtensible = Object.isExtensible || function(){
+	  return true;
+	};
+	var FREEZE = !__webpack_require__(/*! ./_fails */ 184)(function(){
+	  return isExtensible(Object.preventExtensions({}));
+	});
+	var setMeta = function(it){
+	  setDesc(it, META, {value: {
+	    i: 'O' + ++id, // object ID
+	    w: {}          // weak collections IDs
+	  }});
+	};
+	var fastKey = function(it, create){
+	  // return primitive with prefix
+	  if(!isObject(it))return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
+	  if(!has(it, META)){
+	    // can't set metadata to uncaught frozen object
+	    if(!isExtensible(it))return 'F';
+	    // not necessary to add metadata
+	    if(!create)return 'E';
+	    // add missing metadata
+	    setMeta(it);
+	  // return object ID
+	  } return it[META].i;
+	};
+	var getWeak = function(it, create){
+	  if(!has(it, META)){
+	    // can't set metadata to uncaught frozen object
+	    if(!isExtensible(it))return true;
+	    // not necessary to add metadata
+	    if(!create)return false;
+	    // add missing metadata
+	    setMeta(it);
+	  // return hash weak collections IDs
+	  } return it[META].w;
+	};
+	// add metadata on freeze-family methods calling
+	var onFreeze = function(it){
+	  if(FREEZE && meta.NEED && isExtensible(it) && !has(it, META))setMeta(it);
+	  return it;
+	};
+	var meta = module.exports = {
+	  KEY:      META,
+	  NEED:     false,
+	  fastKey:  fastKey,
+	  getWeak:  getWeak,
+	  onFreeze: onFreeze
+	};
+
+/***/ }),
+/* 315 */
+/*!**************************************************!*\
+  !*** ./~/core-js/library/modules/_wks-define.js ***!
+  \**************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var global         = __webpack_require__(/*! ./_global */ 174)
+	  , core           = __webpack_require__(/*! ./_core */ 175)
+	  , LIBRARY        = __webpack_require__(/*! ./_library */ 254)
+	  , wksExt         = __webpack_require__(/*! ./_wks-ext */ 310)
+	  , defineProperty = __webpack_require__(/*! ./_object-dp */ 179).f;
+	module.exports = function(name){
+	  var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
+	  if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty($Symbol, name, {value: wksExt.f(name)});
+	};
+
+/***/ }),
+/* 316 */
+/*!*********************************************!*\
+  !*** ./~/core-js/library/modules/_keyof.js ***!
+  \*********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var getKeys   = __webpack_require__(/*! ./_object-keys */ 207)
+	  , toIObject = __webpack_require__(/*! ./_to-iobject */ 210);
+	module.exports = function(object, el){
+	  var O      = toIObject(object)
+	    , keys   = getKeys(O)
+	    , length = keys.length
+	    , index  = 0
+	    , key;
+	  while(length > index)if(O[key = keys[index++]] === el)return key;
+	};
+
+/***/ }),
+/* 317 */
+/*!*************************************************!*\
+  !*** ./~/core-js/library/modules/_enum-keys.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// all enumerable object keys, includes symbols
+	var getKeys = __webpack_require__(/*! ./_object-keys */ 207)
+	  , gOPS    = __webpack_require__(/*! ./_object-gops */ 222)
+	  , pIE     = __webpack_require__(/*! ./_object-pie */ 223);
+	module.exports = function(it){
+	  var result     = getKeys(it)
+	    , getSymbols = gOPS.f;
+	  if(getSymbols){
+	    var symbols = getSymbols(it)
+	      , isEnum  = pIE.f
+	      , i       = 0
+	      , key;
+	    while(symbols.length > i)if(isEnum.call(it, key = symbols[i++]))result.push(key);
+	  } return result;
+	};
+
+/***/ }),
+/* 318 */
+/*!************************************************!*\
+  !*** ./~/core-js/library/modules/_is-array.js ***!
+  \************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// 7.2.2 IsArray(argument)
+	var cof = __webpack_require__(/*! ./_cof */ 212);
+	module.exports = Array.isArray || function isArray(arg){
+	  return cof(arg) == 'Array';
+	};
+
+/***/ }),
+/* 319 */
+/*!*******************************************************!*\
+  !*** ./~/core-js/library/modules/_object-gopn-ext.js ***!
+  \*******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
+	var toIObject = __webpack_require__(/*! ./_to-iobject */ 210)
+	  , gOPN      = __webpack_require__(/*! ./_object-gopn */ 320).f
+	  , toString  = {}.toString;
+	
+	var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
+	  ? Object.getOwnPropertyNames(window) : [];
+	
+	var getWindowNames = function(it){
+	  try {
+	    return gOPN(it);
+	  } catch(e){
+	    return windowNames.slice();
+	  }
+	};
+	
+	module.exports.f = function getOwnPropertyNames(it){
+	  return windowNames && toString.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(toIObject(it));
+	};
+
+
+/***/ }),
+/* 320 */
+/*!***************************************************!*\
+  !*** ./~/core-js/library/modules/_object-gopn.js ***!
+  \***************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
+	var $keys      = __webpack_require__(/*! ./_object-keys-internal */ 208)
+	  , hiddenKeys = __webpack_require__(/*! ./_enum-bug-keys */ 221).concat('length', 'prototype');
+	
+	exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
+	  return $keys(O, hiddenKeys);
+	};
+
+/***/ }),
+/* 321 */
+/*!***************************************************!*\
+  !*** ./~/core-js/library/modules/_object-gopd.js ***!
+  \***************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var pIE            = __webpack_require__(/*! ./_object-pie */ 223)
+	  , createDesc     = __webpack_require__(/*! ./_property-desc */ 187)
+	  , toIObject      = __webpack_require__(/*! ./_to-iobject */ 210)
+	  , toPrimitive    = __webpack_require__(/*! ./_to-primitive */ 186)
+	  , has            = __webpack_require__(/*! ./_has */ 209)
+	  , IE8_DOM_DEFINE = __webpack_require__(/*! ./_ie8-dom-define */ 182)
+	  , gOPD           = Object.getOwnPropertyDescriptor;
+	
+	exports.f = __webpack_require__(/*! ./_descriptors */ 183) ? gOPD : function getOwnPropertyDescriptor(O, P){
+	  O = toIObject(O);
+	  P = toPrimitive(P, true);
+	  if(IE8_DOM_DEFINE)try {
+	    return gOPD(O, P);
+	  } catch(e){ /* empty */ }
+	  if(has(O, P))return createDesc(!pIE.f.call(O, P), O[P]);
+	};
+
+/***/ }),
+/* 322 */
+/*!***********************************************************!*\
+  !*** ./~/core-js/library/modules/es6.object.to-string.js ***!
+  \***********************************************************/
+/***/ (function(module, exports) {
+
+
+
+/***/ }),
+/* 323 */
+/*!****************************************************************!*\
+  !*** ./~/core-js/library/modules/es7.symbol.async-iterator.js ***!
+  \****************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	__webpack_require__(/*! ./_wks-define */ 315)('asyncIterator');
+
+/***/ }),
+/* 324 */
+/*!************************************************************!*\
+  !*** ./~/core-js/library/modules/es7.symbol.observable.js ***!
+  \************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	__webpack_require__(/*! ./_wks-define */ 315)('observable');
+
+/***/ }),
+/* 325 */
+/*!*********************************************!*\
+  !*** ./~/babel-runtime/helpers/inherits.js ***!
+  \*********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	exports.__esModule = true;
+	
+	var _setPrototypeOf = __webpack_require__(/*! ../core-js/object/set-prototype-of */ 326);
+	
+	var _setPrototypeOf2 = _interopRequireDefault(_setPrototypeOf);
+	
+	var _create = __webpack_require__(/*! ../core-js/object/create */ 330);
+	
+	var _create2 = _interopRequireDefault(_create);
+	
+	var _typeof2 = __webpack_require__(/*! ../helpers/typeof */ 303);
+	
+	var _typeof3 = _interopRequireDefault(_typeof2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function (subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : (0, _typeof3.default)(superClass)));
+	  }
+	
+	  subClass.prototype = (0, _create2.default)(superClass && superClass.prototype, {
+	    constructor: {
+	      value: subClass,
+	      enumerable: false,
+	      writable: true,
+	      configurable: true
+	    }
+	  });
+	  if (superClass) _setPrototypeOf2.default ? (0, _setPrototypeOf2.default)(subClass, superClass) : subClass.__proto__ = superClass;
+	};
+
+/***/ }),
+/* 326 */
+/*!************************************************************!*\
+  !*** ./~/babel-runtime/core-js/object/set-prototype-of.js ***!
+  \************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(/*! core-js/library/fn/object/set-prototype-of */ 327), __esModule: true };
+
+/***/ }),
+/* 327 */
+/*!*********************************************************!*\
+  !*** ./~/core-js/library/fn/object/set-prototype-of.js ***!
+  \*********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	__webpack_require__(/*! ../../modules/es6.object.set-prototype-of */ 328);
+	module.exports = __webpack_require__(/*! ../../modules/_core */ 175).Object.setPrototypeOf;
+
+/***/ }),
+/* 328 */
+/*!******************************************************************!*\
+  !*** ./~/core-js/library/modules/es6.object.set-prototype-of.js ***!
+  \******************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// 19.1.3.19 Object.setPrototypeOf(O, proto)
+	var $export = __webpack_require__(/*! ./_export */ 173);
+	$export($export.S, 'Object', {setPrototypeOf: __webpack_require__(/*! ./_set-proto */ 329).set});
+
+/***/ }),
+/* 329 */
+/*!*************************************************!*\
+  !*** ./~/core-js/library/modules/_set-proto.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	// Works with __proto__ only. Old v8 can't work with null proto objects.
+	/* eslint-disable no-proto */
+	var isObject = __webpack_require__(/*! ./_is-object */ 181)
+	  , anObject = __webpack_require__(/*! ./_an-object */ 180);
+	var check = function(O, proto){
+	  anObject(O);
+	  if(!isObject(proto) && proto !== null)throw TypeError(proto + ": can't set as prototype!");
+	};
+	module.exports = {
+	  set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
+	    function(test, buggy, set){
+	      try {
+	        set = __webpack_require__(/*! ./_ctx */ 176)(Function.call, __webpack_require__(/*! ./_object-gopd */ 321).f(Object.prototype, '__proto__').set, 2);
+	        set(test, []);
+	        buggy = !(test instanceof Array);
+	      } catch(e){ buggy = true; }
+	      return function setPrototypeOf(O, proto){
+	        check(O, proto);
+	        if(buggy)O.__proto__ = proto;
+	        else set(O, proto);
+	        return O;
+	      };
+	    }({}, false) : undefined),
+	  check: check
+	};
+
+/***/ }),
+/* 330 */
+/*!**************************************************!*\
+  !*** ./~/babel-runtime/core-js/object/create.js ***!
+  \**************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(/*! core-js/library/fn/object/create */ 331), __esModule: true };
+
+/***/ }),
+/* 331 */
+/*!***********************************************!*\
+  !*** ./~/core-js/library/fn/object/create.js ***!
+  \***********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	__webpack_require__(/*! ../../modules/es6.object.create */ 332);
+	var $Object = __webpack_require__(/*! ../../modules/_core */ 175).Object;
+	module.exports = function create(P, D){
+	  return $Object.create(P, D);
+	};
+
+/***/ }),
+/* 332 */
+/*!********************************************************!*\
+  !*** ./~/core-js/library/modules/es6.object.create.js ***!
+  \********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	var $export = __webpack_require__(/*! ./_export */ 173)
+	// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+	$export($export.S, 'Object', {create: __webpack_require__(/*! ./_object-create */ 258)});
+
+/***/ }),
+/* 333 */
+/*!**********************************************!*\
+  !*** ./~/react-relay/~/fbjs/lib/areEqual.js ***!
+  \**********************************************/
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 */
+	
+	var aStackPool = [];
+	var bStackPool = [];
+	
+	/**
+	 * Checks if two values are equal. Values may be primitives, arrays, or objects.
+	 * Returns true if both arguments have the same keys and values.
+	 *
+	 * @see http://underscorejs.org
+	 * @copyright 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
+	 * @license MIT
+	 */
+	function areEqual(a, b) {
+	  var aStack = aStackPool.length ? aStackPool.pop() : [];
+	  var bStack = bStackPool.length ? bStackPool.pop() : [];
+	  var result = eq(a, b, aStack, bStack);
+	  aStack.length = 0;
+	  bStack.length = 0;
+	  aStackPool.push(aStack);
+	  bStackPool.push(bStack);
+	  return result;
+	}
+	
+	function eq(a, b, aStack, bStack) {
+	  if (a === b) {
+	    // Identical objects are equal. `0 === -0`, but they aren't identical.
+	    return a !== 0 || 1 / a == 1 / b;
+	  }
+	  if (a == null || b == null) {
+	    // a or b can be `null` or `undefined`
+	    return false;
+	  }
+	  if (typeof a != 'object' || typeof b != 'object') {
+	    return false;
+	  }
+	  var objToStr = Object.prototype.toString;
+	  var className = objToStr.call(a);
+	  if (className != objToStr.call(b)) {
+	    return false;
+	  }
+	  switch (className) {
+	    case '[object String]':
+	      return a == String(b);
+	    case '[object Number]':
+	      return isNaN(a) || isNaN(b) ? false : a == Number(b);
+	    case '[object Date]':
+	    case '[object Boolean]':
+	      return +a == +b;
+	    case '[object RegExp]':
+	      return a.source == b.source && a.global == b.global && a.multiline == b.multiline && a.ignoreCase == b.ignoreCase;
+	  }
+	  // Assume equality for cyclic structures.
+	  var length = aStack.length;
+	  while (length--) {
+	    if (aStack[length] == a) {
+	      return bStack[length] == b;
+	    }
+	  }
+	  aStack.push(a);
+	  bStack.push(b);
+	  var size = 0;
+	  // Recursively compare objects and arrays.
+	  if (className === '[object Array]') {
+	    size = a.length;
+	    if (size !== b.length) {
+	      return false;
+	    }
+	    // Deep compare the contents, ignoring non-numeric properties.
+	    while (size--) {
+	      if (!eq(a[size], b[size], aStack, bStack)) {
+	        return false;
+	      }
+	    }
+	  } else {
+	    if (a.constructor !== b.constructor) {
+	      return false;
+	    }
+	    if (a.hasOwnProperty('valueOf') && b.hasOwnProperty('valueOf')) {
+	      return a.valueOf() == b.valueOf();
+	    }
+	    var keys = Object.keys(a);
+	    if (keys.length != Object.keys(b).length) {
+	      return false;
+	    }
+	    for (var i = 0; i < keys.length; i++) {
+	      if (!eq(a[keys[i]], b[keys[i]], aStack, bStack)) {
+	        return false;
+	      }
+	    }
+	  }
+	  aStack.pop();
+	  bStack.pop();
+	  return true;
+	}
+	
+	module.exports = areEqual;
+
+/***/ }),
+/* 334 */
+/*!*****************************************!*\
+  !*** ./~/react-relay/lib/deepFreeze.js ***!
+  \*****************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 * @providesModule deepFreeze
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Recursively "deep" freezes the supplied object.
+	 *
+	 * For convenience, and for consistency with the behavior of `Object.freeze`,
+	 * returns the now-frozen original object.
+	 */
+	
+	function deepFreeze(object) {
+	  Object.freeze(object);
+	  Object.getOwnPropertyNames(object).forEach(function (name) {
+	    var property = object[name];
+	    if (property && typeof property === 'object' && !Object.isFrozen(property)) {
+	      deepFreeze(property);
+	    }
+	  });
+	  return object;
+	}
+	
+	module.exports = deepFreeze;
+
+/***/ }),
+/* 335 */
+/*!*********************************************!*\
+  !*** ./~/react-relay/lib/RelayPropTypes.js ***!
+  \*********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayPropTypes
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var RelayPropTypes = {
+	  Container: function Container(props, propName, componentName) {
+	    var component = props[propName];
+	    if (component == null) {
+	      return new Error(__webpack_require__(/*! fbjs/lib/sprintf */ 336)('Required prop `%s` was not specified in `%s`.', propName, componentName));
+	    } else if (!__webpack_require__(/*! ./isRelayContainer */ 337)(component)) {
+	      return new Error(__webpack_require__(/*! fbjs/lib/sprintf */ 336)('Invalid prop `%s` supplied to `%s`, expected a RelayContainer.', propName, componentName));
+	    }
+	    return null;
+	  },
+	  Environment: function Environment(props, propName, componentName) {
+	    var context = props[propName];
+	    if (!__webpack_require__(/*! ./isClassicRelayEnvironment */ 338)(context) || !__webpack_require__(/*! ./isRelayEnvironment */ 339)(context)) {
+	      return new Error(__webpack_require__(/*! fbjs/lib/sprintf */ 336)('Invalid prop/context `%s` supplied to `%s`, expected `%s` to be ' + 'an object conforming to the `RelayEnvironment` interface.', propName, componentName, context));
+	    }
+	    return null;
+	  },
+	
+	
+	  QueryConfig: __webpack_require__(/*! prop-types */ 340).shape({
+	    name: __webpack_require__(/*! prop-types */ 340).string.isRequired,
+	    params: __webpack_require__(/*! prop-types */ 340).object.isRequired,
+	    queries: __webpack_require__(/*! prop-types */ 340).object.isRequired
+	  }),
+	
+	  ClassicRelay: function ClassicRelay(props, propName, componentName) {
+	    var relay = props[propName];
+	    if (!__webpack_require__(/*! ./isRelayContext */ 348)(relay) || !__webpack_require__(/*! ./isClassicRelayEnvironment */ 338)(relay.environment)) {
+	      return new Error(__webpack_require__(/*! fbjs/lib/sprintf */ 336)('Invalid prop/context `%s` supplied to `%s`, expected `%s` to be ' + 'an object with a classic `environment` implementation and `variables`.', propName, componentName, relay));
+	    }
+	    return null;
+	  },
+	  Relay: function Relay(props, propName, componentName) {
+	    var relay = props[propName];
+	    if (!__webpack_require__(/*! ./isRelayContext */ 348)(relay)) {
+	      return new Error(__webpack_require__(/*! fbjs/lib/sprintf */ 336)('Invalid prop/context `%s` supplied to `%s`, expected `%s` to be ' + 'an object with an `environment` and `variables`.', propName, componentName, relay));
+	    }
+	    return null;
+	  }
+	};
+	
+	module.exports = RelayPropTypes;
+
+/***/ }),
+/* 336 */
+/*!*********************************************!*\
+  !*** ./~/react-relay/~/fbjs/lib/sprintf.js ***!
+  \*********************************************/
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @typechecks
+	 */
+	
+	/**
+	 * Simple function for formatting strings.
+	 *
+	 * Replaces placeholders with values passed as extra arguments
+	 *
+	 * @param {string} format the base string
+	 * @param ...args the values to insert
+	 * @return {string} the replaced string
+	 */
+	function sprintf(format) {
+	  for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	    args[_key - 1] = arguments[_key];
+	  }
+	
+	  var index = 0;
+	  return format.replace(/%s/g, function (match) {
+	    return args[index++];
+	  });
+	}
+	
+	module.exports = sprintf;
+
+/***/ }),
+/* 337 */
+/*!***********************************************!*\
+  !*** ./~/react-relay/lib/isRelayContainer.js ***!
+  \***********************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule isRelayContainer
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	function isRelayContainer(component) {
+	  return !!(component && component.getFragmentNames && component.getFragment && component.hasFragment && component.hasVariable);
+	}
+	
+	module.exports = isRelayContainer;
+
+/***/ }),
+/* 338 */
+/*!********************************************************!*\
+  !*** ./~/react-relay/lib/isClassicRelayEnvironment.js ***!
+  \********************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule isClassicRelayEnvironment
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Determine if a given value is an object that implements the `RelayEnvironment`
+	 * interface.
+	 */
+	
+	function isClassicRelayEnvironment(environment) {
+	  return typeof environment === 'object' && environment !== null && typeof environment.applyMutation === 'function' && typeof environment.sendMutation === 'function' && typeof environment.forceFetch === 'function' && typeof environment.getFragmentResolver === 'function' && typeof environment.getStoreData === 'function' && typeof environment.primeCache === 'function';
+	}
+	
+	module.exports = isClassicRelayEnvironment;
+
+/***/ }),
+/* 339 */
+/*!*************************************************!*\
+  !*** ./~/react-relay/lib/isRelayEnvironment.js ***!
+  \*************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule isRelayEnvironment
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Determine if a given value is an object that implements the `Environment`
+	 * interface defined in `RelayEnvironmentTypes`.
+	 */
+	
+	function isRelayEnvironment(environment) {
+	  return typeof environment === 'object' && environment !== null &&
+	  // TODO: add applyMutation/sendMutation once ready in both cores
+	  typeof environment.lookup === 'function' && typeof environment.retain === 'function' && typeof environment.sendQuery === 'function' && typeof environment.streamQuery === 'function' && typeof environment.subscribe === 'function';
+	}
+	
+	module.exports = isRelayEnvironment;
+
+/***/ }),
+/* 340 */
+/*!*******************************!*\
+  !*** ./~/prop-types/index.js ***!
+  \*******************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 */
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  var REACT_ELEMENT_TYPE = (typeof Symbol === 'function' &&
+	    Symbol.for &&
+	    Symbol.for('react.element')) ||
+	    0xeac7;
+	
+	  var isValidElement = function(object) {
+	    return typeof object === 'object' &&
+	      object !== null &&
+	      object.$$typeof === REACT_ELEMENT_TYPE;
+	  };
+	
+	  // By explicitly using `prop-types` you are opting into new development behavior.
+	  // http://fb.me/prop-types-in-prod
+	  var throwOnDirectAccess = true;
+	  module.exports = __webpack_require__(/*! ./factoryWithTypeCheckers */ 341)(isValidElement, throwOnDirectAccess);
+	} else {
+	  // By explicitly using `prop-types` you are opting into new production behavior.
+	  // http://fb.me/prop-types-in-prod
+	  module.exports = __webpack_require__(/*! ./factoryWithThrowingShims */ 347)();
+	}
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../process/browser.js */ 4)))
+
+/***/ }),
+/* 341 */
+/*!*************************************************!*\
+  !*** ./~/prop-types/factoryWithTypeCheckers.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 */
+	
+	'use strict';
+	
+	var emptyFunction = __webpack_require__(/*! fbjs/lib/emptyFunction */ 342);
+	var invariant = __webpack_require__(/*! fbjs/lib/invariant */ 343);
+	var warning = __webpack_require__(/*! fbjs/lib/warning */ 344);
+	
+	var ReactPropTypesSecret = __webpack_require__(/*! ./lib/ReactPropTypesSecret */ 345);
+	var checkPropTypes = __webpack_require__(/*! ./checkPropTypes */ 346);
+	
+	module.exports = function(isValidElement, throwOnDirectAccess) {
+	  /* global Symbol */
+	  var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+	  var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
+	
+	  /**
+	   * Returns the iterator method function contained on the iterable object.
+	   *
+	   * Be sure to invoke the function with the iterable as context:
+	   *
+	   *     var iteratorFn = getIteratorFn(myIterable);
+	   *     if (iteratorFn) {
+	   *       var iterator = iteratorFn.call(myIterable);
+	   *       ...
+	   *     }
+	   *
+	   * @param {?object} maybeIterable
+	   * @return {?function}
+	   */
+	  function getIteratorFn(maybeIterable) {
+	    var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);
+	    if (typeof iteratorFn === 'function') {
+	      return iteratorFn;
+	    }
+	  }
+	
+	  /**
+	   * Collection of methods that allow declaration and validation of props that are
+	   * supplied to React components. Example usage:
+	   *
+	   *   var Props = require('ReactPropTypes');
+	   *   var MyArticle = React.createClass({
+	   *     propTypes: {
+	   *       // An optional string prop named "description".
+	   *       description: Props.string,
+	   *
+	   *       // A required enum prop named "category".
+	   *       category: Props.oneOf(['News','Photos']).isRequired,
+	   *
+	   *       // A prop named "dialog" that requires an instance of Dialog.
+	   *       dialog: Props.instanceOf(Dialog).isRequired
+	   *     },
+	   *     render: function() { ... }
+	   *   });
+	   *
+	   * A more formal specification of how these methods are used:
+	   *
+	   *   type := array|bool|func|object|number|string|oneOf([...])|instanceOf(...)
+	   *   decl := ReactPropTypes.{type}(.isRequired)?
+	   *
+	   * Each and every declaration produces a function with the same signature. This
+	   * allows the creation of custom validation functions. For example:
+	   *
+	   *  var MyLink = React.createClass({
+	   *    propTypes: {
+	   *      // An optional string or URI prop named "href".
+	   *      href: function(props, propName, componentName) {
+	   *        var propValue = props[propName];
+	   *        if (propValue != null && typeof propValue !== 'string' &&
+	   *            !(propValue instanceof URI)) {
+	   *          return new Error(
+	   *            'Expected a string or an URI for ' + propName + ' in ' +
+	   *            componentName
+	   *          );
+	   *        }
+	   *      }
+	   *    },
+	   *    render: function() {...}
+	   *  });
+	   *
+	   * @internal
+	   */
+	
+	  var ANONYMOUS = '<<anonymous>>';
+	
+	  // Important!
+	  // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
+	  var ReactPropTypes = {
+	    array: createPrimitiveTypeChecker('array'),
+	    bool: createPrimitiveTypeChecker('boolean'),
+	    func: createPrimitiveTypeChecker('function'),
+	    number: createPrimitiveTypeChecker('number'),
+	    object: createPrimitiveTypeChecker('object'),
+	    string: createPrimitiveTypeChecker('string'),
+	    symbol: createPrimitiveTypeChecker('symbol'),
+	
+	    any: createAnyTypeChecker(),
+	    arrayOf: createArrayOfTypeChecker,
+	    element: createElementTypeChecker(),
+	    instanceOf: createInstanceTypeChecker,
+	    node: createNodeChecker(),
+	    objectOf: createObjectOfTypeChecker,
+	    oneOf: createEnumTypeChecker,
+	    oneOfType: createUnionTypeChecker,
+	    shape: createShapeTypeChecker
+	  };
+	
+	  /**
+	   * inlined Object.is polyfill to avoid requiring consumers ship their own
+	   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+	   */
+	  /*eslint-disable no-self-compare*/
+	  function is(x, y) {
+	    // SameValue algorithm
+	    if (x === y) {
+	      // Steps 1-5, 7-10
+	      // Steps 6.b-6.e: +0 != -0
+	      return x !== 0 || 1 / x === 1 / y;
+	    } else {
+	      // Step 6.a: NaN == NaN
+	      return x !== x && y !== y;
+	    }
+	  }
+	  /*eslint-enable no-self-compare*/
+	
+	  /**
+	   * We use an Error-like object for backward compatibility as people may call
+	   * PropTypes directly and inspect their output. However, we don't use real
+	   * Errors anymore. We don't inspect their stack anyway, and creating them
+	   * is prohibitively expensive if they are created too often, such as what
+	   * happens in oneOfType() for any type before the one that matched.
+	   */
+	  function PropTypeError(message) {
+	    this.message = message;
+	    this.stack = '';
+	  }
+	  // Make `instanceof Error` still work for returned errors.
+	  PropTypeError.prototype = Error.prototype;
+	
+	  function createChainableTypeChecker(validate) {
+	    if (process.env.NODE_ENV !== 'production') {
+	      var manualPropTypeCallCache = {};
+	      var manualPropTypeWarningCount = 0;
+	    }
+	    function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
+	      componentName = componentName || ANONYMOUS;
+	      propFullName = propFullName || propName;
+	
+	      if (secret !== ReactPropTypesSecret) {
+	        if (throwOnDirectAccess) {
+	          // New behavior only for users of `prop-types` package
+	          invariant(
+	            false,
+	            'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
+	            'Use `PropTypes.checkPropTypes()` to call them. ' +
+	            'Read more at http://fb.me/use-check-prop-types'
+	          );
+	        } else if (process.env.NODE_ENV !== 'production' && typeof console !== 'undefined') {
+	          // Old behavior for people using React.PropTypes
+	          var cacheKey = componentName + ':' + propName;
+	          if (
+	            !manualPropTypeCallCache[cacheKey] &&
+	            // Avoid spamming the console because they are often not actionable except for lib authors
+	            manualPropTypeWarningCount < 3
+	          ) {
+	            warning(
+	              false,
+	              'You are manually calling a React.PropTypes validation ' +
+	              'function for the `%s` prop on `%s`. This is deprecated ' +
+	              'and will throw in the standalone `prop-types` package. ' +
+	              'You may be seeing this warning due to a third-party PropTypes ' +
+	              'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.',
+	              propFullName,
+	              componentName
+	            );
+	            manualPropTypeCallCache[cacheKey] = true;
+	            manualPropTypeWarningCount++;
+	          }
+	        }
+	      }
+	      if (props[propName] == null) {
+	        if (isRequired) {
+	          if (props[propName] === null) {
+	            return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required ' + ('in `' + componentName + '`, but its value is `null`.'));
+	          }
+	          return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required in ' + ('`' + componentName + '`, but its value is `undefined`.'));
+	        }
+	        return null;
+	      } else {
+	        return validate(props, propName, componentName, location, propFullName);
+	      }
+	    }
+	
+	    var chainedCheckType = checkType.bind(null, false);
+	    chainedCheckType.isRequired = checkType.bind(null, true);
+	
+	    return chainedCheckType;
+	  }
+	
+	  function createPrimitiveTypeChecker(expectedType) {
+	    function validate(props, propName, componentName, location, propFullName, secret) {
+	      var propValue = props[propName];
+	      var propType = getPropType(propValue);
+	      if (propType !== expectedType) {
+	        // `propValue` being instance of, say, date/regexp, pass the 'object'
+	        // check, but we can offer a more precise error message here rather than
+	        // 'of type `object`'.
+	        var preciseType = getPreciseType(propValue);
+	
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'));
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+	
+	  function createAnyTypeChecker() {
+	    return createChainableTypeChecker(emptyFunction.thatReturnsNull);
+	  }
+	
+	  function createArrayOfTypeChecker(typeChecker) {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      if (typeof typeChecker !== 'function') {
+	        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside arrayOf.');
+	      }
+	      var propValue = props[propName];
+	      if (!Array.isArray(propValue)) {
+	        var propType = getPropType(propValue);
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
+	      }
+	      for (var i = 0; i < propValue.length; i++) {
+	        var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret);
+	        if (error instanceof Error) {
+	          return error;
+	        }
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+	
+	  function createElementTypeChecker() {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      var propValue = props[propName];
+	      if (!isValidElement(propValue)) {
+	        var propType = getPropType(propValue);
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement.'));
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+	
+	  function createInstanceTypeChecker(expectedClass) {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      if (!(props[propName] instanceof expectedClass)) {
+	        var expectedClassName = expectedClass.name || ANONYMOUS;
+	        var actualClassName = getClassName(props[propName]);
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + actualClassName + '` supplied to `' + componentName + '`, expected ') + ('instance of `' + expectedClassName + '`.'));
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+	
+	  function createEnumTypeChecker(expectedValues) {
+	    if (!Array.isArray(expectedValues)) {
+	      process.env.NODE_ENV !== 'production' ? warning(false, 'Invalid argument supplied to oneOf, expected an instance of array.') : void 0;
+	      return emptyFunction.thatReturnsNull;
+	    }
+	
+	    function validate(props, propName, componentName, location, propFullName) {
+	      var propValue = props[propName];
+	      for (var i = 0; i < expectedValues.length; i++) {
+	        if (is(propValue, expectedValues[i])) {
+	          return null;
+	        }
+	      }
+	
+	      var valuesString = JSON.stringify(expectedValues);
+	      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of value `' + propValue + '` ' + ('supplied to `' + componentName + '`, expected one of ' + valuesString + '.'));
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+	
+	  function createObjectOfTypeChecker(typeChecker) {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      if (typeof typeChecker !== 'function') {
+	        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside objectOf.');
+	      }
+	      var propValue = props[propName];
+	      var propType = getPropType(propValue);
+	      if (propType !== 'object') {
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an object.'));
+	      }
+	      for (var key in propValue) {
+	        if (propValue.hasOwnProperty(key)) {
+	          var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+	          if (error instanceof Error) {
+	            return error;
+	          }
+	        }
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+	
+	  function createUnionTypeChecker(arrayOfTypeCheckers) {
+	    if (!Array.isArray(arrayOfTypeCheckers)) {
+	      process.env.NODE_ENV !== 'production' ? warning(false, 'Invalid argument supplied to oneOfType, expected an instance of array.') : void 0;
+	      return emptyFunction.thatReturnsNull;
+	    }
+	
+	    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+	      var checker = arrayOfTypeCheckers[i];
+	      if (typeof checker !== 'function') {
+	        warning(
+	          false,
+	          'Invalid argument supplid to oneOfType. Expected an array of check functions, but ' +
+	          'received %s at index %s.',
+	          getPostfixForTypeWarning(checker),
+	          i
+	        );
+	        return emptyFunction.thatReturnsNull;
+	      }
+	    }
+	
+	    function validate(props, propName, componentName, location, propFullName) {
+	      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+	        var checker = arrayOfTypeCheckers[i];
+	        if (checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret) == null) {
+	          return null;
+	        }
+	      }
+	
+	      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`.'));
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+	
+	  function createNodeChecker() {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      if (!isNode(props[propName])) {
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`, expected a ReactNode.'));
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+	
+	  function createShapeTypeChecker(shapeTypes) {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      var propValue = props[propName];
+	      var propType = getPropType(propValue);
+	      if (propType !== 'object') {
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+	      }
+	      for (var key in shapeTypes) {
+	        var checker = shapeTypes[key];
+	        if (!checker) {
+	          continue;
+	        }
+	        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+	        if (error) {
+	          return error;
+	        }
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+	
+	  function isNode(propValue) {
+	    switch (typeof propValue) {
+	      case 'number':
+	      case 'string':
+	      case 'undefined':
+	        return true;
+	      case 'boolean':
+	        return !propValue;
+	      case 'object':
+	        if (Array.isArray(propValue)) {
+	          return propValue.every(isNode);
+	        }
+	        if (propValue === null || isValidElement(propValue)) {
+	          return true;
+	        }
+	
+	        var iteratorFn = getIteratorFn(propValue);
+	        if (iteratorFn) {
+	          var iterator = iteratorFn.call(propValue);
+	          var step;
+	          if (iteratorFn !== propValue.entries) {
+	            while (!(step = iterator.next()).done) {
+	              if (!isNode(step.value)) {
+	                return false;
+	              }
+	            }
+	          } else {
+	            // Iterator will provide entry [k,v] tuples rather than values.
+	            while (!(step = iterator.next()).done) {
+	              var entry = step.value;
+	              if (entry) {
+	                if (!isNode(entry[1])) {
+	                  return false;
+	                }
+	              }
+	            }
+	          }
+	        } else {
+	          return false;
+	        }
+	
+	        return true;
+	      default:
+	        return false;
+	    }
+	  }
+	
+	  function isSymbol(propType, propValue) {
+	    // Native Symbol.
+	    if (propType === 'symbol') {
+	      return true;
+	    }
+	
+	    // 19.4.3.5 Symbol.prototype[@@toStringTag] === 'Symbol'
+	    if (propValue['@@toStringTag'] === 'Symbol') {
+	      return true;
+	    }
+	
+	    // Fallback for non-spec compliant Symbols which are polyfilled.
+	    if (typeof Symbol === 'function' && propValue instanceof Symbol) {
+	      return true;
+	    }
+	
+	    return false;
+	  }
+	
+	  // Equivalent of `typeof` but with special handling for array and regexp.
+	  function getPropType(propValue) {
+	    var propType = typeof propValue;
+	    if (Array.isArray(propValue)) {
+	      return 'array';
+	    }
+	    if (propValue instanceof RegExp) {
+	      // Old webkits (at least until Android 4.0) return 'function' rather than
+	      // 'object' for typeof a RegExp. We'll normalize this here so that /bla/
+	      // passes PropTypes.object.
+	      return 'object';
+	    }
+	    if (isSymbol(propType, propValue)) {
+	      return 'symbol';
+	    }
+	    return propType;
+	  }
+	
+	  // This handles more types than `getPropType`. Only used for error messages.
+	  // See `createPrimitiveTypeChecker`.
+	  function getPreciseType(propValue) {
+	    if (typeof propValue === 'undefined' || propValue === null) {
+	      return '' + propValue;
+	    }
+	    var propType = getPropType(propValue);
+	    if (propType === 'object') {
+	      if (propValue instanceof Date) {
+	        return 'date';
+	      } else if (propValue instanceof RegExp) {
+	        return 'regexp';
+	      }
+	    }
+	    return propType;
+	  }
+	
+	  // Returns a string that is postfixed to a warning about an invalid type.
+	  // For example, "undefined" or "of type array"
+	  function getPostfixForTypeWarning(value) {
+	    var type = getPreciseType(value);
+	    switch (type) {
+	      case 'array':
+	      case 'object':
+	        return 'an ' + type;
+	      case 'boolean':
+	      case 'date':
+	      case 'regexp':
+	        return 'a ' + type;
+	      default:
+	        return type;
+	    }
+	  }
+	
+	  // Returns class name of the object, if any.
+	  function getClassName(propValue) {
+	    if (!propValue.constructor || !propValue.constructor.name) {
+	      return ANONYMOUS;
+	    }
+	    return propValue.constructor.name;
+	  }
+	
+	  ReactPropTypes.checkPropTypes = checkPropTypes;
+	  ReactPropTypes.PropTypes = ReactPropTypes;
+	
+	  return ReactPropTypes;
+	};
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../process/browser.js */ 4)))
+
+/***/ }),
+/* 342 */
+/*!**************************************************!*\
+  !*** ./~/prop-types/~/fbjs/lib/emptyFunction.js ***!
+  \**************************************************/
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 */
+	
+	function makeEmptyFunction(arg) {
+	  return function () {
+	    return arg;
+	  };
+	}
+	
+	/**
+	 * This function accepts and discards inputs; it has no side effects. This is
+	 * primarily useful idiomatically for overridable function endpoints which
+	 * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
+	 */
+	var emptyFunction = function emptyFunction() {};
+	
+	emptyFunction.thatReturns = makeEmptyFunction;
+	emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
+	emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
+	emptyFunction.thatReturnsNull = makeEmptyFunction(null);
+	emptyFunction.thatReturnsThis = function () {
+	  return this;
+	};
+	emptyFunction.thatReturnsArgument = function (arg) {
+	  return arg;
+	};
+	
+	module.exports = emptyFunction;
+
+/***/ }),
+/* 343 */
+/*!**********************************************!*\
+  !*** ./~/prop-types/~/fbjs/lib/invariant.js ***!
+  \**********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Use invariant() to assert state which your program assumes to be true.
+	 *
+	 * Provide sprintf-style format (only %s is supported) and arguments
+	 * to provide information about what broke and what you were
+	 * expecting.
+	 *
+	 * The invariant message will be stripped in production, but the invariant
+	 * will remain to ensure logic does not differ in production.
+	 */
+	
+	var validateFormat = function validateFormat(format) {};
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  validateFormat = function validateFormat(format) {
+	    if (format === undefined) {
+	      throw new Error('invariant requires an error message argument');
+	    }
+	  };
+	}
+	
+	function invariant(condition, format, a, b, c, d, e, f) {
+	  validateFormat(format);
+	
+	  if (!condition) {
+	    var error;
+	    if (format === undefined) {
+	      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+	    } else {
+	      var args = [a, b, c, d, e, f];
+	      var argIndex = 0;
+	      error = new Error(format.replace(/%s/g, function () {
+	        return args[argIndex++];
+	      }));
+	      error.name = 'Invariant Violation';
+	    }
+	
+	    error.framesToPop = 1; // we don't care about invariant's own frame
+	    throw error;
+	  }
+	}
+	
+	module.exports = invariant;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../../process/browser.js */ 4)))
+
+/***/ }),
+/* 344 */
+/*!********************************************!*\
+  !*** ./~/prop-types/~/fbjs/lib/warning.js ***!
+  \********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 */
+	
+	'use strict';
+	
+	var emptyFunction = __webpack_require__(/*! ./emptyFunction */ 342);
+	
+	/**
+	 * Similar to invariant but only logs a warning if the condition is not met.
+	 * This can be used to log issues in development environments in critical
+	 * paths. Removing the logging code for production environments will keep the
+	 * same logic and follow the same code paths.
+	 */
+	
+	var warning = emptyFunction;
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  (function () {
+	    var printWarning = function printWarning(format) {
+	      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        args[_key - 1] = arguments[_key];
+	      }
+	
+	      var argIndex = 0;
+	      var message = 'Warning: ' + format.replace(/%s/g, function () {
+	        return args[argIndex++];
+	      });
+	      if (typeof console !== 'undefined') {
+	        console.error(message);
+	      }
+	      try {
+	        // --- Welcome to debugging React ---
+	        // This error was thrown as a convenience so that you can use this stack
+	        // to find the callsite that caused this warning to fire.
+	        throw new Error(message);
+	      } catch (x) {}
+	    };
+	
+	    warning = function warning(condition, format) {
+	      if (format === undefined) {
+	        throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+	      }
+	
+	      if (format.indexOf('Failed Composite propType: ') === 0) {
+	        return; // Ignore CompositeComponent proptype check.
+	      }
+	
+	      if (!condition) {
+	        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+	          args[_key2 - 2] = arguments[_key2];
+	        }
+	
+	        printWarning.apply(undefined, [format].concat(args));
+	      }
+	    };
+	  })();
+	}
+	
+	module.exports = warning;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../../process/browser.js */ 4)))
+
+/***/ }),
+/* 345 */
+/*!**************************************************!*\
+  !*** ./~/prop-types/lib/ReactPropTypesSecret.js ***!
+  \**************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 */
+	
+	'use strict';
+	
+	var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
+	
+	module.exports = ReactPropTypesSecret;
+
+
+/***/ }),
+/* 346 */
+/*!****************************************!*\
+  !*** ./~/prop-types/checkPropTypes.js ***!
+  \****************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 */
+	
+	'use strict';
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  var invariant = __webpack_require__(/*! fbjs/lib/invariant */ 343);
+	  var warning = __webpack_require__(/*! fbjs/lib/warning */ 344);
+	  var ReactPropTypesSecret = __webpack_require__(/*! ./lib/ReactPropTypesSecret */ 345);
+	  var loggedTypeFailures = {};
+	}
+	
+	/**
+	 * Assert that the values match with the type specs.
+	 * Error messages are memorized and will only be shown once.
+	 *
+	 * @param {object} typeSpecs Map of name to a ReactPropType
+	 * @param {object} values Runtime values that need to be type-checked
+	 * @param {string} location e.g. "prop", "context", "child context"
+	 * @param {string} componentName Name of the component for error messages.
+	 * @param {?Function} getStack Returns the component stack.
+	 * @private
+	 */
+	function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
+	  if (process.env.NODE_ENV !== 'production') {
+	    for (var typeSpecName in typeSpecs) {
+	      if (typeSpecs.hasOwnProperty(typeSpecName)) {
+	        var error;
+	        // Prop type validation may throw. In case they do, we don't want to
+	        // fail the render phase where it didn't fail before. So we log it.
+	        // After these have been cleaned up, we'll let them throw.
+	        try {
+	          // This is intentionally an invariant that gets caught. It's the same
+	          // behavior as without this statement except with a better message.
+	          invariant(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'React.PropTypes.', componentName || 'React class', location, typeSpecName);
+	          error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret);
+	        } catch (ex) {
+	          error = ex;
+	        }
+	        warning(!error || error instanceof Error, '%s: type specification of %s `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error);
+	        if (error instanceof Error && !(error.message in loggedTypeFailures)) {
+	          // Only monitor this failure once because there tends to be a lot of the
+	          // same error.
+	          loggedTypeFailures[error.message] = true;
+	
+	          var stack = getStack ? getStack() : '';
+	
+	          warning(false, 'Failed %s type: %s%s', location, error.message, stack != null ? stack : '');
+	        }
+	      }
+	    }
+	  }
+	}
+	
+	module.exports = checkPropTypes;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../process/browser.js */ 4)))
+
+/***/ }),
+/* 347 */
+/*!**************************************************!*\
+  !*** ./~/prop-types/factoryWithThrowingShims.js ***!
+  \**************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 */
+	
+	'use strict';
+	
+	var emptyFunction = __webpack_require__(/*! fbjs/lib/emptyFunction */ 342);
+	var invariant = __webpack_require__(/*! fbjs/lib/invariant */ 343);
+	var ReactPropTypesSecret = __webpack_require__(/*! ./lib/ReactPropTypesSecret */ 345);
+	
+	module.exports = function() {
+	  function shim(props, propName, componentName, location, propFullName, secret) {
+	    if (secret === ReactPropTypesSecret) {
+	      // It is still safe when called from React.
+	      return;
+	    }
+	    invariant(
+	      false,
+	      'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
+	      'Use PropTypes.checkPropTypes() to call them. ' +
+	      'Read more at http://fb.me/use-check-prop-types'
+	    );
+	  };
+	  shim.isRequired = shim;
+	  function getShim() {
+	    return shim;
+	  };
+	  // Important!
+	  // Keep this list in sync with production version in `./factoryWithTypeCheckers.js`.
+	  var ReactPropTypes = {
+	    array: shim,
+	    bool: shim,
+	    func: shim,
+	    number: shim,
+	    object: shim,
+	    string: shim,
+	    symbol: shim,
+	
+	    any: shim,
+	    arrayOf: getShim,
+	    element: shim,
+	    instanceOf: getShim,
+	    node: shim,
+	    objectOf: getShim,
+	    oneOf: getShim,
+	    oneOfType: getShim,
+	    shape: getShim
+	  };
+	
+	  ReactPropTypes.checkPropTypes = emptyFunction;
+	  ReactPropTypes.PropTypes = ReactPropTypes;
+	
+	  return ReactPropTypes;
+	};
+
+
+/***/ }),
+/* 348 */
+/*!*********************************************!*\
+  !*** ./~/react-relay/lib/isRelayContext.js ***!
+  \*********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule isRelayContext
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Determine if the input is a plain object that matches the `RelayContext`
+	 * type defined in `RelayEnvironmentTypes`.
+	 */
+	function isRelayContext(context) {
+	  return typeof context === 'object' && context !== null && !Array.isArray(context) && __webpack_require__(/*! ./isRelayEnvironment */ 339)(context.environment) && __webpack_require__(/*! ./isRelayVariables */ 349)(context.variables);
+	}
+	
+	module.exports = isRelayContext;
+
+/***/ }),
+/* 349 */
+/*!***********************************************!*\
+  !*** ./~/react-relay/lib/isRelayVariables.js ***!
+  \***********************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule isRelayVariables
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Determine if the object is a plain object that matches the `Variables` type.
+	 */
+	
+	function isRelayVariables(variables) {
+	  return typeof variables === 'object' && variables !== null && !Array.isArray(variables);
+	}
+	
+	module.exports = isRelayVariables;
+
+/***/ }),
+/* 350 */
+/*!**********************************************************!*\
+  !*** ./~/react-relay/lib/ReactRelayFragmentContainer.js ***!
+  \**********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactRelayFragmentContainer
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _extends3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/extends */ 202));
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	var _possibleConstructorReturn3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ 302));
+	
+	var _inherits3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/inherits */ 325));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _require = __webpack_require__(/*! ./ReactRelayContainerProfiler */ 351),
+	    profileContainer = _require.profileContainer;
+	
+	var _require2 = __webpack_require__(/*! ./RelayContainerUtils */ 356),
+	    getComponentName = _require2.getComponentName,
+	    getReactComponent = _require2.getReactComponent;
+	
+	var containerContextTypes = {
+	  relay: __webpack_require__(/*! ./RelayPropTypes */ 335).Relay
+	};
+	
+	/**
+	 * Composes a React component class, returning a new class that intercepts
+	 * props, resolving them with the provided fragments and subscribing for
+	 * updates.
+	 */
+	function createContainerWithFragments(Component, fragments) {
+	  var ComponentClass = getReactComponent(Component);
+	  var componentName = getComponentName(Component);
+	  var containerName = 'Relay(' + componentName + ')';
+	
+	  var Container = function (_React$Component) {
+	    (0, _inherits3['default'])(Container, _React$Component);
+	
+	    function Container(props, context) {
+	      (0, _classCallCheck3['default'])(this, Container);
+	
+	      var _this = (0, _possibleConstructorReturn3['default'])(this, _React$Component.call(this, props, context));
+	
+	      _this._handleFragmentDataUpdate = function () {
+	        var data = _this._resolver.resolve();
+	        var profiler = __webpack_require__(/*! ./RelayProfiler */ 352).profile('ReactRelayFragmentContainer.handleFragmentDataUpdate');
+	        _this.setState({ data: data }, profiler.stop);
+	      };
+	
+	      var relay = assertRelayContext(context.relay);
+	      var createFragmentSpecResolver = relay.environment.unstable_internal.createFragmentSpecResolver;
+	
+	      _this._resolver = createFragmentSpecResolver(relay, containerName, fragments, props, _this._handleFragmentDataUpdate);
+	      _this.state = {
+	        data: _this._resolver.resolve(),
+	        relayProp: {
+	          environment: relay.environment
+	        }
+	      };
+	      return _this;
+	    }
+	
+	    /**
+	     * When new props are received, read data for the new props and subscribe
+	     * for updates. Props may be the same in which case previous data and
+	     * subscriptions can be reused.
+	     */
+	
+	
+	    Container.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps, nextContext) {
+	      var context = __webpack_require__(/*! fbjs/lib/nullthrows */ 357)(nextContext);
+	      var relay = assertRelayContext(context.relay);
+	      var _relay$environment$un = relay.environment.unstable_internal,
+	          createFragmentSpecResolver = _relay$environment$un.createFragmentSpecResolver,
+	          getDataIDsFromObject = _relay$environment$un.getDataIDsFromObject;
+	
+	      var prevIDs = getDataIDsFromObject(fragments, this.props);
+	      var nextIDs = getDataIDsFromObject(fragments, nextProps);
+	      // If the environment has changed or props point to new records then
+	      // previously fetched data and any pending fetches no longer apply:
+	      // - Existing references are on the old environment.
+	      // - Existing references are based on old variables.
+	      // - Pending fetches are for the previous records.
+	      if (this.context.relay.environment !== relay.environment || this.context.relay.variables !== relay.variables || !__webpack_require__(/*! fbjs/lib/areEqual */ 333)(prevIDs, nextIDs)) {
+	        this._resolver.dispose();
+	        this._resolver = createFragmentSpecResolver(relay, containerName, fragments, nextProps, this._handleFragmentDataUpdate);
+	        var _relayProp = {
+	          environment: relay.environment
+	        };
+	        this.setState({ relayProp: _relayProp });
+	      } else {
+	        this._resolver.setProps(nextProps);
+	      }
+	      var data = this._resolver.resolve();
+	      if (data !== this.state.data) {
+	        this.setState({ data: data });
+	      }
+	    };
+	
+	    Container.prototype.componentWillUnmount = function componentWillUnmount() {
+	      this._resolver.dispose();
+	    };
+	
+	    Container.prototype.shouldComponentUpdate = function shouldComponentUpdate(nextProps, nextState, nextContext) {
+	      // Short-circuit if any Relay-related data has changed
+	      if (nextContext.relay !== this.context.relay || nextState.data !== this.state.data) {
+	        return true;
+	      }
+	      // Otherwise, for convenience short-circuit if all non-Relay props
+	      // are scalar and equal
+	      var keys = Object.keys(nextProps);
+	      for (var ii = 0; ii < keys.length; ii++) {
+	        var _key = keys[ii];
+	        if (!fragments.hasOwnProperty(_key) && !__webpack_require__(/*! ./isScalarAndEqual */ 358)(nextProps[_key], this.props[_key])) {
+	          return true;
+	        }
+	      }
+	      return false;
+	    };
+	
+	    /**
+	     * Render new data for the existing props/context.
+	     */
+	
+	
+	    Container.prototype.render = function render() {
+	      if (ComponentClass) {
+	        return __webpack_require__(/*! react */ 1).createElement(ComponentClass, (0, _extends3['default'])({}, this.props, this.state.data, {
+	          // TODO: Remove the string ref fallback.
+	          // eslint-disable-next-line react/no-string-refs
+	          ref: this.props.componentRef || 'component',
+	          relay: this.state.relayProp
+	        }));
+	      } else {
+	        // Stateless functional, doesn't support `ref`
+	        return __webpack_require__(/*! react */ 1).createElement(Component, (0, _extends3['default'])({}, this.props, this.state.data, {
+	          relay: this.state.relayProp
+	        }));
+	      }
+	    };
+	
+	    return Container;
+	  }(__webpack_require__(/*! react */ 1).Component);
+	
+	  profileContainer(Container, 'ReactRelayFragmentContainer');
+	  Container.contextTypes = containerContextTypes;
+	  Container.displayName = containerName;
+	
+	  return Container;
+	}
+	
+	function assertRelayContext(relay) {
+	  __webpack_require__(/*! fbjs/lib/invariant */ 359)(__webpack_require__(/*! ./isRelayContext */ 348)(relay), 'ReactRelayFragmentContainer: Expected `context.relay` to be an object ' + 'conforming to the `RelayContext` interface, got `%s`.', relay);
+	  return relay;
+	}
+	
+	/**
+	 * Wrap the basic `createContainer()` function with logic to adapt to the
+	 * `context.relay.environment` in which it is rendered. Specifically, the
+	 * extraction of the environment-specific version of fragments in the
+	 * `fragmentSpec` is memoized once per environment, rather than once per
+	 * instance of the container constructed/rendered.
+	 */
+	function createContainer(Component, fragmentSpec) {
+	  return __webpack_require__(/*! ./buildReactRelayContainer */ 360)(Component, fragmentSpec, createContainerWithFragments);
+	}
+	
+	module.exports = { createContainer: createContainer, createContainerWithFragments: createContainerWithFragments };
+
+/***/ }),
+/* 351 */
+/*!**********************************************************!*\
+  !*** ./~/react-relay/lib/ReactRelayContainerProfiler.js ***!
+  \**********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactRelayContainerProfiler
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	function profileContainer(Container, containerName) {
+	  __webpack_require__(/*! ./RelayProfiler */ 352).instrumentMethods(Container.prototype, {
+	    constructor: containerName + '.prototype.constructor',
+	    componentWillReceiveProps: containerName + '.prototype.componentWillReceiveProps',
+	    componentWillUnmount: containerName + '.prototype.componentWillUnmount',
+	    shouldComponentUpdate: containerName + '.prototype.shouldComponentUpdate'
+	  });
+	}
+	
+	module.exports = { profileContainer: profileContainer };
+
+/***/ }),
+/* 352 */
+/*!********************************************!*\
+  !*** ./~/react-relay/lib/RelayProfiler.js ***!
+  \********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayProfiler
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var aggregateHandlersByName = {
+	  '*': []
+	};
+	var profileHandlersByName = {
+	  '*': []
+	};
+	
+	var NOT_INVOKED = {};
+	var defaultProfiler = { stop: __webpack_require__(/*! fbjs/lib/emptyFunction */ 353) };
+	var shouldInstrument = function shouldInstrument(name) {
+	  if (process.env.NODE_ENV !== 'production') {
+	    return true;
+	  }
+	  return name.charAt(0) !== '@';
+	};
+	
+	/**
+	 * @public
+	 *
+	 * Instruments methods to allow profiling various parts of Relay. Profiling code
+	 * in Relay consists of three steps:
+	 *
+	 *  - Instrument the function to be profiled.
+	 *  - Attach handlers to the instrumented function.
+	 *  - Run the code which triggers the handlers.
+	 *
+	 * Handlers attached to instrumented methods are called with an instrumentation
+	 * name and a callback that must be synchronously executed:
+	 *
+	 *   instrumentedMethod.attachHandler(function(name, callback) {
+	 *     const start = performance.now();
+	 *     callback();
+	 *     console.log('Duration', performance.now() - start);
+	 *   });
+	 *
+	 * Handlers for profiles are callbacks that return a stop method:
+	 *
+	 *   RelayProfiler.attachProfileHandler('profileName', (name, state) => {
+	 *     const start = performance.now();
+	 *     return function stop(name, state) {
+	 *       console.log(`Duration (${name})`, performance.now() - start);
+	 *     }
+	 *   });
+	 *
+	 * In order to reduce the impact on performance in production, instrumented
+	 * methods and profilers with names that begin with `@` will only be measured
+	 * if `__DEV__` is true. This should be used for very hot functions.
+	 */
+	var RelayProfiler = {
+	  /**
+	   * Instruments methods on a class or object. This re-assigns the method in
+	   * order to preserve function names in stack traces (which are detected by
+	   * modern debuggers via heuristics). Example usage:
+	   *
+	   *   const RelayStore = { primeCache: function() {...} };
+	   *   RelayProfiler.instrumentMethods(RelayStore, {
+	   *     primeCache: 'RelayStore.primeCache'
+	   *   });
+	   *
+	   *   RelayStore.primeCache.attachHandler(...);
+	   *
+	   * As a result, the methods will be replaced by wrappers that provide the
+	   * `attachHandler` and `detachHandler` methods.
+	   */
+	  instrumentMethods: function instrumentMethods(object, names) {
+	    __webpack_require__(/*! fbjs/lib/forEachObject */ 354)(names, function (name, key) {
+	      object[key] = RelayProfiler.instrument(name, object[key]);
+	    });
+	  },
+	
+	
+	  /**
+	   * Wraps the supplied function with one that provides the `attachHandler` and
+	   * `detachHandler` methods. Example usage:
+	   *
+	   *   const printRelayQuery =
+	   *     RelayProfiler.instrument('printRelayQuery', printRelayQuery);
+	   *
+	   *   printRelayQuery.attachHandler(...);
+	   *
+	   * NOTE: The instrumentation assumes that no handlers are attached or detached
+	   * in the course of executing another handler.
+	   */
+	  instrument: function instrument(name, originalFunction) {
+	    if (!shouldInstrument(name)) {
+	      originalFunction.attachHandler = __webpack_require__(/*! fbjs/lib/emptyFunction */ 353);
+	      originalFunction.detachHandler = __webpack_require__(/*! fbjs/lib/emptyFunction */ 353);
+	      return originalFunction;
+	    }
+	    if (!aggregateHandlersByName.hasOwnProperty(name)) {
+	      aggregateHandlersByName[name] = [];
+	    }
+	    var catchallHandlers = aggregateHandlersByName['*'];
+	    var aggregateHandlers = aggregateHandlersByName[name];
+	    var handlers = [];
+	    var contexts = [];
+	    var invokeHandlers = function invokeHandlers() {
+	      var context = contexts[contexts.length - 1];
+	      if (context[0]) {
+	        context[0]--;
+	        catchallHandlers[context[0]](name, invokeHandlers);
+	      } else if (context[1]) {
+	        context[1]--;
+	        aggregateHandlers[context[1]](name, invokeHandlers);
+	      } else if (context[2]) {
+	        context[2]--;
+	        handlers[context[2]](name, invokeHandlers);
+	      } else {
+	        context[5] = originalFunction.apply(context[3], context[4]);
+	      }
+	    };
+	    var instrumentedCallback = function instrumentedCallback() {
+	      var returnValue = void 0;
+	      if (aggregateHandlers.length === 0 && handlers.length === 0 && catchallHandlers.length === 0) {
+	        returnValue = originalFunction.apply(this, arguments);
+	      } else {
+	        contexts.push([catchallHandlers.length, aggregateHandlers.length, handlers.length, this, arguments, NOT_INVOKED]);
+	        invokeHandlers();
+	        var context = contexts.pop();
+	        returnValue = context[5];
+	        if (returnValue === NOT_INVOKED) {
+	          throw new Error('RelayProfiler: Handler did not invoke original function.');
+	        }
+	      }
+	      return returnValue;
+	    };
+	    instrumentedCallback.attachHandler = function (handler) {
+	      handlers.push(handler);
+	    };
+	    instrumentedCallback.detachHandler = function (handler) {
+	      __webpack_require__(/*! fbjs/lib/removeFromArray */ 355)(handlers, handler);
+	    };
+	    instrumentedCallback.displayName = '(instrumented ' + name + ')';
+	    return instrumentedCallback;
+	  },
+	
+	
+	  /**
+	   * Attaches a handler to all methods instrumented with the supplied name.
+	   *
+	   *   function createRenderer() {
+	   *     return RelayProfiler.instrument('render', function() {...});
+	   *   }
+	   *   const renderA = createRenderer();
+	   *   const renderB = createRenderer();
+	   *
+	   *   // Only profiles `renderA`.
+	   *   renderA.attachHandler(...);
+	   *
+	   *   // Profiles both `renderA` and `renderB`.
+	   *   RelayProfiler.attachAggregateHandler('render', ...);
+	   *
+	   */
+	  attachAggregateHandler: function attachAggregateHandler(name, handler) {
+	    if (shouldInstrument(name)) {
+	      if (!aggregateHandlersByName.hasOwnProperty(name)) {
+	        aggregateHandlersByName[name] = [];
+	      }
+	      aggregateHandlersByName[name].push(handler);
+	    }
+	  },
+	
+	
+	  /**
+	   * Detaches a handler attached via `attachAggregateHandler`.
+	   */
+	  detachAggregateHandler: function detachAggregateHandler(name, handler) {
+	    if (shouldInstrument(name)) {
+	      if (aggregateHandlersByName.hasOwnProperty(name)) {
+	        __webpack_require__(/*! fbjs/lib/removeFromArray */ 355)(aggregateHandlersByName[name], handler);
+	      }
+	    }
+	  },
+	
+	
+	  /**
+	   * Instruments profiling for arbitrarily asynchronous code by a name.
+	   *
+	   *   const timerProfiler = RelayProfiler.profile('timeout');
+	   *   setTimeout(function() {
+	   *     timerProfiler.stop();
+	   *   }, 1000);
+	   *
+	   *   RelayProfiler.attachProfileHandler('timeout', ...);
+	   *
+	   * Arbitrary state can also be passed into `profile` as a second argument. The
+	   * attached profile handlers will receive this as the second argument.
+	   */
+	  profile: function profile(name, state) {
+	    var hasCatchAllHandlers = profileHandlersByName['*'].length > 0;
+	    var hasNamedHandlers = profileHandlersByName.hasOwnProperty(name);
+	    if (hasNamedHandlers || hasCatchAllHandlers) {
+	      var profileHandlers = hasNamedHandlers && hasCatchAllHandlers ? profileHandlersByName[name].concat(profileHandlersByName['*']) : hasNamedHandlers ? profileHandlersByName[name] : profileHandlersByName['*'];
+	      var stopHandlers = void 0;
+	      for (var ii = profileHandlers.length - 1; ii >= 0; ii--) {
+	        var profileHandler = profileHandlers[ii];
+	        var stopHandler = profileHandler(name, state);
+	        stopHandlers = stopHandlers || [];
+	        stopHandlers.unshift(stopHandler);
+	      }
+	      return {
+	        stop: function stop() {
+	          if (stopHandlers) {
+	            stopHandlers.forEach(function (stopHandler) {
+	              return stopHandler();
+	            });
+	          }
+	        }
+	      };
+	    }
+	    return defaultProfiler;
+	  },
+	
+	
+	  /**
+	   * Attaches a handler to profiles with the supplied name. You can also
+	   * attach to the special name '*' which is a catch all.
+	   */
+	  attachProfileHandler: function attachProfileHandler(name, handler) {
+	    if (shouldInstrument(name)) {
+	      if (!profileHandlersByName.hasOwnProperty(name)) {
+	        profileHandlersByName[name] = [];
+	      }
+	      profileHandlersByName[name].push(handler);
+	    }
+	  },
+	
+	
+	  /**
+	   * Detaches a handler attached via `attachProfileHandler`.
+	   */
+	  detachProfileHandler: function detachProfileHandler(name, handler) {
+	    if (shouldInstrument(name)) {
+	      if (profileHandlersByName.hasOwnProperty(name)) {
+	        __webpack_require__(/*! fbjs/lib/removeFromArray */ 355)(profileHandlersByName[name], handler);
+	      }
+	    }
+	  }
+	};
+	
+	module.exports = RelayProfiler;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 4)))
+
+/***/ }),
+/* 353 */
+/*!***************************************************!*\
+  !*** ./~/react-relay/~/fbjs/lib/emptyFunction.js ***!
+  \***************************************************/
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 */
+	
+	function makeEmptyFunction(arg) {
+	  return function () {
+	    return arg;
+	  };
+	}
+	
+	/**
+	 * This function accepts and discards inputs; it has no side effects. This is
+	 * primarily useful idiomatically for overridable function endpoints which
+	 * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
+	 */
+	var emptyFunction = function emptyFunction() {};
+	
+	emptyFunction.thatReturns = makeEmptyFunction;
+	emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
+	emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
+	emptyFunction.thatReturnsNull = makeEmptyFunction(null);
+	emptyFunction.thatReturnsThis = function () {
+	  return this;
+	};
+	emptyFunction.thatReturnsArgument = function (arg) {
+	  return arg;
+	};
+	
+	module.exports = emptyFunction;
+
+/***/ }),
+/* 354 */
+/*!***************************************************!*\
+  !*** ./~/react-relay/~/fbjs/lib/forEachObject.js ***!
+  \***************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @typechecks
+	 */
+	
+	'use strict';
+	
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
+	
+	/**
+	 * Executes the provided `callback` once for each enumerable own property in the
+	 * object. The `callback` is invoked with three arguments:
+	 *
+	 *  - the property value
+	 *  - the property name
+	 *  - the object being traversed
+	 *
+	 * Properties that are added after the call to `forEachObject` will not be
+	 * visited by `callback`. If the values of existing properties are changed, the
+	 * value passed to `callback` will be the value at the time `forEachObject`
+	 * visits them. Properties that are deleted before being visited are not
+	 * visited.
+	 *
+	 * @param {?object} object
+	 * @param {function} callback
+	 * @param {*} context
+	 */
+	function forEachObject(object, callback, context) {
+	  for (var name in object) {
+	    if (hasOwnProperty.call(object, name)) {
+	      callback.call(context, object[name], name, object);
+	    }
+	  }
+	}
+	
+	module.exports = forEachObject;
+
+/***/ }),
+/* 355 */
+/*!*****************************************************!*\
+  !*** ./~/react-relay/~/fbjs/lib/removeFromArray.js ***!
+  \*****************************************************/
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @typechecks
+	 * 
+	 */
+	
+	/**
+	 * Removes an element from an array.
+	 */
+	function removeFromArray(array, element) {
+	  var index = array.indexOf(element);
+	  if (index !== -1) {
+	    array.splice(index, 1);
+	  }
+	}
+	
+	module.exports = removeFromArray;
+
+/***/ }),
+/* 356 */
+/*!**************************************************!*\
+  !*** ./~/react-relay/lib/RelayContainerUtils.js ***!
+  \**************************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayContainerUtils
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * @internal
+	 *
+	 * Helper for checking if this is a React Component
+	 * created with React.Component or React.createClass().
+	 */
+	
+	function isReactComponent(component) {
+	  return !!(component && typeof component.prototype === 'object' && component.prototype && component.prototype.isReactComponent);
+	}
+	
+	function getReactComponent(Component) {
+	  if (isReactComponent(Component)) {
+	    return Component;
+	  } else {
+	    return null;
+	  }
+	}
+	
+	function getComponentName(Component) {
+	  var name = void 0;
+	  var ComponentClass = getReactComponent(Component);
+	  if (ComponentClass) {
+	    name = ComponentClass.displayName || ComponentClass.name;
+	  } else if (typeof Component === 'function') {
+	    // This is a stateless functional component.
+	    name = Component.displayName || Component.name || 'StatelessComponent';
+	  } else {
+	    name = 'ReactElement';
+	  }
+	  return name;
+	}
+	
+	function getContainerName(Component) {
+	  return 'Relay(' + getComponentName(Component) + ')';
+	}
+	
+	module.exports = {
+	  getComponentName: getComponentName,
+	  getContainerName: getContainerName,
+	  getReactComponent: getReactComponent
+	};
+
+/***/ }),
+/* 357 */
+/*!************************************************!*\
+  !*** ./~/react-relay/~/fbjs/lib/nullthrows.js ***!
+  \************************************************/
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 */
+	
+	var nullthrows = function nullthrows(x) {
+	  if (x != null) {
+	    return x;
+	  }
+	  throw new Error("Got unexpected null or undefined");
+	};
+	
+	module.exports = nullthrows;
+
+/***/ }),
+/* 358 */
+/*!***********************************************!*\
+  !*** ./~/react-relay/lib/isScalarAndEqual.js ***!
+  \***********************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * 
+	 * @providesModule isScalarAndEqual
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * A fast test to determine if two values are equal scalars:
+	 * - compares scalars such as booleans, strings, numbers by value
+	 * - compares functions by identity
+	 * - returns false for complex values, since these cannot be cheaply tested for
+	 *   equality (use `areEquals` instead)
+	 */
+	
+	function isScalarAndEqual(valueA, valueB) {
+	  return valueA === valueB && (valueA === null || typeof valueA !== 'object');
+	}
+	
+	module.exports = isScalarAndEqual;
+
+/***/ }),
+/* 359 */
+/*!***********************************************!*\
+  !*** ./~/react-relay/~/fbjs/lib/invariant.js ***!
+  \***********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Use invariant() to assert state which your program assumes to be true.
+	 *
+	 * Provide sprintf-style format (only %s is supported) and arguments
+	 * to provide information about what broke and what you were
+	 * expecting.
+	 *
+	 * The invariant message will be stripped in production, but the invariant
+	 * will remain to ensure logic does not differ in production.
+	 */
+	
+	var validateFormat = function validateFormat(format) {};
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  validateFormat = function validateFormat(format) {
+	    if (format === undefined) {
+	      throw new Error('invariant requires an error message argument');
+	    }
+	  };
+	}
+	
+	function invariant(condition, format, a, b, c, d, e, f) {
+	  validateFormat(format);
+	
+	  if (!condition) {
+	    var error;
+	    if (format === undefined) {
+	      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+	    } else {
+	      var args = [a, b, c, d, e, f];
+	      var argIndex = 0;
+	      error = new Error(format.replace(/%s/g, function () {
+	        return args[argIndex++];
+	      }));
+	      error.name = 'Invariant Violation';
+	    }
+	
+	    error.framesToPop = 1; // we don't care about invariant's own frame
+	    throw error;
+	  }
+	}
+	
+	module.exports = invariant;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../../process/browser.js */ 4)))
+
+/***/ }),
+/* 360 */
+/*!*******************************************************!*\
+  !*** ./~/react-relay/lib/buildReactRelayContainer.js ***!
+  \*******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule buildReactRelayContainer
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _require = __webpack_require__(/*! ./RelayContainerUtils */ 356),
+	    getComponentName = _require.getComponentName,
+	    getContainerName = _require.getContainerName;
+	
+	var containerContextTypes = {
+	  relay: __webpack_require__(/*! ./RelayPropTypes */ 335).Relay
+	};
+	
+	/**
+	 * Creates a component class whose instances adapt to the
+	 * `context.relay.environment` in which they are rendered and which have the
+	 * necessary static methods (`getFragment()` etc) to be composed within classic
+	 * `Relay.Containers`.
+	 */
+	function buildReactRelayContainer(ComponentClass, fragmentSpec, createContainerWithFragments) {
+	  // Sanity-check user-defined fragment input
+	  var containerName = getContainerName(ComponentClass);
+	  __webpack_require__(/*! ./assertFragmentMap */ 361)(getComponentName(ComponentClass), fragmentSpec);
+	
+	  // Memoize a container for the last environment instance encountered
+	  var environment = void 0;
+	  var Container = void 0;
+	  function ContainerConstructor(props, context) {
+	    if (Container == null || context.relay.environment !== environment) {
+	      environment = context.relay.environment;
+	      if (process.env.NODE_ENV !== 'production') {
+	        var _require2 = __webpack_require__(/*! relay-runtime */ 161),
+	            isRelayModernEnvironment = _require2.isRelayModernEnvironment;
+	
+	        if (!isRelayModernEnvironment(environment)) {
+	          throw new Error('RelayModernContainer: Can only use Relay Modern component ' + (containerName + ' in a Relay Modern environment!\n') + 'When using Relay Modern and Relay Classic in the same ' + 'application, ensure components use Relay Compat to work in ' + 'both environments.\n' + 'See: http://facebook.github.io/relay/docs/relay-compat.html');
+	        }
+	      }
+	      var getFragmentFromTag = environment.unstable_internal.getFragment;
+	
+	      var _fragments = __webpack_require__(/*! fbjs/lib/mapObject */ 362)(fragmentSpec, getFragmentFromTag);
+	      Container = createContainerWithFragments(ComponentClass, _fragments);
+	    }
+	    return new Container(props, context);
+	  }
+	  ContainerConstructor.contextTypes = containerContextTypes;
+	  ContainerConstructor.displayName = containerName;
+	
+	  if (process.env.NODE_ENV !== 'production') {
+	    // Classic container static methods.
+	    ContainerConstructor.getFragment = function getFragmentOnModernContainer() {
+	      throw new Error('RelayModernContainer: ' + containerName + '.getFragment() was called on ' + 'a Relay Modern component by a Relay Classic or Relay Compat ' + 'component.\n' + 'When using Relay Modern and Relay Classic in the same ' + 'application, ensure components use Relay Compat to work in ' + 'both environments.\n' + 'See: http://facebook.github.io/relay/docs/relay-compat.html');
+	    };
+	  }
+	
+	  return ContainerConstructor;
+	}
+	
+	module.exports = buildReactRelayContainer;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 4)))
+
+/***/ }),
+/* 361 */
+/*!************************************************!*\
+  !*** ./~/react-relay/lib/assertFragmentMap.js ***!
+  \************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule assertFragmentMap
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Fail fast if the user supplies invalid fragments as input.
+	 */
+	function assertFragmentMap(componentName, fragments) {
+	  __webpack_require__(/*! fbjs/lib/invariant */ 359)(fragments && typeof fragments === 'object', 'Could not create Relay Container for `%s`. ' + 'Expected a set of GraphQL fragments, got `%s` instead.', componentName, fragments);
+	
+	  __webpack_require__(/*! fbjs/lib/forEachObject */ 354)(fragments, function (fragment, key) {
+	    __webpack_require__(/*! fbjs/lib/invariant */ 359)(fragment && (typeof fragment === 'object' || typeof fragment === 'function'), 'Could not create Relay Container for `%s`. ' + 'The value of fragment `%s` was expected to be a fragment, got `%s` instead.', componentName, key, fragment);
+	  });
+	}
+	
+	module.exports = assertFragmentMap;
+
+/***/ }),
+/* 362 */
+/*!***********************************************!*\
+  !*** ./~/react-relay/~/fbjs/lib/mapObject.js ***!
+  \***********************************************/
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 */
+	
+	'use strict';
+	
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
+	
+	/**
+	 * Executes the provided `callback` once for each enumerable own property in the
+	 * object and constructs a new object from the results. The `callback` is
+	 * invoked with three arguments:
+	 *
+	 *  - the property value
+	 *  - the property name
+	 *  - the object being traversed
+	 *
+	 * Properties that are added after the call to `mapObject` will not be visited
+	 * by `callback`. If the values of existing properties are changed, the value
+	 * passed to `callback` will be the value at the time `mapObject` visits them.
+	 * Properties that are deleted before being visited are not visited.
+	 *
+	 * @grep function objectMap()
+	 * @grep function objMap()
+	 *
+	 * @param {?object} object
+	 * @param {function} callback
+	 * @param {*} context
+	 * @return {?object}
+	 */
+	function mapObject(object, callback, context) {
+	  if (!object) {
+	    return null;
+	  }
+	  var result = {};
+	  for (var name in object) {
+	    if (hasOwnProperty.call(object, name)) {
+	      result[name] = callback.call(context, object[name], name, object);
+	    }
+	  }
+	  return result;
+	}
+	
+	module.exports = mapObject;
+
+/***/ }),
+/* 363 */
+/*!************************************************************!*\
+  !*** ./~/react-relay/lib/ReactRelayPaginationContainer.js ***!
+  \************************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactRelayPaginationContainer
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	var _possibleConstructorReturn3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ 302));
+	
+	var _inherits3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/inherits */ 325));
+	
+	var _defineProperty3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/defineProperty */ 169));
+	
+	var _extends4 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/extends */ 202));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _require = __webpack_require__(/*! ./ReactRelayContainerProfiler */ 351),
+	    profileContainer = _require.profileContainer;
+	
+	var _require2 = __webpack_require__(/*! ./RelayConnectionInterface */ 364),
+	    EDGES = _require2.EDGES,
+	    PAGE_INFO = _require2.PAGE_INFO,
+	    HAS_NEXT_PAGE = _require2.HAS_NEXT_PAGE,
+	    HAS_PREV_PAGE = _require2.HAS_PREV_PAGE,
+	    END_CURSOR = _require2.END_CURSOR,
+	    START_CURSOR = _require2.START_CURSOR;
+	
+	var _require3 = __webpack_require__(/*! ./RelayContainerUtils */ 356),
+	    getComponentName = _require3.getComponentName,
+	    getReactComponent = _require3.getReactComponent;
+	
+	var containerContextTypes = {
+	  relay: __webpack_require__(/*! ./RelayPropTypes */ 335).Relay
+	};
+	
+	var FORWARD = 'forward';
+	
+	/**
+	 * Extends the functionality of RelayFragmentContainer by providing a mechanism
+	 * to load more data from a connection.
+	 *
+	 * # Configuring a PaginationContainer
+	 *
+	 * PaginationContainer accepts the standard FragmentContainer arguments and an
+	 * additional `connectionConfig` argument:
+	 *
+	 * - `Component`: the component to be wrapped/rendered.
+	 * - `fragments`: an object whose values are `graphql` fragments. The object
+	 *   keys determine the prop names by which fragment data is available.
+	 * - `connectionConfig`: an object that determines how to load more connection
+	 *   data. Details below.
+	 *
+	 * # Loading More Data
+	 *
+	 * Use `props.relay.hasMore()` to determine if there are more items to load.
+	 *
+	 * ```
+	 * hasMore(): boolean
+	 * ```
+	 *
+	 * Use `props.relay.isLoading()` to determine if a previous call to `loadMore()`
+	 * is still pending. This is convenient for avoiding duplicate load calls.
+	 *
+	 * ```
+	 * isLoading(): boolean
+	 * ```
+	 *
+	 * Use `props.relay.loadMore()` to load more items. This will return null if
+	 * there are no more items to fetch, otherwise it will fetch more items and
+	 * return a Disposable that can be used to cancel the fetch.
+	 *
+	 * `pageSize` should be the number of *additional* items to fetch (not the
+	 * total).
+	 *
+	 * ```
+	 * loadMore(pageSize: number, callback: ?(error: ?Error) => void): ?Disposable
+	 * ```
+	 *
+	 * A complete example:
+	 *
+	 * ```
+	 * class Foo extends React.Component {
+	 *   ...
+	 *   _onEndReached() {
+	 *     if (!this.props.relay.hasMore() || this.props.relay.isLoading()) {
+	 *       return;
+	 *     }
+	 *     this.props.relay.loadMore(10);
+	 *   }
+	 *   ...
+	 * }
+	 * ```
+	 *
+	 * # Connection Config
+	 *
+	 * Here's an example, followed by details of each config property:
+	 *
+	 * ```
+	 * ReactRelayPaginationContainer.createContainer(
+	 *   Component,
+	 *   {
+	 *     user: graphql`fragment FriendsFragment on User {
+	 *       friends(after: $afterCursor first: $count) @connection {
+	 *         edges { ... }
+	 *         pageInfo {
+	 *           startCursor
+	 *           endCursor
+	 *           hasNextPage
+	 *           hasPreviousPage
+	 *         }
+	 *       }
+	 *     }`,
+	 *   },
+	 *   {
+	 *     direction: 'forward',
+	 *     getConnectionFromProps(props) {
+	 *       return props.user && props.user.friends;
+	 *     },
+	 *     getFragmentVariables(vars, totalCount) {
+	 *       // The component presumably wants *all* edges, not just those after
+	 *       // the cursor, so notice that we don't set $afterCursor here.
+	 *       return {
+	 *         ...vars,
+	 *         count: totalCount,
+	 *       };
+	 *     },
+	 *     getVariables(props, {count, cursor}, fragmentVariables) {
+	 *       return {
+	 *         ...RelayFBQueryConstants.get(),
+	 *         id: props.user.id,
+	 *         afterCursor: cursor,
+	 *         count,
+	 *       },
+	 *     },
+	 *     query: graphql`
+	 *       query FriendsQuery($id: ID!, $afterCursor: ID, $count: Int!) {
+	 *         node(id: $id) {
+	 *           ...FriendsFragment
+	 *         }
+	 *       }
+	 *     `,
+	 *   }
+	 * );
+	 * ```
+	 *
+	 * ## Config Properties
+	 *
+	 * - `direction`: Either "forward" to indicate forward pagination using
+	 *   after/first, or "backward" to indicate backward pagination using
+	 *   before/last.
+	 * - `getConnectionFromProps(props)`: PaginationContainer doesn't magically know
+	 *   which connection data you mean to fetch more of (a container might fetch
+	 *   multiple connections, but can only paginate one of them). This function is
+	 *   given the fragment props only (not full props), and should return the
+	 *   connection data. See the above example that returns the friends data via
+	 *   `props.user.friends`.
+	 * - `getFragmentVariables(previousVars, totalCount)`: Given the previous variables
+	 *   and the new total number of items, get the variables to use when reading
+	 *   your fragments. Typically this means setting whatever your local "count"
+	 *   variable is to the value of `totalCount`. See the example.
+	 * - `getVariables(props, {count, cursor})`: Get the variables to use when
+	 *   fetching the pagination `query`. You may determine the root object id from
+	 *   props (see the example that uses `props.user.id`) and may also set whatever
+	 *   variables you use for the after/first/before/last calls based on the count
+	 *   and cursor.
+	 * - `query`: A query to use when fetching more connection data. This should
+	 *   typically reference one of the container's fragment (as in the example)
+	 *   to ensure that all the necessary fields for sub-components are fetched.
+	 */
+	
+	function createGetConnectionFromProps(metadata) {
+	  var path = metadata.path;
+	  __webpack_require__(/*! fbjs/lib/invariant */ 359)(path, 'ReactRelayPaginationContainer: Unable to synthesize a ' + 'getConnectionFromProps function.');
+	  return function (props) {
+	    var data = props[metadata.fragmentName];
+	    for (var i = 0; i < path.length; i++) {
+	      if (!data || typeof data !== 'object') {
+	        return null;
+	      }
+	      data = data[path[i]];
+	    }
+	    return data;
+	  };
+	}
+	
+	function createGetFragmentVariables(metadata) {
+	  var countVariable = metadata.count;
+	  __webpack_require__(/*! fbjs/lib/invariant */ 359)(countVariable, 'ReactRelayPaginationContainer: Unable to synthesize a ' + 'getFragmentVariables function.');
+	  return function (prevVars, totalCount) {
+	    return (0, _extends4['default'])({}, prevVars, (0, _defineProperty3['default'])({}, countVariable, totalCount));
+	  };
+	}
+	
+	function findConnectionMetadata(fragments) {
+	  var foundConnectionMetadata = null;
+	  for (var _fragmentName in fragments) {
+	    var fragment = fragments[_fragmentName];
+	    var connectionMetadata = fragment.metadata && fragment.metadata.connection;
+	    if (connectionMetadata) {
+	      __webpack_require__(/*! fbjs/lib/invariant */ 359)(connectionMetadata.length === 1, 'ReactRelayPaginationContainer: Only a single @connection is ' + 'supported, `%s` has %s.', _fragmentName, connectionMetadata.length);
+	      __webpack_require__(/*! fbjs/lib/invariant */ 359)(!foundConnectionMetadata, 'ReactRelayPaginationContainer: Only a single fragment with ' + '@connection is supported.');
+	      foundConnectionMetadata = (0, _extends4['default'])({}, connectionMetadata[0], {
+	        fragmentName: _fragmentName
+	      });
+	    }
+	  }
+	  // TODO(t17350438) for modern, this should be an invariant.
+	  return foundConnectionMetadata || {};
+	}
+	
+	function createContainerWithFragments(Component, fragments, connectionConfig) {
+	  var ComponentClass = getReactComponent(Component);
+	  var componentName = getComponentName(Component);
+	  var containerName = 'Relay(' + componentName + ')';
+	
+	  var metadata = findConnectionMetadata(fragments);
+	
+	  var getConnectionFromProps = connectionConfig.getConnectionFromProps || createGetConnectionFromProps(metadata);
+	
+	  var direction = connectionConfig.direction || metadata.direction;
+	  __webpack_require__(/*! fbjs/lib/invariant */ 359)(direction, 'ReactRelayPaginationContainer: Unable to infer direction of the ' + 'connection, possibly because both first and last are provided.');
+	
+	  var getFragmentVariables = connectionConfig.getFragmentVariables || createGetFragmentVariables(metadata);
+	
+	  var Container = function (_React$Component) {
+	    (0, _inherits3['default'])(Container, _React$Component);
+	
+	    function Container(props, context) {
+	      (0, _classCallCheck3['default'])(this, Container);
+	
+	      var _this = (0, _possibleConstructorReturn3['default'])(this, _React$Component.call(this, props, context));
+	
+	      _this._handleFragmentDataUpdate = function () {
+	        var profiler = __webpack_require__(/*! ./RelayProfiler */ 352).profile('ReactRelayPaginationContainer.handleFragmentDataUpdate');
+	        _this.setState({ data: _this._resolver.resolve() }, profiler.stop);
+	      };
+	
+	      _this._hasMore = function () {
+	        var connectionData = _this._getConnectionData();
+	        return !!connectionData && connectionData.hasMore;
+	      };
+	
+	      _this._isLoading = function () {
+	        return !!_this._pendingRefetch;
+	      };
+	
+	      _this._refetchConnection = function (totalCount, callback) {
+	        var paginatingVariables = {
+	          count: totalCount,
+	          cursor: null,
+	          totalCount: totalCount
+	        };
+	        return _this._fetchPage(paginatingVariables, callback, { force: true });
+	      };
+	
+	      _this._loadMore = function (pageSize, callback, options) {
+	        var connectionData = _this._getConnectionData();
+	        if (!connectionData) {
+	          return null;
+	        }
+	        var totalCount = connectionData.edgeCount + pageSize;
+	        if (options && options.force) {
+	          return _this._refetchConnection(totalCount, callback);
+	        }
+	        var paginatingVariables = {
+	          count: pageSize,
+	          cursor: connectionData.cursor,
+	          totalCount: totalCount
+	        };
+	        return _this._fetchPage(paginatingVariables, callback, options);
+	      };
+	
+	      var relay = assertRelayContext(context.relay);
+	      var createFragmentSpecResolver = relay.environment.unstable_internal.createFragmentSpecResolver;
+	
+	      _this._localVariables = null;
+	      _this._pendingRefetch = null;
+	      _this._references = [];
+	      _this._resolver = createFragmentSpecResolver(relay, containerName, fragments, props, _this._handleFragmentDataUpdate);
+	      _this.state = {
+	        data: _this._resolver.resolve(),
+	        relayProp: _this._buildRelayProp(relay)
+	      };
+	      return _this;
+	    }
+	
+	    /**
+	     * When new props are received, read data for the new props and subscribe
+	     * for updates. Props may be the same in which case previous data and
+	     * subscriptions can be reused.
+	     */
+	
+	
+	    Container.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps, nextContext) {
+	      var context = __webpack_require__(/*! fbjs/lib/nullthrows */ 357)(nextContext);
+	      var relay = assertRelayContext(context.relay);
+	      var _relay$environment$un = relay.environment.unstable_internal,
+	          createFragmentSpecResolver = _relay$environment$un.createFragmentSpecResolver,
+	          getDataIDsFromObject = _relay$environment$un.getDataIDsFromObject;
+	
+	      var prevIDs = getDataIDsFromObject(fragments, this.props);
+	      var nextIDs = getDataIDsFromObject(fragments, nextProps);
+	
+	      // If the environment has changed or props point to new records then
+	      // previously fetched data and any pending fetches no longer apply:
+	      // - Existing references are on the old environment.
+	      // - Existing references are based on old variables.
+	      // - Pending fetches are for the previous records.
+	      if (this.context.relay.environment !== relay.environment || this.context.relay.variables !== relay.variables || !__webpack_require__(/*! fbjs/lib/areEqual */ 333)(prevIDs, nextIDs)) {
+	        this._release();
+	        this._localVariables = null;
+	        this._resolver = createFragmentSpecResolver(relay, containerName, fragments, nextProps, this._handleFragmentDataUpdate);
+	        this.setState({ relayProp: this._buildRelayProp(relay) });
+	      } else if (!this._localVariables) {
+	        this._resolver.setProps(nextProps);
+	      }
+	      var data = this._resolver.resolve();
+	      if (data !== this.state.data) {
+	        this.setState({ data: data });
+	      }
+	    };
+	
+	    Container.prototype.componentWillUnmount = function componentWillUnmount() {
+	      this._release();
+	    };
+	
+	    Container.prototype.shouldComponentUpdate = function shouldComponentUpdate(nextProps, nextState, nextContext) {
+	      // Short-circuit if any Relay-related data has changed
+	      if (nextContext.relay !== this.context.relay || nextState.data !== this.state.data || nextState.relayProp !== this.state.relayProp) {
+	        return true;
+	      }
+	      // Otherwise, for convenience short-circuit if all non-Relay props
+	      // are scalar and equal
+	      var keys = Object.keys(nextProps);
+	      for (var ii = 0; ii < keys.length; ii++) {
+	        var _key = keys[ii];
+	        if (!fragments.hasOwnProperty(_key) && !__webpack_require__(/*! ./isScalarAndEqual */ 358)(nextProps[_key], this.props[_key])) {
+	          return true;
+	        }
+	      }
+	      return false;
+	    };
+	
+	    Container.prototype._buildRelayProp = function _buildRelayProp(relay) {
+	      return {
+	        hasMore: this._hasMore,
+	        isLoading: this._isLoading,
+	        loadMore: this._loadMore,
+	        refetchConnection: this._refetchConnection,
+	        environment: relay.environment
+	      };
+	    };
+	
+	    /**
+	     * Render new data for the existing props/context.
+	     */
+	
+	
+	    Container.prototype._getConnectionData = function _getConnectionData() {
+	      // Extract connection data and verify there are more edges to fetch
+	      var props = (0, _extends4['default'])({}, this.props, this.state.data);
+	      var connectionData = getConnectionFromProps(props);
+	      if (connectionData == null) {
+	        return null;
+	      }
+	      __webpack_require__(/*! fbjs/lib/invariant */ 359)(typeof connectionData === 'object', 'ReactRelayPaginationContainer: Expected `getConnectionFromProps()` in `%s`' + 'to return `null` or a plain object with %s and %s properties, got `%s`.' + componentName, EDGES, PAGE_INFO, connectionData);
+	      var edges = connectionData[EDGES];
+	      var pageInfo = connectionData[PAGE_INFO];
+	      if (edges == null || pageInfo == null) {
+	        return null;
+	      }
+	      __webpack_require__(/*! fbjs/lib/invariant */ 359)(Array.isArray(edges), 'ReactRelayPaginationContainer: Expected `getConnectionFromProps()` in `%s`' + 'to return an object with %s: Array, got `%s`.', componentName, EDGES, edges);
+	      __webpack_require__(/*! fbjs/lib/invariant */ 359)(typeof pageInfo === 'object', 'ReactRelayPaginationContainer: Expected `getConnectionFromProps()` in `%s`' + 'to return an object with %s: Object, got `%s`.', componentName, PAGE_INFO, pageInfo);
+	      var hasMore = direction === FORWARD ? pageInfo[HAS_NEXT_PAGE] : pageInfo[HAS_PREV_PAGE];
+	      var cursor = direction === FORWARD ? pageInfo[END_CURSOR] : pageInfo[START_CURSOR];
+	      if (typeof hasMore !== 'boolean' || typeof cursor !== 'string') {
+	        __webpack_require__(/*! fbjs/lib/warning */ 366)(false, 'ReactRelayPaginationContainer: Cannot paginate without %s fields in `%s`. ' + 'Be sure to fetch %s (got `%s`) and %s (got `%s`).', PAGE_INFO, componentName, direction === FORWARD ? HAS_NEXT_PAGE : HAS_PREV_PAGE, hasMore, direction === FORWARD ? END_CURSOR : START_CURSOR, cursor);
+	        return null;
+	      }
+	      return {
+	        cursor: cursor,
+	        edgeCount: edges.length,
+	        hasMore: hasMore
+	      };
+	    };
+	
+	    Container.prototype._fetchPage = function _fetchPage(paginatingVariables, callback, options) {
+	      var _this2 = this;
+	
+	      var _assertRelayContext = assertRelayContext(this.context.relay),
+	          environment = _assertRelayContext.environment;
+	
+	      var _environment$unstable = environment.unstable_internal,
+	          createOperationSelector = _environment$unstable.createOperationSelector,
+	          getOperation = _environment$unstable.getOperation,
+	          getVariablesFromObject = _environment$unstable.getVariablesFromObject;
+	
+	      var props = (0, _extends4['default'])({}, this.props, this.state.data);
+	      var fragmentVariables = getVariablesFromObject(this.context.relay.variables, fragments, this.props);
+	      var fetchVariables = connectionConfig.getVariables(props, {
+	        count: paginatingVariables.count,
+	        cursor: paginatingVariables.cursor
+	      },
+	      // Pass the variables used to fetch the fragments initially
+	      fragmentVariables);
+	      __webpack_require__(/*! fbjs/lib/invariant */ 359)(typeof fetchVariables === 'object' && fetchVariables !== null, 'ReactRelayPaginationContainer: Expected `getVariables()` to ' + 'return an object, got `%s` in `%s`.', fetchVariables, componentName);
+	      this._localVariables = fetchVariables;
+	
+	      var cacheConfig = options ? { force: !!options.force } : undefined;
+	      var query = getOperation(connectionConfig.query);
+	      var operation = createOperationSelector(query, fetchVariables);
+	
+	      var onCompleted = function onCompleted() {
+	        _this2._pendingRefetch = null;
+	        callback && callback();
+	        _this2._updateSnapshots(paginatingVariables.totalCount);
+	      };
+	      var onError = function onError(error) {
+	        _this2._pendingRefetch = null;
+	        callback && callback(error);
+	      };
+	
+	      // Immediately retain the results of the query to prevent cached
+	      // data from being evicted
+	      var reference = environment.retain(operation.root);
+	      this._references.push(reference);
+	
+	      if (this._pendingRefetch) {
+	        this._pendingRefetch.dispose();
+	      }
+	      var pendingRefetch = environment.streamQuery({
+	        cacheConfig: cacheConfig,
+	        onCompleted: onCompleted,
+	        onError: onError,
+	        operation: operation
+	      });
+	      this._pendingRefetch = pendingRefetch;
+	      return {
+	        dispose: function dispose() {
+	          // Disposing a loadMore() call should always dispose the fetch itself,
+	          // but should not clear this._pendingFetch unless the loadMore() being
+	          // cancelled is the most recent call.
+	          pendingRefetch.dispose();
+	          if (_this2._pendingRefetch === pendingRefetch) {
+	            _this2._pendingRefetch = null;
+	          }
+	        }
+	      };
+	    };
+	
+	    Container.prototype._updateSnapshots = function _updateSnapshots(totalCount) {
+	      var getVariablesFromObject = this.context.relay.environment.unstable_internal.getVariablesFromObject;
+	
+	      var prevVariables = getVariablesFromObject(this.context.relay.variables, fragments, this.props);
+	      var nextVariables = getFragmentVariables(prevVariables, totalCount);
+	
+	      var prevData = this._resolver.resolve();
+	      this._resolver.setVariables(nextVariables);
+	      var nextData = this._resolver.resolve();
+	      // Workaround slightly different handling for connection in different
+	      // core implementations:
+	      // - Classic core requires the count to be explicitly incremented
+	      // - Modern core automatically appends new items, updating the count
+	      //   isn't required to see new data.
+	      //
+	      // `setState` is only required if changing the variables would change the
+	      // resolved data.
+	      // TODO #14894725: remove PaginationContainer equal check
+	      if (!__webpack_require__(/*! fbjs/lib/areEqual */ 333)(prevData, nextData)) {
+	        this.setState({ data: nextData });
+	      }
+	    };
+	
+	    Container.prototype._release = function _release() {
+	      this._resolver.dispose();
+	      this._references.forEach(function (disposable) {
+	        return disposable.dispose();
+	      });
+	      this._references.length = 0;
+	      if (this._pendingRefetch) {
+	        this._pendingRefetch.dispose();
+	        this._pendingRefetch = null;
+	      }
+	    };
+	
+	    Container.prototype.render = function render() {
+	      if (ComponentClass) {
+	        return __webpack_require__(/*! react */ 1).createElement(ComponentClass, (0, _extends4['default'])({}, this.props, this.state.data, {
+	          // TODO: Remove the string ref fallback.
+	          // eslint-disable-next-line react/no-string-refs
+	          ref: this.props.componentRef || 'component',
+	          relay: this.state.relayProp
+	        }));
+	      } else {
+	        // Stateless functional, doesn't support `ref`
+	        return __webpack_require__(/*! react */ 1).createElement(Component, (0, _extends4['default'])({}, this.props, this.state.data, {
+	          relay: this.state.relayProp
+	        }));
+	      }
+	    };
+	
+	    return Container;
+	  }(__webpack_require__(/*! react */ 1).Component);
+	
+	  profileContainer(Container, 'ReactRelayPaginationContainer');
+	  Container.contextTypes = containerContextTypes;
+	  Container.displayName = containerName;
+	
+	  return Container;
+	}
+	
+	function assertRelayContext(relay) {
+	  __webpack_require__(/*! fbjs/lib/invariant */ 359)(__webpack_require__(/*! ./isRelayContext */ 348)(relay), 'ReactRelayPaginationContainer: Expected `context.relay` to be an object ' + 'conforming to the `RelayContext` interface, got `%s`.', relay);
+	  return relay;
+	}
+	
+	/**
+	 * Wrap the basic `createContainer()` function with logic to adapt to the
+	 * `context.relay.environment` in which it is rendered. Specifically, the
+	 * extraction of the environment-specific version of fragments in the
+	 * `fragmentSpec` is memoized once per environment, rather than once per
+	 * instance of the container constructed/rendered.
+	 */
+	function createContainer(Component, fragmentSpec, connectionConfig) {
+	  return __webpack_require__(/*! ./buildReactRelayContainer */ 360)(Component, fragmentSpec, function (ComponentClass, fragments) {
+	    return createContainerWithFragments(ComponentClass, fragments, connectionConfig);
+	  });
+	}
+	
+	module.exports = { createContainer: createContainer, createContainerWithFragments: createContainerWithFragments };
+
+/***/ }),
+/* 364 */
+/*!*******************************************************!*\
+  !*** ./~/react-relay/lib/RelayConnectionInterface.js ***!
+  \*******************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayConnectionInterface
+	 * @format
+	 */
+	
+	'use strict';
+	
+	module.exports = __webpack_require__(/*! ./RelayOSSConnectionInterface */ 365);
+
+/***/ }),
+/* 365 */
+/*!**********************************************************!*\
+  !*** ./~/react-relay/lib/RelayOSSConnectionInterface.js ***!
+  \**********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule RelayOSSConnectionInterface
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _defineProperty3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/defineProperty */ 169));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var CLIENT_MUTATION_ID = 'clientMutationId';
+	var CONNECTION_CALLS = {
+	  after: true,
+	  before: true,
+	  find: true,
+	  first: true,
+	  last: true,
+	  surrounds: true
+	};
+	var CURSOR = 'cursor';
+	var EDGES = 'edges';
+	var END_CURSOR = 'endCursor';
+	var HAS_NEXT_PAGE = 'hasNextPage';
+	var HAS_PREV_PAGE = 'hasPreviousPage';
+	var NODE = 'node';
+	var PAGE_INFO = 'pageInfo';
+	var PAGE_INFO_TYPE = 'PageInfo';
+	var REQUIRED_RANGE_CALLS = {
+	  find: true,
+	  first: true,
+	  last: true
+	};
+	var START_CURSOR = 'startCursor';
+	
+	/**
+	 * @internal
+	 *
+	 * Defines logic relevant to the informal "Connection" GraphQL interface.
+	 */
+	var RelayOSSConnectionInterface = {
+	  CLIENT_MUTATION_ID: CLIENT_MUTATION_ID,
+	  CURSOR: CURSOR,
+	  EDGES: EDGES,
+	  END_CURSOR: END_CURSOR,
+	  HAS_NEXT_PAGE: HAS_NEXT_PAGE,
+	  HAS_PREV_PAGE: HAS_PREV_PAGE,
+	  NODE: NODE,
+	  PAGE_INFO: PAGE_INFO,
+	  PAGE_INFO_TYPE: PAGE_INFO_TYPE,
+	  START_CURSOR: START_CURSOR,
+	
+	  /**
+	   * Whether `edges` fields are expected to have `source` fields.
+	   */
+	  EDGES_HAVE_SOURCE_FIELD: false,
+	
+	  /**
+	   * Checks whether a call exists strictly to encode which parts of a connection
+	   * to fetch. Fields that only differ by connection call values should have the
+	   * same identity.
+	   */
+	  isConnectionCall: function isConnectionCall(call) {
+	    return CONNECTION_CALLS.hasOwnProperty(call.name);
+	  },
+	
+	
+	  /**
+	   * Checks whether a set of calls on a connection supply enough information to
+	   * fetch the range fields (i.e. `edges` and `page_info`).
+	   */
+	  hasRangeCalls: function hasRangeCalls(calls) {
+	    return calls.some(function (call) {
+	      return REQUIRED_RANGE_CALLS.hasOwnProperty(call.name);
+	    });
+	  },
+	
+	
+	  /**
+	   * Gets a default record representing a connection's `PAGE_INFO`.
+	   */
+	  getDefaultPageInfo: function getDefaultPageInfo() {
+	    var _ref;
+	
+	    return _ref = {}, (0, _defineProperty3['default'])(_ref, END_CURSOR, undefined), (0, _defineProperty3['default'])(_ref, HAS_NEXT_PAGE, false), (0, _defineProperty3['default'])(_ref, HAS_PREV_PAGE, false), (0, _defineProperty3['default'])(_ref, START_CURSOR, undefined), _ref;
+	  }
+	};
+	
+	module.exports = RelayOSSConnectionInterface;
+
+/***/ }),
+/* 366 */
+/*!*********************************************!*\
+  !*** ./~/react-relay/~/fbjs/lib/warning.js ***!
+  \*********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 */
+	
+	'use strict';
+	
+	var emptyFunction = __webpack_require__(/*! ./emptyFunction */ 353);
+	
+	/**
+	 * Similar to invariant but only logs a warning if the condition is not met.
+	 * This can be used to log issues in development environments in critical
+	 * paths. Removing the logging code for production environments will keep the
+	 * same logic and follow the same code paths.
+	 */
+	
+	var warning = emptyFunction;
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  (function () {
+	    var printWarning = function printWarning(format) {
+	      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        args[_key - 1] = arguments[_key];
+	      }
+	
+	      var argIndex = 0;
+	      var message = 'Warning: ' + format.replace(/%s/g, function () {
+	        return args[argIndex++];
+	      });
+	      if (typeof console !== 'undefined') {
+	        console.error(message);
+	      }
+	      try {
+	        // --- Welcome to debugging React ---
+	        // This error was thrown as a convenience so that you can use this stack
+	        // to find the callsite that caused this warning to fire.
+	        throw new Error(message);
+	      } catch (x) {}
+	    };
+	
+	    warning = function warning(condition, format) {
+	      if (format === undefined) {
+	        throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+	      }
+	
+	      if (format.indexOf('Failed Composite propType: ') === 0) {
+	        return; // Ignore CompositeComponent proptype check.
+	      }
+	
+	      if (!condition) {
+	        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+	          args[_key2 - 2] = arguments[_key2];
+	        }
+	
+	        printWarning.apply(undefined, [format].concat(args));
+	      }
+	    };
+	  })();
+	}
+	
+	module.exports = warning;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../../process/browser.js */ 4)))
+
+/***/ }),
+/* 367 */
+/*!*********************************************************!*\
+  !*** ./~/react-relay/lib/ReactRelayRefetchContainer.js ***!
+  \*********************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactRelayRefetchContainer
+	 * 
+	 * @format
+	 */
+	
+	'use strict';
+	
+	var _extends3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/extends */ 202));
+	
+	var _classCallCheck3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/classCallCheck */ 164));
+	
+	var _possibleConstructorReturn3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ 302));
+	
+	var _inherits3 = _interopRequireDefault(__webpack_require__(/*! babel-runtime/helpers/inherits */ 325));
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _require = __webpack_require__(/*! ./ReactRelayContainerProfiler */ 351),
+	    profileContainer = _require.profileContainer;
+	
+	var _require2 = __webpack_require__(/*! ./RelayContainerUtils */ 356),
+	    getComponentName = _require2.getComponentName,
+	    getReactComponent = _require2.getReactComponent;
+	
+	var containerContextTypes = {
+	  relay: __webpack_require__(/*! ./RelayPropTypes */ 335).Relay
+	};
+	
+	/**
+	 * Composes a React component class, returning a new class that intercepts
+	 * props, resolving them with the provided fragments and subscribing for
+	 * updates.
+	 */
+	function createContainerWithFragments(Component, fragments, taggedNode) {
+	  var ComponentClass = getReactComponent(Component);
+	  var componentName = getComponentName(Component);
+	  var containerName = 'Relay(' + componentName + ')';
+	
+	  var Container = function (_React$Component) {
+	    (0, _inherits3['default'])(Container, _React$Component);
+	
+	    function Container(props, context) {
+	      (0, _classCallCheck3['default'])(this, Container);
+	
+	      var _this = (0, _possibleConstructorReturn3['default'])(this, _React$Component.call(this, props, context));
+	
+	      _this._handleFragmentDataUpdate = function () {
+	        var profiler = __webpack_require__(/*! ./RelayProfiler */ 352).profile('ReactRelayRefetchContainer.handleFragmentDataUpdate');
+	        _this.setState({ data: _this._resolver.resolve() }, profiler.stop);
+	      };
+	
+	      _this._refetch = function (refetchVariables, renderVariables, callback, options) {
+	        var _assertRelayContext = assertRelayContext(_this.context.relay),
+	            environment = _assertRelayContext.environment,
+	            rootVariables = _assertRelayContext.variables;
+	
+	        var fetchVariables = typeof refetchVariables === 'function' ? refetchVariables(_this._getFragmentVariables()) : refetchVariables;
+	        fetchVariables = (0, _extends3['default'])({}, rootVariables, fetchVariables);
+	        var fragmentVariables = renderVariables ? (0, _extends3['default'])({}, rootVariables, renderVariables) : fetchVariables;
+	
+	        var onNext = function onNext(response) {
+	          if (!_this._pendingRefetch) {
+	            // only call callback once per refetch
+	            return;
+	          }
+	          // TODO t15106389: add helper utility for fetching more data
+	          _this._pendingRefetch = null;
+	          _this._relayContext = {
+	            environment: _this.context.relay.environment,
+	            variables: fragmentVariables
+	          };
+	          callback && callback();
+	          _this._resolver.setVariables(fragmentVariables);
+	          _this.setState({ data: _this._resolver.resolve() });
+	        };
+	        var onError = function onError(error) {
+	          _this._pendingRefetch = null;
+	          callback && callback(error);
+	        };
+	
+	        var cacheConfig = options ? { force: !!options.force } : undefined;
+	        var _this$context$relay$e = _this.context.relay.environment.unstable_internal,
+	            createOperationSelector = _this$context$relay$e.createOperationSelector,
+	            getOperation = _this$context$relay$e.getOperation;
+	
+	        var query = getOperation(taggedNode);
+	        var operation = createOperationSelector(query, fetchVariables);
+	
+	        // Immediately retain the results of the query to prevent cached
+	        // data from being evicted
+	        var reference = environment.retain(operation.root);
+	        _this._references.push(reference);
+	
+	        _this._localVariables = fetchVariables;
+	        if (_this._pendingRefetch) {
+	          _this._pendingRefetch.dispose();
+	        }
+	        var pendingRefetch = environment.streamQuery({
+	          cacheConfig: cacheConfig,
+	          onError: onError,
+	          onNext: onNext,
+	          operation: operation
+	        });
+	        _this._pendingRefetch = pendingRefetch;
+	        return {
+	          dispose: function dispose() {
+	            // Disposing a refetch() call should always dispose the fetch itself,
+	            // but should not clear this._pendingFetch unless the refetch() being
+	            // cancelled is the most recent call.
+	            pendingRefetch.dispose();
+	            if (_this._pendingRefetch === pendingRefetch) {
+	              _this._pendingRefetch = null;
+	            }
+	          }
+	        };
+	      };
+	
+	      var relay = assertRelayContext(context.relay);
+	      var createFragmentSpecResolver = relay.environment.unstable_internal.createFragmentSpecResolver;
+	
+	      _this._localVariables = null;
+	      _this._pendingRefetch = null;
+	      _this._references = [];
+	      _this._resolver = createFragmentSpecResolver(relay, containerName, fragments, props, _this._handleFragmentDataUpdate);
+	      _this._relayContext = {
+	        environment: _this.context.relay.environment,
+	        variables: _this.context.relay.variables
+	      };
+	      _this.state = {
+	        data: _this._resolver.resolve(),
+	        relayProp: _this._buildRelayProp(relay)
+	      };
+	      return _this;
+	    }
+	
+	    /**
+	     * When new props are received, read data for the new props and subscribe
+	     * for updates. Props may be the same in which case previous data and
+	     * subscriptions can be reused.
+	     */
+	
+	
+	    Container.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps, nextContext) {
+	      var context = __webpack_require__(/*! fbjs/lib/nullthrows */ 357)(nextContext);
+	      var relay = assertRelayContext(context.relay);
+	      var _relay$environment$un = relay.environment.unstable_internal,
+	          createFragmentSpecResolver = _relay$environment$un.createFragmentSpecResolver,
+	          getDataIDsFromObject = _relay$environment$un.getDataIDsFromObject;
+	
+	      var prevIDs = getDataIDsFromObject(fragments, this.props);
+	      var nextIDs = getDataIDsFromObject(fragments, nextProps);
+	
+	      // If the environment has changed or props point to new records then
+	      // previously fetched data and any pending fetches no longer apply:
+	      // - Existing references are on the old environment.
+	      // - Existing references are based on old variables.
+	      // - Pending fetches are for the previous records.
+	      if (this.context.relay.environment !== relay.environment || this.context.relay.variables !== relay.variables || !__webpack_require__(/*! fbjs/lib/areEqual */ 333)(prevIDs, nextIDs)) {
+	        this._release();
+	        this._localVariables = null;
+	        this._relayContext = {
+	          environment: relay.environment,
+	          variables: relay.variables
+	        };
+	        this._resolver = createFragmentSpecResolver(relay, containerName, fragments, nextProps, this._handleFragmentDataUpdate);
+	        this.setState({ relayProp: this._buildRelayProp(relay) });
+	      } else if (!this._localVariables) {
+	        this._resolver.setProps(nextProps);
+	      }
+	      var data = this._resolver.resolve();
+	      if (data !== this.state.data) {
+	        this.setState({ data: data });
+	      }
+	    };
+	
+	    Container.prototype.componentWillUnmount = function componentWillUnmount() {
+	      this._release();
+	    };
+	
+	    Container.prototype.shouldComponentUpdate = function shouldComponentUpdate(nextProps, nextState, nextContext) {
+	      // Short-circuit if any Relay-related data has changed
+	      if (nextContext.relay !== this.context.relay || nextState.data !== this.state.data || nextState.relayProp !== this.state.relayProp) {
+	        return true;
+	      }
+	      // Otherwise, for convenience short-circuit if all non-Relay props
+	      // are scalar and equal
+	      var keys = Object.keys(nextProps);
+	      for (var ii = 0; ii < keys.length; ii++) {
+	        var _key = keys[ii];
+	        if (!fragments.hasOwnProperty(_key) && !__webpack_require__(/*! ./isScalarAndEqual */ 358)(nextProps[_key], this.props[_key])) {
+	          return true;
+	        }
+	      }
+	      return false;
+	    };
+	
+	    Container.prototype._release = function _release() {
+	      this._resolver.dispose();
+	      this._references.forEach(function (disposable) {
+	        return disposable.dispose();
+	      });
+	      this._references.length = 0;
+	      if (this._pendingRefetch) {
+	        this._pendingRefetch.dispose();
+	        this._pendingRefetch = null;
+	      }
+	    };
+	
+	    Container.prototype._buildRelayProp = function _buildRelayProp(relay) {
+	      return {
+	        environment: relay.environment,
+	        refetch: this._refetch
+	      };
+	    };
+	
+	    /**
+	     * Render new data for the existing props/context.
+	     */
+	
+	
+	    Container.prototype._getFragmentVariables = function _getFragmentVariables() {
+	      var getVariablesFromObject = this.context.relay.environment.unstable_internal.getVariablesFromObject;
+	
+	      return getVariablesFromObject(this.context.relay.variables, fragments, this.props);
+	    };
+	
+	    Container.prototype.getChildContext = function getChildContext() {
+	      return { relay: this._relayContext };
+	    };
+	
+	    Container.prototype.render = function render() {
+	      if (ComponentClass) {
+	        return __webpack_require__(/*! react */ 1).createElement(ComponentClass, (0, _extends3['default'])({}, this.props, this.state.data, {
+	          // TODO: Remove the string ref fallback.
+	          // eslint-disable-next-line react/no-string-refs
+	          ref: this.props.componentRef || 'component',
+	          relay: this.state.relayProp
+	        }));
+	      } else {
+	        // Stateless functional, doesn't support `ref`
+	        return __webpack_require__(/*! react */ 1).createElement(Component, (0, _extends3['default'])({}, this.props, this.state.data, {
+	          relay: this.state.relayProp
+	        }));
+	      }
+	    };
+	
+	    return Container;
+	  }(__webpack_require__(/*! react */ 1).Component);
+	
+	  profileContainer(Container, 'ReactRelayRefetchContainer');
+	  Container.contextTypes = containerContextTypes;
+	  Container.displayName = containerName;
+	
+	  return Container;
+	}
+	
+	function assertRelayContext(relay) {
+	  __webpack_require__(/*! fbjs/lib/invariant */ 359)(__webpack_require__(/*! ./isRelayContext */ 348)(relay), 'ReactRelayRefetchContainer: Expected `context.relay` to be an object ' + 'conforming to the `RelayContext` interface, got `%s`.', relay);
+	  return relay;
+	}
+	
+	/**
+	 * Wrap the basic `createContainer()` function with logic to adapt to the
+	 * `context.relay.environment` in which it is rendered. Specifically, the
+	 * extraction of the environment-specific version of fragments in the
+	 * `fragmentSpec` is memoized once per environment, rather than once per
+	 * instance of the container constructed/rendered.
+	 */
+	function createContainer(Component, fragmentSpec, taggedNode) {
+	  var Container = __webpack_require__(/*! ./buildReactRelayContainer */ 360)(Component, fragmentSpec, function (ComponentClass, fragments) {
+	    return createContainerWithFragments(ComponentClass, fragments, taggedNode);
+	  });
+	  Container.childContextTypes = containerContextTypes;
+	  return Container;
+	}
+	
+	module.exports = { createContainer: createContainer, createContainerWithFragments: createContainerWithFragments };
+
+/***/ }),
+/* 368 */
 /*!*******************************!*\
   !*** ./js/components/Main.js ***!
   \*******************************/
@@ -20256,11 +33968,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _API = __webpack_require__(/*! ../API */ 160);
+	var _API = __webpack_require__(/*! ../API */ 369);
 	
 	var _API2 = _interopRequireDefault(_API);
 	
-	var _LinkStore = __webpack_require__(/*! ../stores/LinkStore */ 168);
+	var _LinkStore = __webpack_require__(/*! ../stores/LinkStore */ 377);
 	
 	var _LinkStore2 = _interopRequireDefault(_LinkStore);
 	
@@ -20279,14 +33991,21 @@
 	var Main = function (_React$Component) {
 	  _inherits(Main, _React$Component);
 	
-	  function Main(props) {
+	  function Main() {
+	    var _ref;
+	
+	    var _temp, _this, _ret;
+	
 	    _classCallCheck(this, Main);
 	
-	    var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
 	
-	    _this.state = _getAppState();
-	    _this.onChange = _this.onChange.bind(_this);
-	    return _this;
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Main.__proto__ || Object.getPrototypeOf(Main)).call.apply(_ref, [this].concat(args))), _this), _this.state = _getAppState(), _this.onChange = function () {
+	      console.log("4. In the view");
+	      _this.setState(_getAppState());
+	    }, _temp), _possibleConstructorReturn(_this, _ret);
 	  }
 	
 	  _createClass(Main, [{
@@ -20301,15 +34020,9 @@
 	      _LinkStore2.default.removeListener("change, this.onChange");
 	    }
 	  }, {
-	    key: "onChange",
-	    value: function onChange() {
-	      console.log("4. In the view");
-	      this.setState(_getAppState());
-	    }
-	  }, {
 	    key: "render",
 	    value: function render() {
-	      var content = this.state.links.map(function (link) {
+	      var content = this.state.links.slice(0, this.props.limit).map(function (link) {
 	        return _react2.default.createElement(
 	          "li",
 	          { key: link._id },
@@ -20340,10 +34053,16 @@
 	  return Main;
 	}(_react2.default.Component);
 	
+	Main.propTypes = {
+	  limit: _react2.default.PropTypes.number
+	};
+	Main.defaultProps = {
+	  limit: 1
+	};
 	exports.default = Main;
 
 /***/ }),
-/* 160 */
+/* 369 */
 /*!*******************!*\
   !*** ./js/API.js ***!
   \*******************/
@@ -20355,9 +34074,9 @@
 	  value: true
 	});
 	
-	var _jquery = __webpack_require__(/*! jquery */ 161);
+	var _jquery = __webpack_require__(/*! jquery */ 370);
 	
-	var _ServerActions = __webpack_require__(/*! ./actions/ServerActions */ 162);
+	var _ServerActions = __webpack_require__(/*! ./actions/ServerActions */ 371);
 	
 	var _ServerActions2 = _interopRequireDefault(_ServerActions);
 	
@@ -20377,7 +34096,7 @@
 	exports.default = API;
 
 /***/ }),
-/* 161 */
+/* 370 */
 /*!*********************************!*\
   !*** ./~/jquery/dist/jquery.js ***!
   \*********************************/
@@ -30639,7 +44358,7 @@
 
 
 /***/ }),
-/* 162 */
+/* 371 */
 /*!*************************************!*\
   !*** ./js/actions/ServerActions.js ***!
   \*************************************/
@@ -30651,11 +44370,11 @@
 	    value: true
 	});
 	
-	var _AppDispatcher = __webpack_require__(/*! ../AppDispatcher */ 163);
+	var _AppDispatcher = __webpack_require__(/*! ../AppDispatcher */ 372);
 	
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 	
-	var _Constants = __webpack_require__(/*! ../Constants */ 167);
+	var _Constants = __webpack_require__(/*! ../Constants */ 376);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -30672,7 +44391,7 @@
 	exports.default = ServerActions;
 
 /***/ }),
-/* 163 */
+/* 372 */
 /*!*****************************!*\
   !*** ./js/AppDispatcher.js ***!
   \*****************************/
@@ -30684,7 +44403,7 @@
 	  value: true
 	});
 	
-	var _flux = __webpack_require__(/*! flux */ 164);
+	var _flux = __webpack_require__(/*! flux */ 373);
 	
 	var _flux2 = _interopRequireDefault(_flux);
 	
@@ -30695,7 +44414,7 @@
 	exports.default = AppDispatcher;
 
 /***/ }),
-/* 164 */
+/* 373 */
 /*!*************************!*\
   !*** ./~/flux/index.js ***!
   \*************************/
@@ -30710,11 +44429,11 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Dispatcher = __webpack_require__(/*! ./lib/Dispatcher */ 165);
+	module.exports.Dispatcher = __webpack_require__(/*! ./lib/Dispatcher */ 374);
 
 
 /***/ }),
-/* 165 */
+/* 374 */
 /*!**********************************!*\
   !*** ./~/flux/lib/Dispatcher.js ***!
   \**********************************/
@@ -30739,7 +44458,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(/*! fbjs/lib/invariant */ 166);
+	var invariant = __webpack_require__(/*! fbjs/lib/invariant */ 375);
 	
 	var _prefix = 'ID_';
 	
@@ -30954,7 +44673,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 4)))
 
 /***/ }),
-/* 166 */
+/* 375 */
 /*!****************************************!*\
   !*** ./~/flux/~/fbjs/lib/invariant.js ***!
   \****************************************/
@@ -31018,7 +44737,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../../process/browser.js */ 4)))
 
 /***/ }),
-/* 167 */
+/* 376 */
 /*!*************************!*\
   !*** ./js/Constants.js ***!
   \*************************/
@@ -31034,7 +44753,7 @@
 	};
 
 /***/ }),
-/* 168 */
+/* 377 */
 /*!********************************!*\
   !*** ./js/stores/LinkStore.js ***!
   \********************************/
@@ -31048,13 +44767,13 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _AppDispatcher = __webpack_require__(/*! ../AppDispatcher */ 163);
+	var _AppDispatcher = __webpack_require__(/*! ../AppDispatcher */ 372);
 	
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 	
-	var _Constants = __webpack_require__(/*! ../Constants */ 167);
+	var _Constants = __webpack_require__(/*! ../Constants */ 376);
 	
-	var _events = __webpack_require__(/*! events */ 169);
+	var _events = __webpack_require__(/*! events */ 378);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -31102,7 +44821,7 @@
 	exports.default = new LinkStore();
 
 /***/ }),
-/* 169 */
+/* 378 */
 /*!****************************!*\
   !*** ./~/events/events.js ***!
   \****************************/
