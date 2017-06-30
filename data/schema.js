@@ -6,27 +6,32 @@ import {
   GraphQLString
 } from 'graphql';
 
-let data = [42,43,44];
+// NEEDS ACCESS TO MONGO
+let Schema = (db) => {
 
-let schema = new GraphQLSchema({
-  query: new GraphQLObjectType({
-    name: 'Query',
+  let linkType = new GraphQLObjectType({
+    name: 'Link',
     fields: () => ({
-      data: {
-        type: new GraphQLList(GraphQLInt),
-        resolve: () => data
-      }
+      _id: { type: GraphQLString },
+      title: { type: GraphQLString },
+      url: { type: GraphQLString }
     })
-  }),
-  mutation: new GraphQLObjectType({
-    name: 'Mutation',
-    fields: () => ({
-      incrementCounter: {
-        type: GraphQLInt,
-        resolve: () => ++counter
-      }
-    })
-  })
-});
+  });
 
-export default schema;
+  let schema = new GraphQLSchema({
+    query: new GraphQLObjectType({
+      name: 'Query',
+      fields: () => ({
+        links: {
+          type: new GraphQLList(linkType),
+          resolve: () => db.collection("links").find({}).toArray() // TODO: read from mongo
+        }
+      })
+    })
+  });
+
+  return schema;
+
+}
+
+export default Schema;
